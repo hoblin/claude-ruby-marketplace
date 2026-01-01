@@ -18,7 +18,7 @@ A Claude Code plugin marketplace for Ruby and Rails development.
 | [`activerecord`](./plugins/activerecord/README.md) | Skill | ActiveRecord patterns for Rails models and queries |
 | [`mcp`](./plugins/mcp/README.md) | Skill | MCP server development with Ruby SDK |
 
-\* LSP plugins are currently broken due to [claude-code#15148](https://github.com/anthropics/claude-code/issues/15148)
+\* LSP plugins broken since v2.0.69 ([#13952](https://github.com/anthropics/claude-code/issues/13952)) - use v2.0.67 or wait for fix
 
 ## Installing Plugins
 

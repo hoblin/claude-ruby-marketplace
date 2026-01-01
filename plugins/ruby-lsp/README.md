@@ -1,6 +1,6 @@
 # ruby-lsp
 
-> **Note**: LSP plugins are currently broken in Claude Code due to a race condition bug where the LSP manager initializes before plugins load. See [Issue #15148](https://github.com/anthropics/claude-code/issues/15148) for status updates.
+> **Note**: LSP plugins are currently broken in Claude Code - the LSP server registration function is not implemented. Last working version is 2.0.67. See [Issue #13952](https://github.com/anthropics/claude-code/issues/13952) for status and workarounds.
 
 Ruby language server for Claude Code, providing code intelligence features like go-to-definition, find references, hover documentation, and diagnostics.
 
