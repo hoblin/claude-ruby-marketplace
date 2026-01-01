@@ -1,0 +1,5 @@
+{
+  "name": "draper",
+  "version": "1.0.0",
+  "description": "Draper decorator patterns for Rails view logic"
+}
