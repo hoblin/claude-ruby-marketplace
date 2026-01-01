@@ -11,6 +11,34 @@
       "version": "1.0.0",
       "source": "./plugins/ruby-lsp",
       "category": "development"
+    },
+    {
+      "name": "rspec",
+      "description": "RSpec and FactoryBot testing patterns for Rails",
+      "version": "1.0.0",
+      "source": "./plugins/rspec",
+      "category": "testing"
+    },
+    {
+      "name": "draper",
+      "description": "Draper decorator patterns for Rails view logic",
+      "version": "1.0.0",
+      "source": "./plugins/draper",
+      "category": "patterns"
+    },
+    {
+      "name": "activerecord",
+      "description": "ActiveRecord patterns for Rails models and queries",
+      "version": "1.0.0",
+      "source": "./plugins/activerecord",
+      "category": "database"
+    },
+    {
+      "name": "mcp",
+      "description": "MCP server development with Ruby SDK",
+      "version": "1.0.0",
+      "source": "./plugins/mcp",
+      "category": "integrations"
     }
   ]
 }
