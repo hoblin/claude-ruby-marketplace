@@ -1,0 +1,5 @@
+{
+  "name": "activerecord",
+  "version": "1.0.0",
+  "description": "ActiveRecord patterns for Rails models and queries"
+}
