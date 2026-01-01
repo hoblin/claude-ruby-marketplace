@@ -12,8 +12,14 @@ RSpec and FactoryBot testing patterns for Rails applications.
 
 ### rspec
 
-Comprehensive RSpec and FactoryBot reference with:
-- Testing best practices and patterns
-- Ready-to-use spec templates
-- FactoryBot traits and strategies
-- Matcher examples and custom matcher patterns
+**Triggers:** Writing `*_spec.rb` files, discussing tests, TDD workflow, fixing failing specs
+
+Comprehensive RSpec and FactoryBot reference covering:
+- Test structure, `describe`/`context`/`it` blocks, `let`/`subject`
+- All matchers (equality, collections, changes, errors, predicates)
+- Test doubles, stubbing, spies, argument matchers
+- FactoryBot strategies, traits, sequences, associations
+- Rails spec types (model, request, system, job, mailer)
+- Best practices and anti-patterns
+
+**References:** `core.md`, `factory_bot.md`, `matchers.md`, `mocks.md`, `rails.md`

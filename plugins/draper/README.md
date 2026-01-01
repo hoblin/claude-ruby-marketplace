@@ -12,8 +12,13 @@ Draper decorator patterns for Rails view logic.
 
 ### draper-decorators
 
-Guidance on Draper gem best practices:
-- Decorator structure and organization
-- View helper delegation
+**Triggers:** Creating decorators, presentation logic, formatting model data for views
+
+Complete guide to the Draper gem:
+- Decorator philosophy and structure
+- Delegation strategies, accessing helpers
+- Association decoration, context passing
 - Testing decorators with RSpec
-- When to use decorators vs helpers vs presenters
+- Common anti-patterns (N+1, fat decorators)
+
+**References:** `patterns.md`, `testing.md`, `anti-patterns.md`
