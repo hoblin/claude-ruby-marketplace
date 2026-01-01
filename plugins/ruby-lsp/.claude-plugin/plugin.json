@@ -1,5 +1,6 @@
 {
   "name": "ruby-lsp",
   "version": "1.0.0",
-  "description": "Ruby language server for code intelligence"
+  "description": "Ruby language server for code intelligence",
+  "author": { "name": "hoblin" }
 }

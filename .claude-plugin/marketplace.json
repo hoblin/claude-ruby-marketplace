@@ -1,6 +1,8 @@
 {
   "name": "claude-ruby-marketplace",
-  "description": "Claude Code plugins for Ruby and Rails development",
+  "metadata": {
+    "description": "Ruby and Rails plugins: LSP integration, RSpec testing patterns, ActiveRecord queries, Draper decorators, and MCP server development"
+  },
   "owner": {
     "name": "hoblin"
   },

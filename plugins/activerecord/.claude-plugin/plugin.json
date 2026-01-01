@@ -1,5 +1,6 @@
 {
   "name": "activerecord",
   "version": "1.0.0",
-  "description": "ActiveRecord patterns for Rails models and queries"
+  "description": "ActiveRecord patterns for Rails models and queries",
+  "author": { "name": "hoblin" }
 }

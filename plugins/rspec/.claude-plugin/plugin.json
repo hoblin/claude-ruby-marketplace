@@ -1,5 +1,6 @@
 {
   "name": "rspec",
   "version": "1.0.0",
-  "description": "RSpec and FactoryBot testing patterns for Rails"
+  "description": "RSpec and FactoryBot testing patterns for Rails",
+  "author": { "name": "hoblin" }
 }
