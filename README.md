@@ -12,11 +12,13 @@ A Claude Code plugin marketplace for Ruby and Rails development.
 
 | Plugin | Type | Description |
 |--------|------|-------------|
-| `ruby-lsp` | LSP | Ruby language server (Shopify's ruby-lsp) |
-| `rspec` | Skill | RSpec and FactoryBot testing patterns for Rails |
-| `draper` | Skill | Draper decorator patterns for Rails view logic |
-| `activerecord` | Skill | ActiveRecord patterns for Rails models and queries |
-| `mcp` | Skill | MCP server development with Ruby SDK |
+| [`ruby-lsp`](./plugins/ruby-lsp/README.md) | LSP | Ruby language server (Shopify's ruby-lsp) * |
+| [`rspec`](./plugins/rspec/README.md) | Skill | RSpec and FactoryBot testing patterns for Rails |
+| [`draper`](./plugins/draper/README.md) | Skill | Draper decorator patterns for Rails view logic |
+| [`activerecord`](./plugins/activerecord/README.md) | Skill | ActiveRecord patterns for Rails models and queries |
+| [`mcp`](./plugins/mcp/README.md) | Skill | MCP server development with Ruby SDK |
+
+\* LSP plugins are currently broken due to [claude-code#15148](https://github.com/anthropics/claude-code/issues/15148)
 
 ## Installing Plugins
 

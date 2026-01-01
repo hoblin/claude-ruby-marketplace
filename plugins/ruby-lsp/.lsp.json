@@ -1,12 +1,17 @@
 {
   "ruby": {
     "command": "ruby-lsp",
+    "args": [],
     "extensionToLanguage": {
       ".rb": "ruby",
       ".rake": "ruby",
       ".gemspec": "ruby",
       ".ru": "ruby",
       ".erb": "erb"
-    }
+    },
+    "transport": "stdio",
+    "initializationOptions": {},
+    "settings": {},
+    "maxRestarts": 3
   }
 }

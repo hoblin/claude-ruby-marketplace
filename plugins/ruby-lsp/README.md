@@ -1,5 +1,7 @@
 # ruby-lsp
 
+> **Note**: LSP plugins are currently broken in Claude Code due to a race condition bug where the LSP manager initializes before plugins load. See [Issue #15148](https://github.com/anthropics/claude-code/issues/15148) for status updates.
+
 Ruby language server for Claude Code, providing code intelligence features like go-to-definition, find references, hover documentation, and diagnostics.
 
 Uses [Shopify's ruby-lsp](https://github.com/Shopify/ruby-lsp) - the modern Ruby language server.
