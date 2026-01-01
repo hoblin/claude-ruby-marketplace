@@ -1,0 +1,5 @@
+{
+  "name": "ruby-lsp",
+  "version": "1.0.0",
+  "description": "Ruby language server for code intelligence"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "claude-ruby-marketplace",
+  "description": "Claude Code plugins for Ruby and Rails development",
+  "owner": {
+    "name": "hoblin"
+  },
+  "plugins": [
+    {
+      "name": "ruby-lsp",
+      "description": "Ruby language server (Shopify's ruby-lsp) for code intelligence",
+      "version": "1.0.0",
+      "source": "./plugins/ruby-lsp",
+      "category": "development"
+    }
+  ]
+}
