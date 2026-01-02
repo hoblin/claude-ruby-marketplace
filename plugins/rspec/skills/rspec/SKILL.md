@@ -1,5 +1,6 @@
 ---
 name: RSpec Testing
+version: 1.1.0
 description: This skill should be used when the user asks to "write specs", "create spec", "add RSpec tests", "fix failing spec", or mentions RSpec, describe blocks, it blocks, expect syntax, test doubles, or matchers. Should also be used when editing *_spec.rb files, working in spec/ directory, planning implementation phases that include tests (TDD/RGRC workflow), writing Testing Strategy or Success Criteria sections, discussing unit or integration tests, or reviewing spec output and test failures. Comprehensive RSpec and FactoryBot reference with best practices, ready-to-use patterns, and examples.
 ---
 
@@ -274,27 +275,50 @@ Essential settings for `spec_helper.rb` and `rails_helper.rb`:
 
 See `examples/core/configuration.rb` for complete setup.
 
-## Additional Resources
+## Before You Write
 
-### Reference Files
+**What are you about to do?**
 
-For detailed patterns and complete API references, consult:
+```
+├── Creating or modifying a factory?
+│   └── Read `references/factory_bot.md`
+│
+├── Writing a new spec file?
+│   ├── Model/service/PORO → Read `references/core.md`
+│   ├── Request/controller → Read `references/rails.md`
+│   └── System/feature/job/mailer → Read `references/rails.md`
+│
+├── Using test doubles, stubs, or mocks?
+│   └── Read `references/mocks.md`
+│
+├── Writing custom or complex matchers?
+│   └── Read `references/matchers.md`
+│
+└── Fixing a failing spec?
+    ├── Factory-related error → Read `references/factory_bot.md`
+    ├── Mock/stub error → Read `references/mocks.md`
+    ├── Matcher error → Read `references/matchers.md`
+    └── Rails-specific error → Read `references/rails.md`
+```
 
-- **`references/core.md`** - describe, it, hooks, let/subject, shared examples, anti-patterns
-- **`references/factory_bot.md`** - Build strategies, traits, sequences, associations, callbacks
-- **`references/matchers.md`** - All built-in matchers, composing matchers, custom matchers
-- **`references/mocks.md`** - Test doubles, stubbing, spies, argument matchers
-- **`references/rails.md`** - All Rails spec types, Rails matchers, request/system specs
+**Need code examples?**
 
-### Example Files
-
-Ready-to-use code patterns in `examples/`:
-
-- **`examples/core/`** - Basic structure, hooks, let/subject, shared examples, configuration
-- **`examples/matchers/`** - Equality, collections, change, errors, predicates, custom matchers
-- **`examples/mocks/`** - Doubles, stubs, spies, argument matchers, any_instance, constants
-- **`examples/rails/`** - Model, request, controller, system, job, mailer, routing specs
-- **`examples/factory_bot/`** - Build strategies, traits, associations, callbacks, transients
+```
+├── Basic spec structure, hooks, shared examples
+│   └── See `examples/core/`
+│
+├── Matcher usage patterns
+│   └── See `examples/matchers/`
+│
+├── Test doubles and stubbing
+│   └── See `examples/mocks/`
+│
+├── Rails spec templates (model, request, system, job, mailer)
+│   └── See `examples/rails/`
+│
+└── Factory definitions with traits and associations
+    └── See `examples/factory_bot/`
+```
 
 ### Running Specs
 
