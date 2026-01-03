@@ -286,7 +286,7 @@ $wizards.itch.start
 
 Prompts for all required fields, then runs `dragonruby-publish --only-package`.
 
-## Anti-Patterns
+## Common Antipatterns
 
 | Don't | Why | Instead |
 |-------|-----|---------|
