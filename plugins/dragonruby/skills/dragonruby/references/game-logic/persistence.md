@@ -301,13 +301,13 @@ end
 ### Unchecked File Read
 
 ```ruby
-# DANGEROUS - crashes on nil
-score = $gtk.read_file("score.txt").to_i  # OK, nil.to_i = 0
+# WRONG - crashes on nil (actually OK, nil.to_i = 0)
+score = $gtk.read_file("score.txt").to_i
 
-# DANGEROUS - crashes if file missing
+# WRONG - crashes if file missing
 name = $gtk.read_file("name.txt").strip  # NoMethodError!
 
-# SAFE
+# CORRECT
 contents = $gtk.read_file("name.txt")
 name = contents ? contents.strip : "Player"
 ```

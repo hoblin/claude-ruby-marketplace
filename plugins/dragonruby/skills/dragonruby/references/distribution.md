@@ -288,14 +288,84 @@ Prompts for all required fields, then runs `dragonruby-publish --only-package`.
 
 ## Common Antipatterns
 
-| Don't | Why | Instead |
-|-------|-----|---------|
-| Ship with dev data | Players see your high scores | Delete temp files pre-build |
-| Skip local testing | Broken builds on platforms | Test each platform build |
-| Wrong viewport size | Layout issues on itch.io | Use 1280x720 (landscape) |
-| Forget SharedArrayBuffer | HTML5 won't run | Enable in itch.io settings |
-| Inconsistent versioning | Players confused about updates | Increment on every release |
-| Share engine folder | Path issues, version conflicts | Copy engine per project |
+### Shipping with Dev Data
+
+```ruby
+# WRONG - players see your high scores/saves
+# (no code cleanup before build)
+
+# CORRECT - delete temp files pre-build
+rm -f mygame/high-score.txt
+rm -rf mygame/saves/*
+```
+
+**Why:** Development data (high scores, save files) gets bundled into the release.
+
+### Skipping Local Testing
+
+```ruby
+# WRONG - publish without testing
+./dragonruby-publish mygame
+
+# CORRECT - test each platform build
+./dragonruby-publish --only-package
+# Then run: builds/mygame-windows.exe
+# Then run: builds/mygame-macos.app
+# Then run: builds/mygame-linux
+```
+
+**Why:** Different platforms may have broken builds or missing assets.
+
+### Wrong Viewport Size
+
+```ruby
+# WRONG - using non-standard dimensions on itch.io
+Viewport: 800x600
+
+# CORRECT - use standard dimensions
+Viewport: 1280x720 (landscape)
+Viewport: 540x960 (portrait)
+```
+
+**Why:** Mismatched viewport causes layout issues in the itch.io embed.
+
+### Forgetting SharedArrayBuffer
+
+```ruby
+# WRONG - HTML5 build doesn't run on itch.io
+# (no SharedArrayBuffer enabled)
+
+# CORRECT - enable in itch.io settings
+# Project → Edit → SharedArrayBuffer → Enabled
+```
+
+**Why:** DragonRuby HTML5 builds require SharedArrayBuffer to function.
+
+### Inconsistent Versioning
+
+```ruby
+# WRONG - version never changes
+version=1.0
+
+# CORRECT - increment on every release
+version=1.0  # Initial release
+version=1.1  # Bug fixes
+version=1.2  # New content
+```
+
+**Why:** Players can't tell if they have the latest version.
+
+### Sharing Engine Folder
+
+```ruby
+# WRONG - symlink or shared engine folder
+dragonruby -> /shared/dragonruby
+
+# CORRECT - copy engine per project
+cp -r /path/to/dragonruby ./my-game/
+```
+
+**Why:** Shared engines cause path issues and version conflicts between projects.
 
 ## Decision Tree
 

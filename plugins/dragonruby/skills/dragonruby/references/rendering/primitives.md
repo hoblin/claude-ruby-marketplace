@@ -258,22 +258,75 @@ Also available: `attr_label`, `attr_line`
 
 ## Common Antipatterns
 
+### Magic Numbers
+
 ```ruby
-# Magic numbers
-if player.x > 1280  # use args.grid.w
+# WRONG - hardcoded screen dimensions
+if player.x > 1280
+  player.x = 1280
+end
 
-# Array syntax
-[640, 500, 'Hello', 5, 1]  # use hash
-
-# Manual centering
-x: 640 - sprite_w / 2  # use anchor_x: 0.5
-
-# Many solids
-100.times { args.outputs.solids << rect }  # use sprites with path: :solid
-
-# Recreating static content every frame
-args.outputs.sprites << background  # use static_sprites
+# CORRECT - use grid constants
+if player.x > args.grid.w
+  player.x = args.grid.w
+end
 ```
+
+**Why:** Screen dimensions may vary; grid constants ensure portability.
+
+### Array Syntax
+
+```ruby
+# WRONG - positional arguments are hard to read
+args.outputs.labels << [640, 500, 'Hello', 5, 1]
+
+# CORRECT - hash syntax is explicit and maintainable
+args.outputs.labels << { x: 640, y: 500, text: 'Hello', size_enum: 5, alignment_enum: 1 }
+```
+
+**Why:** Array syntax is error-prone and difficult to maintain.
+
+### Manual Centering
+
+```ruby
+# WRONG - manual offset calculation
+{ x: 640 - sprite_w / 2, y: 360 - sprite_h / 2, w: sprite_w, h: sprite_h, path: 'sprite.png' }
+
+# CORRECT - use anchors
+{ x: 640, y: 360, w: sprite_w, h: sprite_h, path: 'sprite.png', anchor_x: 0.5, anchor_y: 0.5 }
+```
+
+**Why:** Anchors are clearer and automatically handle size changes.
+
+### Many Solids
+
+```ruby
+# WRONG - solids are not cached, poor performance
+100.times { |i| args.outputs.solids << { x: i * 10, y: 0, w: 8, h: 100 } }
+
+# CORRECT - use sprites with path: :solid for many rectangles
+100.times { |i| args.outputs.sprites << { x: i * 10, y: 0, w: 8, h: 100, path: :solid, r: 255 } }
+```
+
+**Why:** Sprites with `path: :solid` are GPU-cached and much faster for many rectangles.
+
+### Recreating Static Content
+
+```ruby
+# WRONG - recreates background every frame
+def tick(args)
+  args.outputs.sprites << { x: 0, y: 0, w: 1280, h: 720, path: 'background.png' }
+end
+
+# CORRECT - use static_sprites (renders once)
+def tick(args)
+  if Kernel.tick_count == 0
+    args.outputs.static_sprites << { x: 0, y: 0, w: 1280, h: 720, path: 'background.png' }
+  end
+end
+```
+
+**Why:** Static outputs are only processed once, reducing per-frame overhead.
 
 ## Property Defaults
 

@@ -337,13 +337,13 @@ end
 ### Checking D-Pad AND Analog Separately
 
 ```ruby
-# Bad: Redundant checks
+# WRONG - redundant checks
 if args.inputs.controller_one.dpad_left ||
    args.inputs.controller_one.left_analog_x_perc < -0.5
   move_left
 end
 
-# Good: Use built-in helper
+# CORRECT - use built-in helper
 if args.inputs.controller_one.left
   move_left
 end
@@ -352,12 +352,12 @@ end
 ### Not Using Grid for Boundaries
 
 ```ruby
-# Bad: Hardcoded values
+# WRONG - hardcoded values
 if player.x > 1280
   player.x = 1280
 end
 
-# Good: Use grid constants
+# CORRECT - use grid constants
 if player.x + player.w > args.grid.right
   player.x = args.grid.right - player.w
 end
@@ -366,11 +366,11 @@ end
 ### Forgetting Diagonal Speed
 
 ```ruby
-# Bad: Diagonal is ~1.41x faster
+# WRONG - diagonal is ~1.41x faster
 player.x += args.inputs.left_right * speed
 player.y += args.inputs.up_down * speed
 
-# Good: Normalized diagonal
+# CORRECT - normalized diagonal
 if (v = args.inputs.directional_vector)
   player.x += v.x * speed
   player.y += v.y * speed

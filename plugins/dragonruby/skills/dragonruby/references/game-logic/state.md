@@ -344,10 +344,10 @@ args.state.timer ||= 30 * 60
 ### Global State Pollution
 
 ```ruby
-# AVOID - pollutes global namespace
+# WRONG - pollutes global namespace
 @player_x = 100
 
-# PREFER
+# CORRECT
 args.state.player_x ||= 100
 ```
 

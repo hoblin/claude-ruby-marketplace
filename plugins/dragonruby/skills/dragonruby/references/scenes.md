@@ -364,7 +364,7 @@ end
 ### Missing Early Return
 
 ```ruby
-# BAD: Executes both scenes
+# WRONG - executes both scenes
 def gameplay_tick args
   if game_over?
     args.state.scene = :game_over
@@ -372,7 +372,7 @@ def gameplay_tick args
   update_player args  # Still runs after scene change!
 end
 
-# GOOD: Early return
+# CORRECT - early return
 def gameplay_tick args
   if game_over?
     args.state.scene = :game_over
@@ -385,10 +385,10 @@ end
 ### Undefined Scene Methods
 
 ```ruby
-# BAD: Crashes if scene method missing
+# WRONG - crashes if scene method missing
 send("#{args.state.scene}_tick", args)
 
-# GOOD: Validate scene exists
+# CORRECT - validate scene exists
 valid_scenes = [:title, :gameplay, :game_over]
 unless valid_scenes.include?(args.state.scene)
   raise "Invalid scene: #{args.state.scene}"
@@ -398,12 +398,12 @@ end
 ### Mid-Tick Scene Changes
 
 ```ruby
-# BAD: Hard to debug
+# WRONG - hard to debug
 def some_helper args
   args.state.scene = :game_over  # Hidden transition
 end
 
-# GOOD: Centralized transitions
+# CORRECT - centralized transitions
 def transition_to_game_over args
   args.state.scene = :game_over
   args.state.game_ended_at = Kernel.tick_count

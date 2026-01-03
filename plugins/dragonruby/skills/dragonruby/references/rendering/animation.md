@@ -329,21 +329,70 @@ end
 
 ## Common Antipatterns
 
+### Recalculating From Zero
+
 ```ruby
-# Recalculating from 0 every frame (animation never progresses correctly for one-shots)
-frame = 0.frame_index(count: 6, hold_for: 4, repeat: false)
+# WRONG - animation never progresses for one-shots
+def tick(args)
+  frame = 0.frame_index(count: 6, hold_for: 4, repeat: false)
+  # frame is always 0 because we start from 0 every tick
+end
 
-# Not handling nil
-path = "sprite-#{frame}.png"  # crashes when frame is nil
-
-# Separate images per direction
-path = player.facing_left ? 'player-left.png' : 'player-right.png'
-# Use flip_horizontally instead
-
-# Hardcoded frame timing
-hold_for: 8  # Magic number
-# Define constants: WALK_SPEED = 8, ATTACK_SPEED = 4
+# CORRECT - store animation start time
+def tick(args)
+  args.state.attack_at ||= Kernel.tick_count
+  frame = args.state.attack_at.frame_index(count: 6, hold_for: 4, repeat: false)
+end
 ```
+
+**Why:** `frame_index` calculates based on elapsed time since the timestamp; using 0 resets every frame.
+
+### Not Handling Nil
+
+```ruby
+# WRONG - crashes when animation completes
+frame = args.state.attack_at.frame_index(count: 6, hold_for: 4, repeat: false)
+path = "sprite-#{frame}.png"  # NoMethodError when frame is nil!
+
+# CORRECT - handle nil return
+frame = args.state.attack_at.frame_index(count: 6, hold_for: 4, repeat: false)
+frame ||= 5  # stay on last frame, or switch state
+path = "sprite-#{frame}.png"
+```
+
+**Why:** `frame_index` returns nil when `repeat: false` animation completes.
+
+### Separate Direction Images
+
+```ruby
+# WRONG - requires two sets of sprite assets
+path = player.facing_left ? 'player-left.png' : 'player-right.png'
+
+# CORRECT - use flip_horizontally
+args.outputs.sprites << {
+  path: 'player.png',
+  flip_horizontally: player.direction < 0
+}
+```
+
+**Why:** Flipping reduces asset count and ensures consistency.
+
+### Hardcoded Frame Timing
+
+```ruby
+# WRONG - magic numbers
+args.state.walk_at.frame_index(count: 6, hold_for: 8, repeat: true)
+args.state.attack_at.frame_index(count: 4, hold_for: 4, repeat: false)
+
+# CORRECT - named constants
+WALK_FRAME_SPEED = 8
+ATTACK_FRAME_SPEED = 4
+
+args.state.walk_at.frame_index(count: 6, hold_for: WALK_FRAME_SPEED, repeat: true)
+args.state.attack_at.frame_index(count: 4, hold_for: ATTACK_FRAME_SPEED, repeat: false)
+```
+
+**Why:** Constants make animation timing easier to tune and understand.
 
 ## Quick Reference
 

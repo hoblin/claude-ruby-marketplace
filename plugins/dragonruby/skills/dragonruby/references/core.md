@@ -321,10 +321,10 @@ args.outputs.debug.watch args.state.player
 ### State Persistence During Hot Reload
 
 ```ruby
-# WRONG: Changed value doesn't apply
+# WRONG - changed value doesn't apply
 args.state.player_x ||= 200  # Still uses old value
 
-# FIX: Add $gtk.reset at end of file
+# CORRECT - add $gtk.reset at end of file
 ```
 
 ### Magic Numbers
@@ -333,7 +333,7 @@ args.state.player_x ||= 200  # Still uses old value
 # WRONG
 args.state.timer = 30 * 60
 
-# RIGHT
+# CORRECT
 FPS = 60
 args.state.timer = 30 * FPS
 ```
@@ -341,10 +341,10 @@ args.state.timer = 30 * FPS
 ### Infinite Collections
 
 ```ruby
-# WRONG: Memory leak
+# WRONG - memory leak
 args.state.fireballs.each { |f| f.x += 5 }
 
-# RIGHT: Remove offscreen
+# CORRECT - remove offscreen
 args.state.fireballs.each do |f|
   f.x += 5
   f.dead = true if f.x > args.grid.w
@@ -355,11 +355,11 @@ args.state.fireballs.reject! { |f| f.dead }
 ### Render Before Update
 
 ```ruby
-# WRONG: Off by 1 frame
+# WRONG - off by 1 frame
 args.outputs.sprites << player
 player.x += 5
 
-# RIGHT: Update then render
+# CORRECT - update then render
 player.x += 5
 args.outputs.sprites << player
 ```
@@ -367,13 +367,13 @@ args.outputs.sprites << player
 ### Missing Early Return
 
 ```ruby
-# WRONG: Game still runs after game over
+# WRONG - game still runs after game over
 if game_over?
   show_game_over(args)
 end
 handle_input(args)  # Still executes!
 
-# RIGHT
+# CORRECT
 if game_over?
   show_game_over(args)
   return
