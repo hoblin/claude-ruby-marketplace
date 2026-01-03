@@ -381,37 +381,34 @@ end
 
 ## Decision Tree
 
-**What type of movement?**
+```
+What type of movement?
+├─ Simple 4-directional → examples/input/directional_input.rb
+├─ With boundary clamping → examples/input/movement_with_bounds.rb
+├─ Smooth analog → examples/input/analog_movement.rb
+└─ Normalized diagonal → examples/input/normalized_movement.rb
 
-→ **Simple 4-directional**: Use `args.inputs.up/down/left/right`
-  - See: [`directional_input.rb`](../examples/input/directional_input.rb)
+What type of action trigger?
+├─ One-shot (fire, jump) → use key_down, examples/input/action_triggers.rb
+├─ Continuous (hold to run) → use key_held, examples/input/keyboard_input.rb
+└─ On release (charge attacks) → use key_up, examples/input/keyboard_input.rb
 
-→ **With boundary clamping**: Add `.clamp()` with `args.grid`
-  - See: [`movement_with_bounds.rb`](../examples/input/movement_with_bounds.rb)
+Mouse interaction?
+└─ Click handling → examples/input/mouse_click.rb
 
-→ **Smooth analog**: Use `left_right_perc` / `up_down_perc`
-  - See: [`analog_movement.rb`](../examples/input/analog_movement.rb)
+Controller input?
+└─ Buttons and analog → examples/input/controller_input.rb
+```
 
-→ **Normalized diagonal**: Divide by vector length
-  - See: [`normalized_movement.rb`](../examples/input/normalized_movement.rb)
+## Examples
 
-**What type of action trigger?**
-
-→ **One-shot action** (fire, jump): Use `key_down`
-  - See: [`action_triggers.rb`](../examples/input/action_triggers.rb)
-
-→ **Continuous action** (hold to run): Use `key_held` or shorthand
-  - See: [`keyboard_input.rb`](../examples/input/keyboard_input.rb)
-
-→ **On release** (charge attacks): Use `key_up`
-  - See: [`keyboard_input.rb`](../examples/input/keyboard_input.rb)
-
-**Mouse interaction?**
-
-→ **Click handling**: Use `args.inputs.mouse.click`
-  - See: [`mouse_click.rb`](../examples/input/mouse_click.rb)
-
-**Controller input?**
-
-→ **Buttons and analog sticks**: Use `controller_one`
-  - See: [`controller_input.rb`](../examples/input/controller_input.rb)
+| File | Demonstrates |
+|------|--------------|
+| `examples/input/directional_input.rb` | 4-directional movement with unified input |
+| `examples/input/movement_with_bounds.rb` | Clamping player to screen boundaries |
+| `examples/input/analog_movement.rb` | Smooth analog stick movement |
+| `examples/input/normalized_movement.rb` | Normalized diagonal movement |
+| `examples/input/action_triggers.rb` | One-shot actions with key_down |
+| `examples/input/keyboard_input.rb` | Key states: down, held, up |
+| `examples/input/mouse_click.rb` | Mouse click detection and position |
+| `examples/input/controller_input.rb` | Controller buttons and analog sticks |
