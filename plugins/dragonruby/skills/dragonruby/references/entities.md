@@ -325,7 +325,7 @@ For collision detection:
 | 100-500 | `find_intersect_rect` / `each_intersect_rect` |
 | 500+ | Quad trees |
 
-## Antipatterns
+## Common Antipatterns
 
 ### ❌ Modifying Collection While Iterating
 
