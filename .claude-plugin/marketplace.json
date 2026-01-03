@@ -1,7 +1,7 @@
 {
   "name": "claude-ruby-marketplace",
   "metadata": {
-    "description": "Ruby and Rails plugins: LSP integration, RSpec testing patterns, ActiveRecord queries, Draper decorators, and MCP server development"
+    "description": "Ruby and Rails plugins: LSP integration, RSpec testing patterns, ActiveRecord queries, Draper decorators, MCP server development, and DragonRuby game development"
   },
   "owner": {
     "name": "hoblin"
@@ -41,6 +41,13 @@
       "version": "1.0.0",
       "source": "./plugins/mcp",
       "category": "integrations"
+    },
+    {
+      "name": "dragonruby",
+      "description": "DragonRuby Game Toolkit patterns for 2D game development",
+      "version": "1.0.0",
+      "source": "./plugins/dragonruby",
+      "category": "game-development"
     }
   ]
 }
