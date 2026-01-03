@@ -20,13 +20,13 @@ def tick(args)
   end
 
   # Method 2: find_intersect_rect - returns first collision (faster)
-  collision = args.geometry.find_intersect_rect(
+  collision = Geometry.find_intersect_rect(
     args.state.player,
     args.state.enemies
   )
 
   # Method 3: find_all_intersect_rect - returns all collisions
-  all_hits = args.geometry.find_all_intersect_rect(
+  all_hits = Geometry.find_all_intersect_rect(
     args.state.player,
     args.state.enemies
   )

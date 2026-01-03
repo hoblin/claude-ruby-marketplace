@@ -1,7 +1,7 @@
 ---
 name: DragonRuby Game Toolkit
 description: This skill should be used when the user asks to "create a game", "make a game", "game development", "dragonruby", "drgtk", "game loop", "tick method", "sprite rendering", "game state", or mentions args.outputs, args.state, args.inputs, coordinate system, collision detection, animation frames, or scene management. Should also be used when editing DragonRuby game files, working on 2D game logic, or discussing game performance optimization.
-version: 1.0.0
+version: 1.0.1
 ---
 
 # DragonRuby Game Toolkit
@@ -39,7 +39,7 @@ end
 | `args.state` | Persistent game data storage |
 | `args.inputs` | Keyboard, mouse, controller input |
 | `args.grid` | Screen dimensions (1280x720) |
-| `args.geometry` | Collision detection helpers |
+| `Geometry` | Collision detection helpers |
 
 ### Coordinate System
 
@@ -137,7 +137,7 @@ args.inputs.mouse.inside_rect?(rect)  # Collision check
 ## Collision Detection
 
 ```ruby
-if args.geometry.intersect_rect?(player, enemy)
+if Geometry.intersect_rect?(player, enemy)
   enemy.dead = true
   args.state.score += 1
 end

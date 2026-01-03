@@ -145,7 +145,7 @@ if player.intersect_rect?(enemy)
 end
 
 # Module method
-if args.geometry.intersect_rect?(player, enemy)
+if Geometry.intersect_rect?(player, enemy)
   handle_collision
 end
 
@@ -159,7 +159,7 @@ end
 
 ```ruby
 # Returns first intersecting entity or nil
-hit = args.geometry.find_intersect_rect(bullet, args.state.enemies)
+hit = Geometry.find_intersect_rect(bullet, args.state.enemies)
 if hit
   hit.dead = true
 end
@@ -169,7 +169,7 @@ end
 
 ```ruby
 # Returns array (empty if no collisions)
-hits = args.geometry.find_all_intersect_rect(explosion, args.state.enemies)
+hits = Geometry.find_all_intersect_rect(explosion, args.state.enemies)
 hits.each { |enemy| enemy.health -= 50 }
 ```
 
@@ -177,7 +177,7 @@ hits.each { |enemy| enemy.health -= 50 }
 
 ```ruby
 # Iterate through all collision pairs
-args.geometry.each_intersect_rect(bullets, enemies) do |bullet, enemy|
+Geometry.each_intersect_rect(bullets, enemies) do |bullet, enemy|
   bullet.dead = true
   enemy.health -= bullet.damage
 end
@@ -188,7 +188,7 @@ end
 ```ruby
 args.state.bullets.each do |bullet|
   args.state.enemies.each do |enemy|
-    if args.geometry.intersect_rect?(bullet, enemy)
+    if Geometry.intersect_rect?(bullet, enemy)
       bullet.dead = true
       enemy.dead = true
     end
@@ -200,10 +200,10 @@ end
 
 ```ruby
 # Create once for static/semi-static entities
-args.state.quad_tree ||= args.geometry.quad_tree_create(args.state.terrain)
+args.state.quad_tree ||= Geometry.quad_tree_create(args.state.terrain)
 
 # Fast collision lookup
-hit = args.geometry.find_intersect_rect_quad_tree(
+hit = Geometry.find_intersect_rect_quad_tree(
   args.state.player,
   args.state.quad_tree
 )
@@ -227,7 +227,7 @@ args.state.bullets.each do |bullet|
 
   # Mark on collision
   args.state.enemies.each do |enemy|
-    if args.geometry.intersect_rect?(bullet, enemy)
+    if Geometry.intersect_rect?(bullet, enemy)
       bullet.dead = true
       enemy.dead = true
     end
@@ -295,6 +295,8 @@ end
 ```
 
 ## Geometry API Reference
+
+Access via `Geometry.*` (preferred) or `args.geometry.*`. Instance methods also available as mixins on Hash/Array/Entity.
 
 | Method | Returns | Use Case |
 |--------|---------|----------|
@@ -378,7 +380,7 @@ args.state.bullets.each do |bullet|
   bullet.x += bullet.speed
   # No check if already dead - wastes cycles
   args.state.enemies.each do |enemy|
-    if args.geometry.intersect_rect?(bullet, enemy)
+    if Geometry.intersect_rect?(bullet, enemy)
       bullet.dead = true
       enemy.dead = true
     end
@@ -424,7 +426,7 @@ def check_collisions(args)
     args.state.enemies.each do |enemy|
       next if enemy.dead
 
-      if args.geometry.intersect_rect?(bullet, enemy)
+      if Geometry.intersect_rect?(bullet, enemy)
         bullet.dead = true
         enemy.dead = true
         args.state.score ||= 0

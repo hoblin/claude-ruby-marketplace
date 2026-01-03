@@ -47,7 +47,7 @@ def check_collisions(args)
     args.state.targets.each do |target|
       next if target.dead
 
-      if args.geometry.intersect_rect?(bullet, target)
+      if Geometry.intersect_rect?(bullet, target)
         bullet.dead = true
         target.dead = true
       end

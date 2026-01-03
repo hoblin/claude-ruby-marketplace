@@ -92,7 +92,7 @@ The `args` parameter contains everything needed for the game:
 | `args.state` | Persistent game data |
 | `args.inputs` | Keyboard/mouse/controller |
 | `args.grid` | Screen dimensions |
-| `args.geometry` | Collision helpers |
+| `Geometry` | Collision helpers (also `args.geometry`) |
 | `args.audio` | Sound playback |
 
 ## args.state - Game State
