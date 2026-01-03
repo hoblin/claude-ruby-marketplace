@@ -47,11 +47,31 @@ def tick args
 end
 ```
 
-## Resources
+## Sources & Acknowledgments
 
-- [DragonRuby Documentation](https://docs.dragonruby.org)
-- [DragonRuby Book](https://book.dragonriders.community)
-- [Discord Community](https://discord.dragonruby.org)
+This skill was built using knowledge from these excellent resources:
+
+### Building Games with DragonRuby (The Book)
+
+**Highly recommended for learning DragonRuby!**
+
+An open-source book by [Brett Chalupa](https://github.com/brettchalupa) and the Dragon Rider Community. It provides a hands-on, project-based introduction to game development with DragonRuby GTK.
+
+- [Read online](https://book.dragonriders.community)
+- [GitHub repository](https://github.com/DragonRidersUnite/book)
+- [Support the author](https://buymeacoffee.com/brettchalupa)
+
+### Official Resources
+
+- [DragonRuby Documentation](https://docs.dragonruby.org) - Complete API reference
+- [DragonRuby Discord](https://discord.dragonruby.org) - Active community support
+- [DragonRuby GTK](https://dragonruby.org/toolkit/game) - Get the engine
+
+### Credits
+
+- **Amir Rajan** - Creator of DragonRuby GTK
+- **Brett Chalupa** - Author of "Building Games with DragonRuby"
+- **Dragon Rider Community** - Book contributors and community support
 
 ## License
 
