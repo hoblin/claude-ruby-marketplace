@@ -5,7 +5,7 @@ DragonRuby Game Toolkit patterns and best practices for 2D game development with
 ## Installation
 
 ```bash
-/plugin marketplace add https://github.com/hoblin/claude-ruby-marketplace
+/plugin marketplace add hoblin/claude-ruby-marketplace
 /plugin install dragonruby@claude-ruby-marketplace
 ```
 
