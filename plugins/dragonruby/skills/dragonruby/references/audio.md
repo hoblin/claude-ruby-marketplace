@@ -267,7 +267,7 @@ args.audio[:beep] = {
 - Sawtooth wave - buzzy, synth-like (use gain: 0.3)
 - Triangle wave - soft, mellow
 
-## Anti-Patterns
+## Common Antipatterns
 
 ### Re-initializing Music Every Frame
 
@@ -385,3 +385,12 @@ Need advanced audio?
 ├── Multiple tracks → different keys (:music, :sfx, :ambient)
 └── Procedural audio → [channels, sample_rate, samples_array]
 ```
+
+## Examples
+
+| File | Demonstrates |
+|------|--------------|
+| `examples/audio/sound_effects.rb` | One-shot sounds with args.outputs.sounds |
+| `examples/audio/background_music.rb` | Looping music with args.audio |
+| `examples/audio/music_controls.rb` | Pause, resume, volume, seeking |
+| `examples/audio/audio_events.rb` | Event-driven sound triggers |
