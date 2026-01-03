@@ -256,7 +256,7 @@ Also available: `attr_label`, `attr_line`
 6. **Render in order** - backgrounds first, UI last
 7. **Flatten arrays** - DragonRuby handles `sprites << [player, enemies, bullets]`
 
-## Antipatterns
+## Common Antipatterns
 
 ```ruby
 # Magic numbers
