@@ -1,7 +1,7 @@
 ---
 name: DragonRuby Game Toolkit
 description: This skill should be used when the user asks to "create a game", "make a game", "game development", "dragonruby", "drgtk", "game loop", "tick method", "sprite rendering", "game state", or mentions args.outputs, args.state, args.inputs, coordinate system, collision detection, animation frames, or scene management. Should also be used when editing DragonRuby game files, working on 2D game logic, or discussing game performance optimization.
-version: 0.1.0
+version: 0.4.0
 ---
 
 # DragonRuby Game Toolkit
@@ -195,17 +195,20 @@ end
 
 For detailed API documentation and patterns:
 
-- **`references/core.md`** - Game loop, args object, rendering, coordinates, state management
+- **`references/core.md`** - Game loop, args object, rendering, coordinates
+- **`references/input.md`** - Keyboard, mouse, controller input patterns
+- **`references/entities.md`** - Entity spawning, collision, lifecycle
+- **`references/game-logic/state.md`** - Timers, scoring, scene transitions
+- **`references/game-logic/persistence.md`** - Save/load, file I/O patterns
 
 ### Example Files
 
 Working code in `examples/`:
 
-- **`examples/core/hello_world.rb`** - Minimal tick with labels
-- **`examples/core/sprites.rb`** - Sprite rendering with rotation, alpha
-- **`examples/core/labels.rb`** - Text alignment, size, colors
-- **`examples/core/state_management.rb`** - args.state with ||= pattern
-- **`examples/core/coordinate_system.rb`** - Bottom-left origin demo
+- **`examples/core/`** - Hello world, sprites, labels, state, coordinates
+- **`examples/input/`** - Directional, keyboard, mouse, movement
+- **`examples/entities/`** - Storage, factories, collision, lifecycle
+- **`examples/game-logic/`** - Timers, scoring, save/load, state transitions
 
 ## Development Workflow
 
