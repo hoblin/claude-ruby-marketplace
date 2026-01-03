@@ -11,15 +11,19 @@ DragonRuby Game Toolkit patterns and best practices for 2D game development with
 
 ## Features
 
-This plugin provides:
+This plugin provides comprehensive coverage of DragonRuby development:
 
-- **Core domain** - Game loop, tick method, coordinate system, args object
-- **Rendering** - Sprites, labels, solids, borders, lines
-- **State management** - Using args.state with lazy initialization
-- **Input handling** - Keyboard, mouse, controller patterns
-- **Collision detection** - args.geometry helpers
-- **Animation** - Frame-based sprite animation
-- **Scene management** - State-based scene transitions
+| Domain | Coverage |
+|--------|----------|
+| **Core** | Game loop, tick method, args object, coordinate system |
+| **Input** | Keyboard, mouse, controller, directional/analog movement |
+| **Entities** | Spawning, collision detection, lifecycle management |
+| **Game Logic** | State management, timers, persistence, save/load |
+| **Audio** | Sound effects, background music, event-driven audio |
+| **Rendering** | Sprites, labels, solids, primitives, layering |
+| **Animation** | Frame-based animation, spritesheets, state-driven |
+| **Scenes** | Scene management, transitions, menu systems |
+| **Distribution** | itch.io, Steam, mobile, cross-platform builds |
 
 ## Usage
 
