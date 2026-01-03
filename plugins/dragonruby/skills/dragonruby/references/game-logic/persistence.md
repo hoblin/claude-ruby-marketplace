@@ -281,7 +281,7 @@ $gtk.write_file_root("../external.txt", "data")
 $gtk.append_file_root("../log.txt", "entry\n")
 ```
 
-## Anti-Patterns
+## Common Antipatterns
 
 ### Missing Save-Once Flag
 
@@ -378,3 +378,9 @@ File not saving correctly?
 ├── File empty? → Check .to_s conversion
 └── Wrong location? → Development vs production paths differ
 ```
+
+## Examples
+
+| File | Demonstrates |
+|------|--------------|
+| `examples/game-logic/save_load.rb` | High score, serialize/deserialize, save-once flag |
