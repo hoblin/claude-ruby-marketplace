@@ -1,0 +1,16 @@
+# Production-ready cvars.txt
+# Location: mygame/metadata/cvars.txt
+
+# Minimize logging noise
+log.level=info
+log.filter_subsystems=HTTPServer,HTTP
+
+# Disable web server in production
+# webserver.enabled=false
+
+# Keep game running when backgrounded (0 = no sleep)
+# Useful for music games or web where users tab away
+# renderer.background_sleep=0
+
+# Fullscreen by default (ensure quit option in game!)
+# renderer.fullscreen=true

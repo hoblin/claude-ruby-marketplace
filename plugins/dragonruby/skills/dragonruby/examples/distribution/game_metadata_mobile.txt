@@ -1,0 +1,31 @@
+# Mobile-ready game_metadata.txt
+# For Android/iOS deployment
+
+devid=youritchusername
+devtitle=Your Studio Name
+gameid=my-mobile-game
+gametitle=My Mobile Game
+version=1.0
+icon=metadata/icon.png
+
+# Required for Android/iOS
+packageid=com.yourstudio.mygame
+
+# HD mode for modern devices
+hd=true
+highdpi=true
+
+# Portrait orientation (540x960 logical)
+orientation=portrait
+# Or landscape,portrait for rotation support
+
+# Platform-specific orientation overrides
+orientation_ios=portrait,landscape
+orientation_android=portrait,landscape
+
+# Edge-to-edge rendering (no letterbox)
+hd_letterbox=false
+hd_max_scale=400
+
+# Exclude dev files from builds
+ignore_directories=saves,debug,tmp
