@@ -383,10 +383,21 @@ handle_input(args)
 
 ## Decision Tree
 
-**What are you trying to do?**
+```
+What are you trying to do?
+├─ Display text → examples/core/labels.rb
+├─ Show an image → examples/core/sprites.rb
+├─ Store game data → examples/core/state_management.rb
+├─ Basic game structure → examples/core/hello_world.rb
+└─ Understand coordinates → examples/core/coordinate_system.rb
+```
 
-- **Display text** → See `examples/core/labels.rb`
-- **Show an image** → See `examples/core/sprites.rb`
-- **Store game data** → See `examples/core/state_management.rb`
-- **Basic game structure** → See `examples/core/hello_world.rb`
-- **Understand coordinates** → See `examples/core/coordinate_system.rb`
+## Examples
+
+| File | Demonstrates |
+|------|--------------|
+| `examples/core/hello_world.rb` | Minimal tick method, basic rendering |
+| `examples/core/sprites.rb` | Image rendering, anchors, rotation, color |
+| `examples/core/labels.rb` | Text display, alignment, sizing, fonts |
+| `examples/core/state_management.rb` | args.state, ||= initialization, persistence |
+| `examples/core/coordinate_system.rb` | Grid helpers, positioning, movement directions |
