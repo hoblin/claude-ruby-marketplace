@@ -1,7 +1,7 @@
 ---
 name: DragonRuby Game Toolkit
 description: This skill should be used when the user asks to "create a game", "make a game", "game development", "dragonruby", "drgtk", "game loop", "tick method", "sprite rendering", "game state", or mentions args.outputs, args.state, args.inputs, coordinate system, collision detection, animation frames, or scene management. Should also be used when editing DragonRuby game files, working on 2D game logic, or discussing game performance optimization.
-version: 0.4.0
+version: 0.5.0
 ---
 
 # DragonRuby Game Toolkit
@@ -200,6 +200,9 @@ For detailed API documentation and patterns:
 - **`references/entities.md`** - Entity spawning, collision, lifecycle
 - **`references/game-logic/state.md`** - Timers, scoring, scene transitions
 - **`references/game-logic/persistence.md`** - Save/load, file I/O patterns
+- **`references/audio.md`** - Sound effects, music playback, audio controls
+- **`references/rendering/primitives.md`** - Sprites, labels, solids, borders, layering
+- **`references/rendering/animation.md`** - frame_index, spritesheets, easing functions
 
 ### Example Files
 
@@ -209,6 +212,8 @@ Working code in `examples/`:
 - **`examples/input/`** - Directional, keyboard, mouse, movement
 - **`examples/entities/`** - Storage, factories, collision, lifecycle
 - **`examples/game-logic/`** - Timers, scoring, save/load, state transitions
+- **`examples/audio/`** - Sound effects, background music, pause/resume
+- **`examples/rendering/`** - Sprites, labels, animation, layering
 
 ## Development Workflow
 
