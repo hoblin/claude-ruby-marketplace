@@ -359,7 +359,7 @@ def tick args
 end
 ```
 
-## Antipatterns
+## Common Antipatterns
 
 ### Missing Early Return
 
@@ -412,13 +412,24 @@ end
 
 ## Decision Tree
 
-**Choosing a scene pattern:**
+```
+What scene pattern to use?
+├─ Simple game (2-4 scenes) → examples/scenes/send_dispatch.rb
+├─ Need explicit scene validation → examples/scenes/case_dispatch.rb
+├─ Debugging scene transitions → examples/scenes/safe_transitions.rb
+├─ Complex game with shared data → examples/scenes/class_based.rb
+└─ Pause overlay on gameplay → examples/scenes/pause_overlay.rb
+```
 
-1. **Simple game (2-4 scenes)?** → Send-based dispatch (`examples/scenes/send_dispatch.rb`)
-2. **Need explicit scene validation?** → Case-based dispatch (`examples/scenes/case_dispatch.rb`)
-3. **Debugging scene transitions?** → Safe transitions pattern (`examples/scenes/safe_transitions.rb`)
-4. **Complex game with shared scene data?** → Class-based scenes (`examples/scenes/class_based.rb`)
-5. **Pause overlay on gameplay?** → Conditional rendering (`examples/scenes/pause_overlay.rb`)
+## Examples
+
+| File | Demonstrates |
+|------|--------------|
+| `examples/scenes/send_dispatch.rb` | Dynamic method dispatch with send |
+| `examples/scenes/case_dispatch.rb` | Case-based scene switching |
+| `examples/scenes/safe_transitions.rb` | Deferred scene transitions |
+| `examples/scenes/class_based.rb` | OOP scene management |
+| `examples/scenes/pause_overlay.rb` | Pause menu overlay |
 
 ## Quick Reference
 
