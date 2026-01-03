@@ -1,0 +1,23 @@
+# HD game with high-DPI and linear scaling
+# For modern desktop/web releases
+
+devid=youritchusername
+devtitle=Your Studio Name
+gameid=my-hd-game
+gametitle=My HD Game
+version=1.0
+icon=metadata/icon.png
+
+# Enable HD rendering (720p, 1080p, 1440p, 4k)
+hd=true
+highdpi=true
+
+# Linear scaling for non-pixel-art games
+# 0=nearest (pixel art), 1=linear, 2=anisotropic
+scale_quality=1
+
+# Letterbox to maintain 16:9 aspect ratio
+hd_letterbox=true
+
+# Maximum scale: 0=stretch, 100=720p, 150=1080p, 200=1440p, 300=4k
+hd_max_scale=0

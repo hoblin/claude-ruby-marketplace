@@ -1,0 +1,9 @@
+# Minimal game_metadata.txt - All required fields
+# Location: mygame/metadata/game_metadata.txt
+
+devid=youritchusername
+devtitle=Your Name
+gameid=my-game-slug
+gametitle=My Game Title
+version=0.1
+icon=metadata/icon.png

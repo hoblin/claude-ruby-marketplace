@@ -1,0 +1,19 @@
+# Steam publishing configuration
+# Location: mygame/metadata/steam_metadata.txt
+
+# Enable Steam publishing
+steam.publish=true
+
+# Steam branch to publish to
+steam.branch=public
+
+# Your Steamworks Partner Site login name
+steam.username=YOUR_STEAM_USERNAME
+
+# Your Steam AppID (from Steamworks)
+steam.appid=YOUR_APP_ID
+
+# Platform-specific Depot IDs (from Steamworks)
+steam.linux_depotid=LINUX_DEPOT_ID
+steam.windows_depotid=WINDOWS_DEPOT_ID
+steam.mac_depotid=MAC_DEPOT_ID
