@@ -30,7 +30,7 @@ if args.inputs.keyboard.key_down.space
 end
 
 # On collision
-if args.geometry.intersect_rect?(bullet, enemy)
+if Geometry.intersect_rect?(bullet, enemy)
   args.outputs.sounds << "sounds/hit.wav"
   enemy.dead = true
 end
