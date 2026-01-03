@@ -327,7 +327,7 @@ end
 5. **Cache tile positions** - avoid multiplication every frame
 6. **Reset action_at on state change** - ensures animation restarts
 
-## Antipatterns
+## Common Antipatterns
 
 ```ruby
 # Recalculating from 0 every frame (animation never progresses correctly for one-shots)
