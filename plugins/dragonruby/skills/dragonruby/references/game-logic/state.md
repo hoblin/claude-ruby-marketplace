@@ -302,7 +302,7 @@ def tick(args)
 end
 ```
 
-## Anti-Patterns
+## Common Antipatterns
 
 ### Resetting State Every Frame
 
@@ -378,3 +378,12 @@ Need to reset game?
 Need restart delay?
 └── Grace period → examples/game-logic/state_transitions.rb (game_over_tick)
 ```
+
+## Examples
+
+| File | Demonstrates |
+|------|--------------|
+| `examples/game-logic/timers.rb` | Countdown, zmod? periodic, elapsed_time |
+| `examples/game-logic/scoring.rb` | Score tracking, combo multipliers |
+| `examples/game-logic/state_transitions.rb` | Scene management, send pattern, grace periods |
+| `examples/game-logic/reset_patterns.rb` | Full reset, partial reset, soft reset |
