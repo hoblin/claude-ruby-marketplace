@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# thoughts-status: Show status of thoughts repository
+
+THOUGHTS_DIR="${HOME}/thoughts"
+
+if [[ ! -d "$THOUGHTS_DIR/.git" ]]; then
+  echo "Error: $THOUGHTS_DIR is not a git repository" >&2
+  exit 1
+fi
+
+cd "$THOUGHTS_DIR"
+
+echo "Thoughts Repository Status"
+echo "=================================================="
+echo ""
+echo "Configuration:"
+echo "  Repository: $THOUGHTS_DIR"
+echo "  User: $(whoami)"
+echo ""
+
+# Git status
+echo "Git Status:"
+echo "  $(git status -sb | head -1)"
+
+# Remote status with auto-fetch
+if git remote get-url origin &>/dev/null; then
+  git fetch --quiet 2>/dev/null || true
+
+  STATUS=$(git status -sb)
+  if echo "$STATUS" | grep -q "ahead"; then
+    AHEAD=$(echo "$STATUS" | grep -oP 'ahead \K\d+' || echo "?")
+    echo "  Remote: $AHEAD commits ahead of remote"
+  elif echo "$STATUS" | grep -q "behind"; then
+    BEHIND=$(echo "$STATUS" | grep -oP 'behind \K\d+' || echo "?")
+    # Auto-pull if behind
+    if git pull --rebase --quiet 2>/dev/null; then
+      echo "  Remote: Up to date with remote (after pull)"
+    else
+      echo "  Remote: $BEHIND commits behind remote"
+    fi
+  else
+    echo "  Remote: Up to date with remote"
+  fi
+else
+  echo "  Remote: No remote configured"
+fi
+
+# Last commit
+LAST_COMMIT=$(git log -1 --pretty=format:"%h %s (%cr)" 2>/dev/null || echo "No commits yet")
+echo "  Last commit: $LAST_COMMIT"
+echo ""
+
+# Uncommitted changes
+CHANGES=$(git status --porcelain)
+if [[ -n "$CHANGES" ]]; then
+  echo "Uncommitted changes:"
+  echo "$CHANGES" | while read -r line; do
+    STATUS="${line:0:2}"
+    FILE="${line:3}"
+    case "$STATUS" in
+      "M "*|" M"|"MM") STATUS_TEXT="modified" ;;
+      "A "*) STATUS_TEXT="added" ;;
+      "D "*|" D") STATUS_TEXT="deleted" ;;
+      "??") STATUS_TEXT="untracked" ;;
+      "R "*) STATUS_TEXT="renamed" ;;
+      *) STATUS_TEXT="changed" ;;
+    esac
+    printf "  %-10s %s\n" "$STATUS_TEXT" "$FILE"
+  done
+  echo ""
+  echo 'Run "thoughts-sync" to commit these changes'
+else
+  echo "✓ No uncommitted changes"
+fi

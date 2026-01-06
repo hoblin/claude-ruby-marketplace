@@ -1,0 +1,199 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# thoughts-init-repo: Initialize thoughts system in a repository
+# Usage: thoughts-init-repo [repo-name]
+#   repo-name: Optional. Defaults to current directory name.
+
+THOUGHTS_HOME="${HOME}/thoughts"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+USERNAME="$(whoami)"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+info() { echo -e "${GREEN}✓${NC} $1"; }
+warn() { echo -e "${YELLOW}⚠${NC} $1"; }
+error() { echo -e "${RED}✗${NC} $1" >&2; }
+
+# Detect repo name from argument or current directory
+if [[ $# -gt 0 ]]; then
+  REPO_NAME="$1"
+else
+  REPO_NAME="$(basename "$(pwd)")"
+fi
+
+TARGET_DIR="$(pwd)"
+THOUGHTS_REPO_DIR="${THOUGHTS_HOME}/repos/${REPO_NAME}"
+LOCAL_THOUGHTS_DIR="${TARGET_DIR}/thoughts"
+
+echo "Initializing thoughts system for: ${REPO_NAME}"
+echo "  Target repo: ${TARGET_DIR}"
+echo "  Thoughts storage: ${THOUGHTS_REPO_DIR}"
+echo ""
+
+# Verify we're in a git repo
+if [[ ! -d "${TARGET_DIR}/.git" ]]; then
+  error "Not a git repository: ${TARGET_DIR}"
+  exit 1
+fi
+
+# Verify thoughts home exists
+if [[ ! -d "${THOUGHTS_HOME}" ]]; then
+  error "Thoughts home not found: ${THOUGHTS_HOME}"
+  echo "Please clone the thoughts repository first."
+  exit 1
+fi
+
+# Handle existing thoughts directory
+if [[ -d "${LOCAL_THOUGHTS_DIR}" ]]; then
+  # Check if it's already properly linked
+  if [[ -L "${LOCAL_THOUGHTS_DIR}/shared" ]] && \
+     [[ "$(readlink "${LOCAL_THOUGHTS_DIR}/shared")" == "${THOUGHTS_REPO_DIR}/shared" ]]; then
+    info "Thoughts already initialized for this repo"
+    exit 0
+  fi
+
+  # Existing directory needs migration
+  BACKUP_DIR="${LOCAL_THOUGHTS_DIR}.backup.$(date +%Y%m%d_%H%M%S)"
+  warn "Existing thoughts directory found - migrating..."
+  mv "${LOCAL_THOUGHTS_DIR}" "${BACKUP_DIR}"
+  info "Backed up to: ${BACKUP_DIR}"
+  NEEDS_MIGRATION=true
+else
+  NEEDS_MIGRATION=false
+fi
+
+# Create repo directory structure in thoughts home
+echo "Creating thoughts storage structure..."
+mkdir -p "${THOUGHTS_REPO_DIR}/${USERNAME}"
+mkdir -p "${THOUGHTS_REPO_DIR}/shared/handoffs"
+mkdir -p "${THOUGHTS_REPO_DIR}/shared/plans"
+mkdir -p "${THOUGHTS_REPO_DIR}/shared/research"
+mkdir -p "${THOUGHTS_REPO_DIR}/shared/notes"
+info "Created: ${THOUGHTS_REPO_DIR}"
+
+# Create README if it doesn't exist
+if [[ ! -f "${THOUGHTS_REPO_DIR}/README.md" ]]; then
+  cat > "${THOUGHTS_REPO_DIR}/README.md" << EOF
+# ${REPO_NAME} Thoughts
+
+This directory contains thoughts and notes specific to the ${REPO_NAME} repository.
+
+- \`${USERNAME}/\` - Personal notes for this repository
+- \`shared/\` - Team-shared notes for this repository
+EOF
+  info "Created README.md"
+fi
+
+# Create local thoughts directory with symlinks
+echo "Creating symlinks in repository..."
+mkdir -p "${LOCAL_THOUGHTS_DIR}"
+
+ln -s "${THOUGHTS_HOME}/global" "${LOCAL_THOUGHTS_DIR}/global"
+info "Linked: global -> ${THOUGHTS_HOME}/global"
+
+ln -s "${THOUGHTS_REPO_DIR}/${USERNAME}" "${LOCAL_THOUGHTS_DIR}/${USERNAME}"
+info "Linked: ${USERNAME} -> ${THOUGHTS_REPO_DIR}/${USERNAME}"
+
+ln -s "${THOUGHTS_REPO_DIR}/shared" "${LOCAL_THOUGHTS_DIR}/shared"
+info "Linked: shared -> ${THOUGHTS_REPO_DIR}/shared"
+
+# Create CLAUDE.md
+cat > "${LOCAL_THOUGHTS_DIR}/CLAUDE.md" << EOF
+# Thoughts Directory Structure
+
+This directory contains developer thoughts and notes for the ${REPO_NAME} repository.
+It is managed by the thoughts sync scripts and should not be committed to the code repository.
+
+## Structure
+
+- \`${USERNAME}/\` - Your personal notes for this repository (symlink to ~/thoughts/repos/${REPO_NAME}/${USERNAME})
+- \`shared/\` - Team-shared notes for this repository (symlink to ~/thoughts/repos/${REPO_NAME}/shared)
+- \`global/\` - Cross-repository thoughts (symlink to ~/thoughts/global)
+  - \`${USERNAME}/\` - Personal notes that apply across all repositories
+  - \`shared/\` - Team-shared notes that apply across all repositories
+
+## Usage
+
+Create markdown files in these directories to document:
+- Architecture decisions
+- Design notes
+- TODO items
+- Investigation results
+- Any other development thoughts
+
+Quick access:
+- \`thoughts/${USERNAME}/\` for your repo-specific notes (most common)
+- \`thoughts/shared/\` for team-shared repo notes
+- \`thoughts/global/${USERNAME}/\` for your cross-repo notes
+
+## Commands
+
+- \`thoughts-sync\` - Commit and push thoughts changes
+- \`thoughts-status\` - Show thoughts repository status
+
+## Important
+
+- Never commit the thoughts/ directory to your code repository
+- Use \`thoughts-sync\` to manually sync changes
+- Use \`thoughts-status\` to see sync status
+EOF
+info "Created thoughts/CLAUDE.md"
+
+# Update .gitignore
+GITIGNORE="${TARGET_DIR}/.gitignore"
+if [[ -f "${GITIGNORE}" ]]; then
+  if ! grep -qxF '/thoughts/' "${GITIGNORE}"; then
+    echo '/thoughts/' >> "${GITIGNORE}"
+    info "Added /thoughts/ to .gitignore"
+  else
+    info ".gitignore already excludes /thoughts/"
+  fi
+else
+  echo '/thoughts/' > "${GITIGNORE}"
+  info "Created .gitignore with /thoughts/"
+fi
+
+# Handle migration - copy contents from backup
+if [[ "${NEEDS_MIGRATION}" == "true" ]]; then
+  echo ""
+  echo "Migrating content from backup..."
+
+  # Copy ${USERNAME} contents if exists
+  if [[ -d "${BACKUP_DIR}/${USERNAME}" ]] && [[ -n "$(ls -A "${BACKUP_DIR}/${USERNAME}" 2>/dev/null)" ]]; then
+    cp -r "${BACKUP_DIR}/${USERNAME}/"* "${THOUGHTS_REPO_DIR}/${USERNAME}/" 2>/dev/null || true
+    info "Migrated ${USERNAME}/ contents"
+  fi
+
+  # Copy shared contents if exists
+  if [[ -d "${BACKUP_DIR}/shared" ]] && [[ -n "$(ls -A "${BACKUP_DIR}/shared" 2>/dev/null)" ]]; then
+    cp -rn "${BACKUP_DIR}/shared/"* "${THOUGHTS_REPO_DIR}/shared/" 2>/dev/null || true
+    info "Migrated shared/ contents"
+  fi
+
+  # Copy any loose files (like CLAUDE.md) - skip if they're symlinks
+  for file in "${BACKUP_DIR}"/*; do
+    if [[ -f "${file}" ]] && [[ ! -L "${file}" ]]; then
+      filename=$(basename "${file}")
+      if [[ "${filename}" != "CLAUDE.md" ]]; then
+        cp "${file}" "${THOUGHTS_REPO_DIR}/" 2>/dev/null || true
+        info "Migrated: ${filename}"
+      fi
+    fi
+  done
+
+  echo ""
+  warn "Backup preserved at: ${BACKUP_DIR}"
+  echo "  Review and delete when satisfied: rm -rf '${BACKUP_DIR}'"
+fi
+
+echo ""
+info "Thoughts initialized for ${REPO_NAME}!"
+echo ""
+echo "Next steps:"
+echo "  1. Run 'thoughts-sync' to sync any migrated content"
+echo "  2. Commit the .gitignore change if modified"
