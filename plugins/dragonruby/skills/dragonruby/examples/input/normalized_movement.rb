@@ -25,8 +25,8 @@ def tick args
   args.state.player.y += dy
 
   # Show speed comparison
-  args.outputs.labels << [640, 700, "Move diagonally - speed stays constant", 5, 1]
-  args.outputs.labels << [640, 670, "Current speed: #{Math.sqrt(dx**2 + dy**2).to_sf}", 5, 1]
+  args.outputs.labels << { x: 640, y: 700, text: "Move diagonally - speed stays constant", size_enum: 5, alignment_enum: 1 }
+  args.outputs.labels << { x: 640, y: 670, text: "Current speed: #{Math.sqrt(dx**2 + dy**2).to_sf}", size_enum: 5, alignment_enum: 1 }
 
   args.outputs.sprites << args.state.player.merge(path: 'sprites/square/blue.png')
 end

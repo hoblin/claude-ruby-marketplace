@@ -16,7 +16,7 @@ def tick args
   args.state.player.y = args.state.player.y.clamp(0, args.grid.h - args.state.player.h)
 
   # Visual feedback at boundaries
-  args.outputs.borders << [0, 0, args.grid.w, args.grid.h, 255, 0, 0]
+  args.outputs.primitives << { x: 0, y: 0, w: args.grid.w, h: args.grid.h, r: 255, g: 0, b: 0, primitive_marker: :border }
   args.outputs.sprites << args.state.player.merge(path: 'sprites/square/blue.png')
-  args.outputs.labels << [640, 700, "Try moving off screen - player is clamped", 5, 1]
+  args.outputs.labels << { x: 640, y: 700, text: "Try moving off screen - player is clamped", size_enum: 5, alignment_enum: 1 }
 end
