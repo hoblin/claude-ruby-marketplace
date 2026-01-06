@@ -18,7 +18,7 @@ Use the following information to understand how to create your document:
         - description is a brief kebab-case description
     - Run `spec-metadata` to generate all relevant metadata
     - Examples:
-        - With ticket: `2025-01-08_13-55-22_ENG-2166_create-context-compaction.md`
+        - With ticket: `2025-01-08_13-55-22_ENG-XXXX_create-context-compaction.md`
         - Without ticket: `2025-01-08_13-55-22_create-context-compaction.md`
 
 ### 2. Handoff writing.
@@ -84,7 +84,7 @@ for example (between <example_response></example_response> XML tags - do NOT inc
 Handoff created and synced! You can resume from this handoff in a new session with the following command:
 
 ```bash
-/resume_handoff thoughts/shared/handoffs/ENG-2166/2025-01-08_13-44-55_ENG-2166_create-context-compaction.md
+/resume_handoff thoughts/shared/handoffs/ENG-XXXX/2025-01-08_13-44-55_ENG-XXXX_create-context-compaction.md
 ```
 </example_response>
 
