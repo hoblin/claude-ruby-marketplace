@@ -48,6 +48,13 @@
       "version": "1.0.0",
       "source": "./plugins/dragonruby",
       "category": "game-development"
+    },
+    {
+      "name": "rpi",
+      "description": "RPI workflow: Research, Planning, Implementation with context engineering",
+      "version": "1.0.0",
+      "source": "./plugins/rpi",
+      "category": "workflow"
     }
   ]
 }
