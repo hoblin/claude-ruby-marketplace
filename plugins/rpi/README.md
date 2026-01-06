@@ -2,13 +2,82 @@
 
 **R**esearch, **P**lanning, **I**mplementation - context engineering workflow for AI-assisted development.
 
-## Overview
+## Philosophy
 
-The Thoughts system implements **frequent intentional compaction** - a context management methodology that compresses codebase "truth" and implementation "intent" into reusable artifacts. The core philosophy:
+This workflow is adapted from HumanLayer's [Advanced Context Engineering for Coding Agents](https://github.com/humanlayer/advanced-context-engineering-for-coding-agents).
 
-> "The contents of your context window are the ONLY lever you have to affect the quality of your output."
+> "The contents of your context window are the **ONLY lever** you have to affect the quality of your output."
 
-This plugin enables context continuity between AI sessions by centralizing research, plans, and handoffs across multiple projects.
+LLMs are stateless functions. Each turn is `context window in → next step out`. The problem: research, code exploration, and iteration fill your context with noise. The solution: **Frequent Intentional Compaction** - compress understanding into artifacts, start fresh, reload only what's needed.
+
+A bad line of code is just one bad line. A bad line in a **plan** creates hundreds of bad lines. A misunderstanding in **research** creates thousands. Focus human attention on the highest-leverage artifacts.
+
+**Do not outsource thinking.** The agent researches and drafts - you review and refine. The plan is not ready until *you* say it's ready.
+
+## The Workflow
+
+The key insight: **you will start new sessions frequently**. Each session produces a document (plan, research, handoff) that captures refined understanding. The next session reads that document - no context is "transferred", just loaded fresh.
+
+```
+SESSION 1: Create Plan
+─────────────────────────────────────────────────────────────
+/create_plan MYX-123
+  → Agent spawns research subagents
+  → Agent asks questions on key decisions
+  → Agent writes plan to thoughts/shared/plans/
+  → Context full of research noise
+─────────────────────────────────────────────────────────────
+                    📄 ARTIFACT: plan file contains refined understanding
+
+/new ─────────────────────────────────────────────────────────
+
+SESSION 2: Iterate Plan (fresh context)
+─────────────────────────────────────────────────────────────
+(review plan file yourself first)
+
+/iterate_plan ./thoughts/shared/plans/2026-01-06-MYX-123.md
+  - Review ticket, parent task, sibling subtasks
+  - Narrow scope to current task only
+  → Agent reads plan, updates it, runs thoughts-sync
+─────────────────────────────────────────────────────────────
+                    📄 ARTIFACT: plan updated
+
+/new ─────────────────────────────────────────────────────────
+
+SESSION 3: Iterate Plan again (fresh context)
+─────────────────────────────────────────────────────────────
+/iterate_plan ./thoughts/shared/plans/2026-01-06-MYX-123.md
+  - Wrong order of phases 5 and 6
+  → Agent fixes, syncs
+─────────────────────────────────────────────────────────────
+                    📄 ARTIFACT: plan refined and approved
+
+/new ─────────────────────────────────────────────────────────
+
+SESSION 4: Implement Phase 1 (fresh context)
+─────────────────────────────────────────────────────────────
+/implement_plan ./thoughts/shared/plans/2026-01-06-MYX-123.md
+  Start phase 1
+  → Agent reads plan, implements phase 1
+  → Agent updates checkboxes, commits code
+─────────────────────────────────────────────────────────────
+                    📄 ARTIFACT: plan updated with progress
+
+/new ─────────────────────────────────────────────────────────
+
+SESSION 5: Continue Implementation (fresh context)
+─────────────────────────────────────────────────────────────
+/implement_plan ./thoughts/shared/plans/2026-01-06-MYX-123.md
+  Phase 1 done, continue with phases 2 and 3
+  → Agent reads plan, sees phase 1 ✓, continues
+─────────────────────────────────────────────────────────────
+```
+
+### Why New Sessions?
+
+- Context fills with noise (search results, failed attempts, exploration)
+- Fresh context + artifact = clean start with refined understanding
+- Small phases fit in one session; complex phases get their own
 
 ## Plugin Contents
 
@@ -32,44 +101,6 @@ rpi/
     ├── resume_handoff.md
     └── commit.md
 ```
-
-## The RPI Trifecta
-
-### Research → Planning → Implementation
-
-```
-┌────────────────────────────────────────────────────────────────────┐
-│                        /create_plan                                 │
-│  ┌─────────────┐     ┌─────────────┐                               │
-│  │  RESEARCH   │────▶│  PLANNING   │  (research happens inline)    │
-│  │  subagents  │     │  output     │                               │
-│  └─────────────┘     └─────────────┘                               │
-└────────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌────────────────────────────────────────────────────────────────────┐
-│                      /implement_plan                                │
-│  ┌──────────────────────────────────────────────────────────────┐  │
-│  │  Execute plan phase-by-phase, update progress checkboxes     │  │
-│  └──────────────────────────────────────────────────────────────┘  │
-└────────────────────────────────────────────────────────────────────┘
-```
-
-## Key Concepts
-
-### Context Compression
-
-- **Truth**: Codebase understanding compressed into research artifacts
-- **Intent**: Implementation goals compressed into plan artifacts
-- **Continuity**: Work state compressed into handoff artifacts
-
-### Persistent Memory Layer
-
-The thoughts repository (`~/thoughts/`) acts as external memory for AI-assisted development:
-- Research documents preserve codebase understanding
-- Plans preserve implementation decisions
-- Handoffs preserve work-in-progress state
-- All artifacts are versioned and backed up via git
 
 ## Thoughts Directory Structure
 
@@ -177,31 +208,6 @@ These agents are spawned by `/create_plan` and `/research_codebase` to gather co
 
 **`/commit`** - Create git commits with user approval (no Claude attribution)
 
-## Workflow Example
-
-```bash
-# Optional: Research complex feature before planning
-/research_codebase "How does user authentication work?"
-
-# Create implementation plan (includes research phase)
-/create_plan MYX-123
-
-# Iterate on plan based on feedback
-/iterate_plan MYX-123
-
-# Implement the approved plan
-/implement_plan MYX-123
-
-# For unsupervised runs: validate implementation
-/validate_plan MYX-123
-
-# Switching sessions? Create handoff
-/create_handoff MYX-123
-
-# Resume in new session
-/resume_handoff MYX-123
-```
-
 ## Document Conventions
 
 ### Naming Patterns
@@ -232,8 +238,4 @@ repository: my-app
 claude plugin install rpi@claude-ruby-marketplace
 ```
 
-**Prerequisites**: The thoughts repository must be set up at `~/thoughts/`. See [HumanLayer's context engineering approach](https://github.com/humanlayer/humanlayer) for the underlying methodology.
-
-## Philosophy
-
-This system is adapted from HumanLayer's context engineering approach. The goal is to make AI-assisted development more effective by ensuring essential context is always available without exceeding context window limits.
+**Prerequisites**: The thoughts repository must be set up at `~/thoughts/`.
