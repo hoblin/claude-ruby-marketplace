@@ -156,10 +156,9 @@ Always verify:
 ## Relationship to Other Commands
 
 Recommended workflow:
-1. `/implement_plan` - Execute the implementation
-2. `/commit` - Create atomic commits for changes
-3. `/validate_plan` - Verify implementation correctness
-4. `/describe_pr` - Generate PR description
+1. `/rpi:implement_plan` - Execute the implementation
+2. `/rpi:commit` - Create atomic commits for changes
+3. `/rpi:validate_plan` - Verify implementation correctness
 
 The validation works best after commits are made, as it can analyze the git history to understand what was implemented.
 

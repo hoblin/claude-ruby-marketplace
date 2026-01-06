@@ -20,7 +20,7 @@ A bad line of code is just one bad line. A bad line in a **plan** creates hundre
 claude plugin install rpi@claude-ruby-marketplace
 ```
 
-Then run `/thoughts-init` to set up the thoughts system. The command will:
+Then run `/rpi:thoughts-init` to set up the thoughts system. The command will:
 1. Check if `~/thoughts/` exists and create it if needed
 2. Install helper scripts to `~/thoughts/bin/`
 3. Configure PATH (may require terminal restart)
@@ -33,7 +33,7 @@ The key insight: **you will start new sessions frequently**. Each session produc
 ```
 SESSION 1: Create Plan
 ─────────────────────────────────────────────────────────────
-/create_plan MYX-123
+/rpi:create_plan MYX-123
   → Agent spawns research subagents
   → Agent asks questions on key decisions
   → Agent writes plan to thoughts/shared/plans/
@@ -47,7 +47,7 @@ SESSION 2: Iterate Plan (fresh context)
 ─────────────────────────────────────────────────────────────
 (review plan file yourself first)
 
-/iterate_plan ./thoughts/shared/plans/2026-01-06-MYX-123.md
+/rpi:iterate_plan ./thoughts/shared/plans/2026-01-06-MYX-123.md
   - Review ticket, parent task, sibling subtasks
   - Narrow scope to current task only
   → Agent reads plan, updates it, runs thoughts-sync
@@ -58,7 +58,7 @@ SESSION 2: Iterate Plan (fresh context)
 
 SESSION 3: Iterate Plan again (fresh context)
 ─────────────────────────────────────────────────────────────
-/iterate_plan ./thoughts/shared/plans/2026-01-06-MYX-123.md
+/rpi:iterate_plan ./thoughts/shared/plans/2026-01-06-MYX-123.md
   - Wrong order of phases 5 and 6
   → Agent fixes, syncs
 ─────────────────────────────────────────────────────────────
@@ -68,7 +68,7 @@ SESSION 3: Iterate Plan again (fresh context)
 
 SESSION 4: Implement Phase 1 (fresh context)
 ─────────────────────────────────────────────────────────────
-/implement_plan ./thoughts/shared/plans/2026-01-06-MYX-123.md
+/rpi:implement_plan ./thoughts/shared/plans/2026-01-06-MYX-123.md
   Start phase 1
   → Agent reads plan, implements phase 1
   → Agent updates checkboxes, commits code
@@ -79,7 +79,7 @@ SESSION 4: Implement Phase 1 (fresh context)
 
 SESSION 5: Continue Implementation (fresh context)
 ─────────────────────────────────────────────────────────────
-/implement_plan ./thoughts/shared/plans/2026-01-06-MYX-123.md
+/rpi:implement_plan ./thoughts/shared/plans/2026-01-06-MYX-123.md
   Phase 1 done, continue with phases 2 and 3
   → Agent reads plan, sees phase 1 ✓, continues
 ─────────────────────────────────────────────────────────────
@@ -138,35 +138,35 @@ The plugin expects a thoughts repository at `~/thoughts/` with this structure:
 
 ## Research Subagents
 
-These agents are spawned by `/create_plan` and `/research_codebase` to gather context:
+These agents are spawned by `/rpi:create_plan` and `/rpi:research_codebase` to gather context:
 
 ### Codebase Agents
 
 | Agent | Purpose |
 |-------|---------|
-| **codebase-analyzer** | Traces data flow, understands HOW code works |
-| **codebase-locator** | Finds WHERE code lives (files, functions, classes) |
-| **codebase-pattern-finder** | Finds existing patterns to model new code after |
+| **rpi:codebase-analyzer** | Traces data flow, understands HOW code works |
+| **rpi:codebase-locator** | Finds WHERE code lives (files, functions, classes) |
+| **rpi:codebase-pattern-finder** | Finds existing patterns to model new code after |
 
 ### External Research Agents
 
 | Agent | Purpose |
 |-------|---------|
-| **documentation-researcher** | Fetches library docs via Context7 |
-| **web-search-researcher** | Searches web for modern docs and best practices |
+| **rpi:documentation-researcher** | Fetches library docs via Context7 |
+| **rpi:web-search-researcher** | Searches web for modern docs and best practices |
 
 ### Thoughts Agents
 
 | Agent | Purpose |
 |-------|---------|
-| **thoughts-locator** | Discovers relevant documents in `thoughts/` directory |
-| **thoughts-analyzer** | Deep-dives into specific thoughts documents |
+| **rpi:thoughts-locator** | Discovers relevant documents in `thoughts/` directory |
+| **rpi:thoughts-analyzer** | Deep-dives into specific thoughts documents |
 
 ## Commands
 
 ### Planning
 
-**`/create_plan`** - Create detailed implementation plans through interactive research
+**`/rpi:create_plan`** - Create detailed implementation plans through interactive research
 
 - Spawns research subagents to gather codebase and external context
 - Interactive planning process with user feedback
@@ -174,7 +174,7 @@ These agents are spawned by `/create_plan` and `/research_codebase` to gather co
 - Each phase = one atomic commit
 - Output: `thoughts/shared/plans/YYYY-MM-DD-{ticket}-description.md`
 
-**`/iterate_plan`** - Update existing plans based on feedback
+**`/rpi:iterate_plan`** - Update existing plans based on feedback
 
 - Focused, precise updates to existing plans
 - Confirms understanding before making changes
@@ -182,14 +182,14 @@ These agents are spawned by `/create_plan` and `/research_codebase` to gather co
 
 ### Implementation
 
-**`/implement_plan`** - Execute approved plan from `thoughts/shared/plans/`
+**`/rpi:implement_plan`** - Execute approved plan from `thoughts/shared/plans/`
 
 - Follows plan's intent while adapting to reality
 - Implements each phase fully before moving to next
 - Updates checkboxes in plan files as work progresses
 - Pauses for manual verification after each phase
 
-**`/validate_plan`** - Verify implementation matches plan (for unsupervised runs)
+**`/rpi:validate_plan`** - Verify implementation matches plan (for unsupervised runs)
 
 - Runs automated verification commands
 - Documents pass/fail status
@@ -197,7 +197,7 @@ These agents are spawned by `/create_plan` and `/research_codebase` to gather co
 
 ### Pre-Planning Research
 
-**`/research_codebase`** - Document codebase state before planning
+**`/rpi:research_codebase`** - Document codebase state before planning
 
 - Spawns parallel sub-agents to investigate specific features
 - Synthesizes findings into research document
@@ -206,14 +206,14 @@ These agents are spawned by `/create_plan` and `/research_codebase` to gather co
 
 ### Session Continuity
 
-**`/create_handoff`** - Compact context for session transfer
+**`/rpi:create_handoff`** - Compact context for session transfer
 
 - Concise context compaction without losing details
 - Captures: tasks, status, learnings, artifacts, next steps
 - Includes file:line references for recent changes
 - Output: `thoughts/shared/handoffs/{ticket}/YYYY-MM-DD_HH-MM-SS_description.md`
 
-**`/resume_handoff`** - Resume work from handoff document
+**`/rpi:resume_handoff`** - Resume work from handoff document
 
 - Validates current state against handoff state
 - Creates action plan from handoff's next steps
@@ -221,9 +221,9 @@ These agents are spawned by `/create_plan` and `/research_codebase` to gather co
 
 ### Utilities
 
-**`/commit`** - Create git commits with user approval (no Claude attribution)
+**`/rpi:commit`** - Create git commits with user approval (no Claude attribution)
 
-**`/thoughts-init`** - Initialize thoughts system for current repository
+**`/rpi:thoughts-init`** - Initialize thoughts system for current repository
 
 - Diagnoses thoughts system state (~/thoughts, scripts, PATH, repo setup)
 - Reports "ready" if everything configured

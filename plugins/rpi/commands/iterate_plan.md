@@ -69,13 +69,13 @@ If the user's feedback requires understanding new code patterns or validating as
    Use the right agent for each type of research:
 
    **For code investigation:**
-   - **codebase-locator** - To find relevant files
-   - **codebase-analyzer** - To understand implementation details
-   - **codebase-pattern-finder** - To find similar patterns
+   - **rpi:codebase-locator** - To find relevant files
+   - **rpi:codebase-analyzer** - To understand implementation details
+   - **rpi:codebase-pattern-finder** - To find similar patterns
 
    **For historical context:**
-   - **thoughts-locator** - To find related research or decisions
-   - **thoughts-analyzer** - To extract insights from documents
+   - **rpi:thoughts-locator** - To find related research or decisions
+   - **rpi:thoughts-analyzer** - To extract insights from documents
 
    **Be EXTREMELY specific about directories**:
    - If the change involves "WUI", specify `humanlayer-wui/` directory
@@ -226,13 +226,13 @@ When spawning research sub-tasks:
 
 **Scenario 1: User provides everything upfront**
 ```
-User: /iterate_plan thoughts/shared/plans/2025-10-16-feature.md - add phase for error handling
+User: /rpi:iterate_plan thoughts/shared/plans/2025-10-16-feature.md - add phase for error handling
 Assistant: [Reads plan, researches error handling patterns, updates plan]
 ```
 
 **Scenario 2: User provides just plan file**
 ```
-User: /iterate_plan thoughts/shared/plans/2025-10-16-feature.md
+User: /rpi:iterate_plan thoughts/shared/plans/2025-10-16-feature.md
 Assistant: I've found the plan. What changes would you like to make?
 User: Split Phase 2 into two phases - one for backend, one for frontend
 Assistant: [Proceeds with update]
@@ -240,7 +240,7 @@ Assistant: [Proceeds with update]
 
 **Scenario 3: User provides no arguments**
 ```
-User: /iterate_plan
+User: /rpi:iterate_plan
 Assistant: Which plan would you like to update? Please provide the path...
 User: thoughts/shared/plans/2025-10-16-feature.md
 Assistant: I've found the plan. What changes would you like to make?

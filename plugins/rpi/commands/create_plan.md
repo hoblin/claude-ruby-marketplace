@@ -27,8 +27,8 @@ Please provide:
 
 I'll analyze this information and work with you to create a comprehensive plan.
 
-Tip: You can also invoke this command with a ticket file directly: `/create_plan thoughts/username/tickets/eng_1234.md`
-For deeper analysis, try: `/create_plan think deeply about thoughts/username/tickets/eng_1234.md`
+Tip: You can also invoke this command with a ticket file directly: `/rpi:create_plan thoughts/username/tickets/eng_1234.md`
+For deeper analysis, try: `/rpi:create_plan think deeply about thoughts/username/tickets/eng_1234.md`
 ```
 
 Then wait for the user's input.
@@ -49,9 +49,9 @@ Then wait for the user's input.
 2. **Spawn initial research tasks to gather context**:
    Before asking the user any questions, use specialized agents to research in parallel:
 
-   - Use the **codebase-locator** agent to find all files related to the ticket/task
-   - Use the **codebase-analyzer** agent to understand how the current implementation works
-   - If relevant, use the **thoughts-locator** agent to find any existing thoughts documents about this feature
+   - Use the **rpi:codebase-locator** agent to find all files related to the ticket/task
+   - Use the **rpi:codebase-analyzer** agent to understand how the current implementation works
+   - If relevant, use the **rpi:thoughts-locator** agent to find any existing thoughts documents about this feature
    - If a Linear ticket is mentioned, use the **linear-ticket-reader** agent to get full details
 
    These agents will:
@@ -105,13 +105,13 @@ After getting initial clarifications:
    - Use the right agent for each type of research:
 
    **For deeper investigation:**
-   - **codebase-locator** - To find more specific files (e.g., "find all files that handle [specific component]")
-   - **codebase-analyzer** - To understand implementation details (e.g., "analyze how [system] works")
-   - **codebase-pattern-finder** - To find similar features we can model after
+   - **rpi:codebase-locator** - To find more specific files (e.g., "find all files that handle [specific component]")
+   - **rpi:codebase-analyzer** - To understand implementation details (e.g., "analyze how [system] works")
+   - **rpi:codebase-pattern-finder** - To find similar features we can model after
 
    **For historical context:**
-   - **thoughts-locator** - To find any research, plans, or decisions about this area
-   - **thoughts-analyzer** - To extract key insights from the most relevant documents
+   - **rpi:thoughts-locator** - To find any research, plans, or decisions about this area
+   - **rpi:thoughts-analyzer** - To extract key insights from the most relevant documents
 
    **For related tickets:**
    - **linear-searcher** - To find similar issues or past implementations
