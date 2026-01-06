@@ -2,19 +2,31 @@
 
 Quick reference for `args.outputs` primitives. Screen: 1280x720, origin bottom-left.
 
-## Render Order (Bottom to Top)
+## Render Order
 
-```
-1. args.outputs.solids
-2. args.outputs.sprites
-3. args.outputs.primitives  (custom order, bypasses layers)
-4. args.outputs.labels
-5. args.outputs.lines
-6. args.outputs.borders
-7. args.outputs.debug       (dev only, hidden in production)
+### Recommended: FIFO with `args.outputs.primitives`
+
+Use `args.outputs.primitives` for full control over render order. Items render first-in, first-out (FIFO) regardless of type:
+
+```ruby
+args.outputs.primitives << { x: 0, y: 0, w: 100, h: 100, r: 255, primitive_marker: :solid }
+args.outputs.primitives << { x: 50, y: 50, w: 64, h: 64, path: 'player.png' }  # renders ON TOP of solid
+args.outputs.primitives << { x: 60, y: 120, text: "Score: 100" }               # renders ON TOP of sprite
 ```
 
-Within each collection: first-in renders first (behind later items).
+### Fixed Layer Order (Typed Outputs)
+
+When using typed outputs, DragonRuby renders in fixed order (bottom to top):
+
+1. `args.outputs.solids`
+2. `args.outputs.sprites`
+3. `args.outputs.primitives`
+4. `args.outputs.labels`
+5. `args.outputs.lines`
+6. `args.outputs.borders`
+7. `args.outputs.debug` (dev only)
+
+**Limitation**: A solid will always render behind a sprite, even if added later. Use `args.outputs.primitives` to bypass this constraint.
 
 ## Sprites
 
@@ -167,18 +179,29 @@ args.outputs.lines << {
 { x: 100, y: 100, w: 200, h: 200 }  # equivalent to x2: 300, y2: 300
 ```
 
-## Mixed Primitives
+## Mixed Primitives (Recommended)
 
-Use `args.outputs.primitives` for custom render order. Requires `primitive_marker` for ambiguous types:
+Use `args.outputs.primitives` for FIFO render order control. Requires `primitive_marker` for solids and borders:
 
 ```ruby
-args.outputs.primitives << [
-  { x: 0, y: 0, w: 100, h: 100, primitive_marker: :solid },
-  { x: 50, y: 50, w: 100, h: 100, path: 'sprite.png' },  # auto-detected
-  { x: 100, y: 100, text: "Hello" },                      # auto-detected
-  { x: 0, y: 0, x2: 100, y2: 100 }                        # auto-detected
-]
+def tick args
+  # All primitives render in insertion order (FIFO)
+  args.outputs.primitives << { x: 0, y: 0, w: 1280, h: 720, r: 30, g: 30, b: 50, primitive_marker: :solid }  # background
+  args.outputs.primitives << { x: 100, y: 100, w: 64, h: 64, path: 'player.png' }                            # sprite (auto-detected via path)
+  args.outputs.primitives << { x: 100, y: 170, text: "Player 1" }                                            # label (auto-detected via text)
+  args.outputs.primitives << { x: 90, y: 90, w: 84, h: 100, r: 255, g: 255, b: 0, primitive_marker: :border } # border ON TOP
+end
 ```
+
+### primitive_marker Values
+
+| Type | primitive_marker | Auto-detected by |
+|------|------------------|------------------|
+| Solid | `:solid` | Required |
+| Border | `:border` | Required |
+| Sprite | `:sprite` | `path` property |
+| Label | `:label` | `text` property |
+| Line | `:line` | `x2`/`y2` properties |
 
 ## Static Outputs (Performance)
 
@@ -255,6 +278,7 @@ Also available: `attr_label`, `attr_line`
 5. **Use static outputs** - for backgrounds and unchanging elements
 6. **Render in order** - backgrounds first, UI last
 7. **Flatten arrays** - DragonRuby handles `sprites << [player, enemies, bullets]`
+8. **Use `args.outputs.primitives`** - for full FIFO control over render order
 
 ## Common Antipatterns
 
@@ -360,8 +384,8 @@ What do you want to render?
 ├─ Line segment?
 │  └─ Use lines
 │
-├─ Custom z-order needed?
-│  └─ Use args.outputs.primitives with primitive_marker
+├─ Need control over render order?
+│  └─ Use args.outputs.primitives with primitive_marker (recommended for most cases)
 │
 ├─ Static content (doesn't change)?
 │  └─ Use static_* outputs → once on first frame
