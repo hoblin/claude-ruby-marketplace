@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# thoughts-sync: Sync thoughts repository with git
+# Usage: thoughts-sync [-m "message"]
+
+THOUGHTS_DIR="${HOME}/thoughts"
+MESSAGE=""
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -m|--message)
+      MESSAGE="$2"
+      shift 2
+      ;;
+    *)
+      echo "Unknown option: $1" >&2
+      exit 1
+      ;;
+  esac
+done
+
+# Verify thoughts directory exists
+if [[ ! -d "$THOUGHTS_DIR/.git" ]]; then
+  echo "Error: $THOUGHTS_DIR is not a git repository" >&2
+  exit 1
+fi
+
+cd "$THOUGHTS_DIR"
+
+# Stage all changes
+git add -A
+
+# Check for changes
+if git diff --cached --quiet && git diff --quiet; then
+  echo "No changes to commit"
+else
+  # Commit with message or auto-generated timestamp
+  COMMIT_MSG="${MESSAGE:-Sync thoughts - $(date -Iseconds)}"
+  git commit -m "$COMMIT_MSG"
+  echo "✅ Thoughts synchronized"
+fi
+
+# Pull with rebase
+if ! git pull --rebase 2>&1; then
+  if git status | grep -q "rebase in progress"; then
+    echo "Error: Merge conflict detected in thoughts repository" >&2
+    echo "Please resolve conflicts manually in: $THOUGHTS_DIR" >&2
+    echo 'Then run "git rebase --continue" and "thoughts-sync" again' >&2
+    exit 1
+  fi
+fi
+
+# Push if remote exists
+if git remote get-url origin &>/dev/null; then
+  echo "Pushing to remote..."
+  if git push; then
+    echo "✅ Pushed to remote"
+  else
+    echo "⚠️  Could not push to remote. You may need to push manually."
+  fi
+else
+  echo "ℹ️  No remote configured for thoughts repository"
+fi
