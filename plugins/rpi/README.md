@@ -14,6 +14,18 @@ A bad line of code is just one bad line. A bad line in a **plan** creates hundre
 
 **Do not outsource thinking.** The agent researches and drafts - you review and refine. The plan is not ready until *you* say it's ready.
 
+## Installation
+
+```bash
+claude plugin install rpi@claude-ruby-marketplace
+```
+
+Then run `/thoughts-init` to set up the thoughts system. The command will:
+1. Check if `~/thoughts/` exists and create it if needed
+2. Install helper scripts to `~/thoughts/bin/`
+3. Configure PATH (may require terminal restart)
+4. Initialize the current repository's thoughts symlinks
+
 ## The Workflow
 
 The key insight: **you will start new sessions frequently**. Each session produces a document (plan, research, handoff) that captures refined understanding. The next session reads that document - no context is "transferred", just loaded fresh.
@@ -91,15 +103,18 @@ rpi/
 │   ├── thoughts-analyzer.md
 │   ├── thoughts-locator.md
 │   └── web-search-researcher.md
-└── commands/                  # Workflow commands
-    ├── create_plan.md
-    ├── iterate_plan.md
-    ├── implement_plan.md
-    ├── validate_plan.md
-    ├── research_codebase.md
-    ├── create_handoff.md
-    ├── resume_handoff.md
-    └── commit.md
+├── commands/                  # Workflow commands
+│   ├── create_plan.md
+│   ├── iterate_plan.md
+│   ├── implement_plan.md
+│   ├── validate_plan.md
+│   ├── research_codebase.md
+│   ├── create_handoff.md
+│   ├── resume_handoff.md
+│   ├── commit.md
+│   └── thoughts_init.md
+└── templates/                 # Setup templates
+    └── thoughts-bin/          # Scripts for ~/thoughts/bin/
 ```
 
 ## Thoughts Directory Structure
@@ -208,6 +223,12 @@ These agents are spawned by `/create_plan` and `/research_codebase` to gather co
 
 **`/commit`** - Create git commits with user approval (no Claude attribution)
 
+**`/thoughts-init`** - Initialize thoughts system for current repository
+
+- Diagnoses thoughts system state (~/thoughts, scripts, PATH, repo setup)
+- Reports "ready" if everything configured
+- Presents fixes needed and executes after authorization
+
 ## Document Conventions
 
 ### Naming Patterns
@@ -231,11 +252,3 @@ branch: feature/auth
 repository: my-app
 ---
 ```
-
-## Installation
-
-```bash
-claude plugin install rpi@claude-ruby-marketplace
-```
-
-**Prerequisites**: The thoughts repository must be set up at `~/thoughts/`.
