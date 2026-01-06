@@ -1,7 +1,7 @@
 ---
 name: DragonRuby Game Toolkit
 description: This skill should be used when the user asks to "create a game", "make a game", "game development", "dragonruby", "drgtk", "game loop", "tick method", "sprite rendering", "game state", or mentions args.outputs, args.state, args.inputs, coordinate system, collision detection, animation frames, or scene management. Should also be used when editing DragonRuby game files, working on 2D game logic, or discussing game performance optimization.
-version: 1.0.1
+version: 1.0.2
 ---
 
 # DragonRuby Game Toolkit
@@ -57,10 +57,12 @@ end
 
 ## Rendering Primitives
 
+Use `args.outputs.primitives` for FIFO (first-in, first-out) render order control.
+
 ### Sprites (Images)
 
 ```ruby
-args.outputs.sprites << {
+args.outputs.primitives << {
   x: 100, y: 100, w: 64, h: 64,
   path: 'sprites/player.png',
   angle: 45,
@@ -73,7 +75,7 @@ args.outputs.sprites << {
 ### Labels (Text)
 
 ```ruby
-args.outputs.labels << {
+args.outputs.primitives << {
   x: 640, y: 360,
   text: "Score: #{args.state.score}",
   size_px: 22,
@@ -85,11 +87,18 @@ args.outputs.labels << {
 ### Solids and Borders
 
 ```ruby
-# Filled rectangle (prefer sprites with path: :solid)
-args.outputs.sprites << { x: 0, y: 0, w: 100, h: 100, path: :solid, r: 255, g: 0, b: 0 }
+# Filled rectangle (use primitive_marker: :solid)
+args.outputs.primitives << {
+  x: 0, y: 0, w: 100, h: 100,
+  r: 255, g: 0, b: 0,
+  primitive_marker: :solid
+}
+
+# For many rectangles, use path: :solid for better performance
+args.outputs.primitives << { x: 0, y: 0, w: 100, h: 100, path: :solid, r: 255, g: 0, b: 0 }
 
 # Outline rectangle
-args.outputs.borders << { x: 0, y: 0, w: 100, h: 100, r: 0, g: 0, b: 0 }
+args.outputs.primitives << { x: 0, y: 0, w: 100, h: 100, r: 0, g: 0, b: 0, primitive_marker: :border }
 ```
 
 ## State Management
@@ -181,6 +190,8 @@ end
 - Remove offscreen entities to prevent memory leaks
 - Update logic before rendering
 - Use `$gtk.reset` during development to reset state
+- Use `args.outputs.primitives` for FIFO render order control
+- Use `primitive_marker: :solid` or `:border` for rectangle types
 
 ### Don't
 
