@@ -156,9 +156,6 @@ args.outputs.sprites << {
   # Blending
   blendmode_enum: 1  # 0=none, 1=alpha, 2=additive
 }
-
-# Array syntax (quick prototyping only)
-args.outputs.sprites << [100, 100, 128, 128, "sprites/player.png"]
 ```
 
 ### Labels
@@ -245,21 +242,6 @@ $gtk.reset  # Add at end of file
 
 # Or reset before next tick (safer during tick)
 $gtk.reset_next_tick
-```
-
-## Hash vs Array Syntax
-
-| Syntax | Use Case |
-|--------|----------|
-| Hash | Production code, clarity |
-| Array | Quick prototyping only |
-
-```ruby
-# Hash - PREFERRED
-{ x: 100, y: 200, w: 32, h: 32, path: "player.png" }
-
-# Array - position meanings unclear
-[100, 200, 32, 32, "player.png"]
 ```
 
 ## Tick Structure Pattern

@@ -240,18 +240,6 @@ args.outputs.background_color = [92, 120, 230]      # RGB
 args.outputs.background_color = [92, 120, 230, 255] # RGBA
 ```
 
-## Hash vs Array Syntax
-
-```ruby
-# Array (avoid) - positional, hard to read
-args.outputs.sprites << [100, 100, 64, 64, 'sprite.png']
-args.outputs.labels << [640, 360, "Text", 0, 1, 255, 255, 255]
-
-# Hash (preferred) - explicit, maintainable
-args.outputs.sprites << { x: 100, y: 100, w: 64, h: 64, path: 'sprite.png' }
-args.outputs.labels << { x: 640, y: 360, text: "Text", anchor_x: 0.5 }
-```
-
 ## Class Syntax (Best Performance)
 
 ```ruby
