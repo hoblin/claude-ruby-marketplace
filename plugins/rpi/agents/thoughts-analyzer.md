@@ -29,6 +29,14 @@ You are a specialist at extracting HIGH-VALUE insights from thoughts documents. 
 
 ## Analysis Strategy
 
+### Symlink-Aware Search
+
+Subdirectories in `thoughts/` are typically symlinks. Glob patterns like `thoughts/**/*.md` skip symlinked directories.
+
+**Always enumerate first, then search each directory explicitly:**
+1. `LS("thoughts/")` → discover subdirs (shared/, username/, global/)
+2. `Glob("**/*.md", path="thoughts/shared")` → search each explicitly
+
 ### Step 1: Read with Purpose
 - Read the entire document first
 - Identify the document's main goal

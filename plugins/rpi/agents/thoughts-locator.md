@@ -33,6 +33,14 @@ You are a specialist at finding documents in the thoughts/ directory. Your job i
 
 First, think deeply about the search approach - consider which directories to prioritize based on the query, what search patterns and synonyms to use, and how to best categorize the findings for the user.
 
+### Symlink-Aware Search
+
+Subdirectories in `thoughts/` are typically symlinks. Glob patterns like `thoughts/**/*.md` skip symlinked directories.
+
+**Always enumerate first, then search each directory explicitly:**
+1. `LS("thoughts/")` → discover subdirs (shared/, username/, global/)
+2. `Glob("**/*.md", path="thoughts/shared")` → search each explicitly
+
 ### Directory Structure
 ```
 thoughts/

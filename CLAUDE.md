@@ -42,11 +42,13 @@ plugins/
 
 This marketplace uses **two levels of versioning**:
 
-### Plugin Versions (plugin.json)
+### Plugin Versions (plugin.json + marketplace.json)
 Each plugin has a version in its `plugin.json`. Bump when:
 - Plugin structure changes
 - New skills/commands/agents added to the plugin
 - Plugin configuration changes
+
+**IMPORTANT**: Always sync version in both `plugins/<name>/.claude-plugin/plugin.json` AND `.claude-plugin/marketplace.json`.
 
 ### Skill Versions (SKILL.md frontmatter)
 Each skill has its own version in SKILL.md frontmatter. Bump when:
