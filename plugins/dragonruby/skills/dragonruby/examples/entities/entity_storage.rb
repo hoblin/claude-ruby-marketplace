@@ -33,6 +33,6 @@ def tick(args)
   args.outputs.borders << args.state.enemies
 
   # Display counts
-  args.outputs.labels << [10, 710, "Enemies: #{args.state.enemies.length}"]
-  args.outputs.labels << [10, 690, "Bullets: #{args.state.bullets.length}"]
+  args.outputs.labels << { x: 10, y: 710, text: "Enemies: #{args.state.enemies.length}" }
+  args.outputs.labels << { x: 10, y: 690, text: "Bullets: #{args.state.bullets.length}" }
 end

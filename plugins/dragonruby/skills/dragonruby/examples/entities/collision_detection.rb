@@ -39,5 +39,5 @@ def tick(args)
     e.merge(r: e.hit ? 255 : 128, g: e.hit ? 0 : 128, b: e.hit ? 0 : 128)
   end
 
-  args.outputs.labels << [10, 710, "Collisions: #{all_hits.length}"]
+  args.outputs.labels << { x: 10, y: 710, text: "Collisions: #{all_hits.length}" }
 end

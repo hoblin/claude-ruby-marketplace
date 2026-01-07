@@ -13,7 +13,7 @@ def tick args
 
   # key_held: fires EVERY FRAME while pressed (good for continuous movement)
   if args.inputs.keyboard.key_held.w
-    args.outputs.labels << [640, 360, "W is being held", 5, 1]
+    args.outputs.labels << { x: 640, y: 360, text: "W is being held", size_enum: 5, alignment_enum: 1 }
   end
 
   # key_up: fires ONCE when released (good for charging mechanics)
@@ -22,7 +22,7 @@ def tick args
   end
 
   # Display status
-  args.outputs.labels << [10, 700, "Press SPACE to fire (key_down)"]
-  args.outputs.labels << [10, 670, "Hold W for message (key_held)"]
-  args.outputs.labels << [10, 640, "Press ESC to log release (key_up)"]
+  args.outputs.labels << { x: 10, y: 700, text: "Press SPACE to fire (key_down)" }
+  args.outputs.labels << { x: 10, y: 670, text: "Hold W for message (key_held)" }
+  args.outputs.labels << { x: 10, y: 640, text: "Press ESC to log release (key_up)" }
 end
