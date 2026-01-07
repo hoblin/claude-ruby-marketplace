@@ -64,5 +64,5 @@ end
 def render(args)
   args.outputs.solids << args.state.bullets.map { |b| b.merge(r: 255, g: 200, b: 0) }
   args.outputs.borders << args.state.targets
-  args.outputs.labels << [10, 710, "Click to shoot. Targets: #{args.state.targets.length}"]
+  args.outputs.labels << { x: 10, y: 710, text: "Click to shoot. Targets: #{args.state.targets.length}" }
 end
