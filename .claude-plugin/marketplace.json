@@ -17,7 +17,7 @@
     {
       "name": "rspec",
       "description": "RSpec and FactoryBot testing patterns for Rails",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "source": "./plugins/rspec",
       "category": "testing"
     },
@@ -45,14 +45,14 @@
     {
       "name": "dragonruby",
       "description": "DragonRuby Game Toolkit patterns for 2D game development",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "source": "./plugins/dragonruby",
       "category": "game-development"
     },
     {
       "name": "rpi",
       "description": "RPI workflow: Research, Planning, Implementation with context engineering",
-      "version": "1.0.0",
+      "version": "1.0.5",
       "source": "./plugins/rpi",
       "category": "workflow"
     }
