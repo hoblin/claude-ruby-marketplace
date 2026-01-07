@@ -1,6 +1,6 @@
 ---
 name: thoughts-analyzer
-description: The research equivalent of rpi:codebase-analyzer. Use this subagent_type when wanting to deep dive on a research topic. Not commonly needed otherwise.
+description: Extracts decisions and actionable insights from project history documents. Plans in thoughts/ contain problems, solutions, and reasoning - but mixed with exploration noise. Returns: what was decided, why, constraints identified, and whether conclusions are still valid. Filters noise, returns only high-value information.
 tools: Read, Grep, Glob, LS
 model: sonnet
 ---

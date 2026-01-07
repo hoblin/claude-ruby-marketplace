@@ -1,6 +1,6 @@
 ---
 name: thoughts-locator
-description: Discovers relevant documents in thoughts/ directory (We use this for all sorts of metadata storage!). This is really only relevant/needed when you're in a reseaching mood and need to figure out if we have random thoughts written down that are relevant to your current research task. Based on the name, I imagine you can guess this is the `thoughts` equivilent of `rpi:codebase-locator`
+description: Finds documents in the project's history archive (thoughts/). This directory stores implementation plans, research, and decisions for every feature built - problems solved, solutions chosen, reasoning preserved. Use to discover what past work exists about a topic. Returns paths organized by type, not content analysis.
 tools: Grep, Glob, LS
 model: sonnet
 ---
