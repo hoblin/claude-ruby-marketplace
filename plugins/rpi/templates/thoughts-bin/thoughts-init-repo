@@ -6,7 +6,6 @@ set -euo pipefail
 #   repo-name: Optional. Defaults to current directory name.
 
 THOUGHTS_HOME="${HOME}/thoughts"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 USERNAME="$(whoami)"
 
 # Colors for output
@@ -18,6 +17,26 @@ NC='\033[0m' # No Color
 info() { echo -e "${GREEN}✓${NC} $1"; }
 warn() { echo -e "${YELLOW}⚠${NC} $1"; }
 error() { echo -e "${RED}✗${NC} $1" >&2; }
+
+# Migrate .md files from source to destination, preserving directory structure
+# Excludes CLAUDE.md and README.md (template files)
+migrate_md_files() {
+  local src="$1"
+  local dst="$2"
+  local label="${3:-${src##*/}}"
+  local count=0
+
+  [[ -d "${src}" ]] || return 0
+
+  while IFS= read -r -d '' file; do
+    rel_path="${file#${src}/}"
+    target_dir="${dst}/$(dirname "${rel_path}")"
+    mkdir -p "${target_dir}"
+    cp -n "${file}" "${target_dir}/" 2>/dev/null && ((++count)) || true
+  done < <(find "${src}" -type f -name "*.md" ! -name "CLAUDE.md" ! -name "README.md" -print0)
+
+  [[ ${count} -gt 0 ]] && info "Migrated ${count} file(s) from ${label}/" || true
+}
 
 # Detect repo name from argument or current directory
 if [[ $# -gt 0 ]]; then
@@ -158,33 +177,27 @@ else
   info "Created .gitignore with /thoughts/"
 fi
 
-# Handle migration - copy contents from backup
+# Handle migration - copy .md files from backup preserving structure
 if [[ "${NEEDS_MIGRATION}" == "true" ]]; then
   echo ""
   echo "Migrating content from backup..."
 
-  # Copy ${USERNAME} contents if exists
-  if [[ -d "${BACKUP_DIR}/${USERNAME}" ]] && [[ -n "$(ls -A "${BACKUP_DIR}/${USERNAME}" 2>/dev/null)" ]]; then
-    cp -r "${BACKUP_DIR}/${USERNAME}/"* "${THOUGHTS_REPO_DIR}/${USERNAME}/" 2>/dev/null || true
-    info "Migrated ${USERNAME}/ contents"
-  fi
+  # Migration mappings: source_relative_path:destination_absolute_path
+  MIGRATION_MAPPINGS=(
+    "${USERNAME}:${THOUGHTS_REPO_DIR}/${USERNAME}"
+    "shared:${THOUGHTS_REPO_DIR}/shared"
+    "global/${USERNAME}:${THOUGHTS_HOME}/global/${USERNAME}"
+    "global/shared:${THOUGHTS_HOME}/global/shared"
+  )
 
-  # Copy shared contents if exists
-  if [[ -d "${BACKUP_DIR}/shared" ]] && [[ -n "$(ls -A "${BACKUP_DIR}/shared" 2>/dev/null)" ]]; then
-    cp -rn "${BACKUP_DIR}/shared/"* "${THOUGHTS_REPO_DIR}/shared/" 2>/dev/null || true
-    info "Migrated shared/ contents"
-  fi
-
-  # Copy any loose files (like CLAUDE.md) - skip if they're symlinks
-  for file in "${BACKUP_DIR}"/*; do
-    if [[ -f "${file}" ]] && [[ ! -L "${file}" ]]; then
-      filename=$(basename "${file}")
-      if [[ "${filename}" != "CLAUDE.md" ]]; then
-        cp "${file}" "${THOUGHTS_REPO_DIR}/" 2>/dev/null || true
-        info "Migrated: ${filename}"
-      fi
-    fi
+  for mapping in "${MIGRATION_MAPPINGS[@]}"; do
+    migrate_md_files "${BACKUP_DIR}/${mapping%%:*}" "${mapping##*:}"
   done
+
+  # Catch remaining .md files at backup root
+  while IFS= read -r -d '' file; do
+    cp -n "${file}" "${THOUGHTS_REPO_DIR}/" 2>/dev/null && info "Migrated: $(basename "${file}")" || true
+  done < <(find "${BACKUP_DIR}" -maxdepth 1 -type f -name "*.md" ! -name "CLAUDE.md" ! -name "README.md" -print0)
 
   echo ""
   warn "Backup preserved at: ${BACKUP_DIR}"
