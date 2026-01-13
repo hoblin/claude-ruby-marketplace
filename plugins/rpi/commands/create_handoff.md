@@ -8,20 +8,22 @@ You are tasked with writing a handoff document to hand off your work to another 
 
 
 ## Process
-### 1. Filepath & Metadata
-Use the following information to understand how to create your document:
-    - create your file under `thoughts/shared/handoffs/ENG-XXXX/YYYY-MM-DD_HH-MM-SS_ENG-ZZZZ_description.md`, where:
-        - YYYY-MM-DD is today's date
-        - HH-MM-SS is the hours, minutes and seconds based on the current time, in 24-hour format (i.e. use `13:00` for `1:00 pm`)
-        - ENG-XXXX is the ticket number (replace with `general` if no ticket)
-        - ENG-ZZZZ is the ticket number (omit if no ticket)
-        - description is a brief kebab-case description
-    - Run `spec-metadata` to generate all relevant metadata
-    - Examples:
-        - With ticket: `2025-01-08_13-55-22_ENG-XXXX_create-context-compaction.md`
-        - Without ticket: `2025-01-08_13-55-22_create-context-compaction.md`
+### 1. Gather Metadata
+Run `spec-metadata` to get date, time, git commit, branch, and repository name.
 
-### 2. Handoff writing.
+### 2. Filepath & Naming
+Create your file under `thoughts/shared/handoffs/ENG-XXXX/YYYY-MM-DD_HH-MM-SS_ENG-ZZZZ_description.md`, where:
+- YYYY-MM-DD is today's date
+- HH-MM-SS is the current time in 24-hour format
+- ENG-XXXX is the ticket number (replace with `general` if no ticket)
+- ENG-ZZZZ is the ticket number (omit if no ticket)
+- description is a brief kebab-case description
+
+Examples:
+- With ticket: `2025-01-08_13-55-22_ENG-XXXX_create-context-compaction.md`
+- Without ticket: `2025-01-08_13-55-22_create-context-compaction.md`
+
+### 3. Handoff writing
 using the above conventions, write your document. use the defined filepath, and the following YAML frontmatter pattern. Use the metadata gathered in step 1, Structure the document with YAML frontmatter followed by content:
 
 Use the following template structure:
@@ -65,7 +67,7 @@ type: implementation_strategy
 ```
 ---
 
-### 3. Approve and Sync
+### 4. Approve and Sync
 Run `thoughts-sync` to save the document.
 
 Once this is completed, you should respond to the user with the template between <template_response></template_response> XML tags. do NOT include the tags in your response.
