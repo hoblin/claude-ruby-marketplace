@@ -12,7 +12,7 @@ You are tasked with writing a handoff document to hand off your work to another 
 Run `spec-metadata` to get date, time, git commit, branch, and repository name.
 
 ### 2. Filepath & Naming
-Create your file under `thoughts/shared/handoffs/ENG-XXXX/YYYY-MM-DD_HH-MM-SS_ENG-ZZZZ_description.md`, where:
+Create your file under `./thoughts/shared/handoffs/ENG-XXXX/YYYY-MM-DD_HH-MM-SS_ENG-ZZZZ_description.md`, where:
 - YYYY-MM-DD is today's date
 - HH-MM-SS is the current time in 24-hour format
 - ENG-XXXX is the ticket number (replace with `general` if no ticket)
@@ -86,7 +86,7 @@ for example (between <example_response></example_response> XML tags - do NOT inc
 Handoff created and synced! You can resume from this handoff in a new session with the following command:
 
 ```bash
-/rpi:resume_handoff thoughts/shared/handoffs/ENG-XXXX/2025-01-08_13-44-55_ENG-XXXX_create-context-compaction.md
+/rpi:resume_handoff ./thoughts/shared/handoffs/ENG-XXXX/2025-01-08_13-44-55_ENG-XXXX_create-context-compaction.md
 ```
 </example_response>
 

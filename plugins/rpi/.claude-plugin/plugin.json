@@ -1,6 +1,6 @@
 {
   "name": "rpi",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "RPI workflow: Research, Planning, Implementation. Context engineering system with structured agents and commands for AI-assisted development.",
   "author": {
     "name": "hoblin"

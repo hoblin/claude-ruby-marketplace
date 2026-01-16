@@ -27,8 +27,8 @@ Please provide:
 
 I'll analyze this information and work with you to create a comprehensive plan.
 
-Tip: You can also invoke this command with a ticket file directly: `/rpi:create_plan thoughts/username/tickets/eng_1234.md`
-For deeper analysis, try: `/rpi:create_plan think deeply about thoughts/username/tickets/eng_1234.md`
+Tip: You can also invoke this command with a ticket file directly: `/rpi:create_plan ./thoughts/username/tickets/eng_1234.md`
+For deeper analysis, try: `/rpi:create_plan think deeply about ./thoughts/username/tickets/eng_1234.md`
 ```
 
 Then wait for the user's input.
@@ -38,7 +38,7 @@ Then wait for the user's input.
 ### Step 1: Context Gathering & Initial Analysis
 
 1. **Read all mentioned files (if any) immediately and FULLY**:
-   - Ticket files (e.g., `thoughts/username/tickets/eng_1234.md`)
+   - Ticket files (e.g., `./thoughts/username/tickets/eng_1234.md`)
    - Research documents
    - Related implementation plans
    - Any JSON/data files mentioned
@@ -177,7 +177,7 @@ Each phase represents one atomic commit - the smallest meaningful change that le
 
 After structure approval:
 
-1. **Write the plan** to `thoughts/shared/plans/YYYY-MM-DD-ENG-XXXX-description.md`
+1. **Write the plan** to `./thoughts/shared/plans/YYYY-MM-DD-ENG-XXXX-description.md`
    - Format: `YYYY-MM-DD-ENG-XXXX-description.md` where:
      - YYYY-MM-DD is today's date
      - ENG-XXXX is the ticket number (omit if no ticket)
@@ -282,8 +282,8 @@ After structure approval:
 
 ## References
 
-- Original ticket: `thoughts/username/tickets/eng_XXXX.md`
-- Related research: `thoughts/shared/research/[relevant].md`
+- Original ticket: `./thoughts/username/tickets/eng_XXXX.md`
+- Related research: `./thoughts/shared/research/[relevant].md`
 - Similar implementation: `[file:line]`
 ````
 
@@ -296,7 +296,7 @@ After structure approval:
 2. **Present the draft plan location**:
    ```
    I've created the initial implementation plan at:
-   `thoughts/shared/plans/YYYY-MM-DD-ENG-XXXX-description.md`
+   `./thoughts/shared/plans/YYYY-MM-DD-ENG-XXXX-description.md`
 
    Please review it and let me know:
    - Are the phases properly scoped?
@@ -449,7 +449,7 @@ tasks = [
 User: /implementation_plan
 Assistant: I'll help you create a detailed implementation plan...
 
-User: We need to add parent-child tracking for Claude sub-tasks. See thoughts/username/tickets/ENG-1234.md
+User: We need to add parent-child tracking for Claude sub-tasks. See ./thoughts/username/tickets/ENG-1234.md
 Assistant: Let me read that ticket file completely first...
 
 [Reads file fully]
