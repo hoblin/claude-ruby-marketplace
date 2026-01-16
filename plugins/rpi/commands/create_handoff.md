@@ -9,7 +9,7 @@ You are tasked with writing a handoff document to hand off your work to another 
 
 ## Process
 ### 1. Gather Metadata
-Run `spec-metadata` to get date, time, git commit, branch, and repository name.
+Run `spec-metadata` (in the PATH) to get date, time, git commit, branch, and repository name.
 
 ### 2. Filepath & Naming
 Create your file under `./thoughts/shared/handoffs/ENG-XXXX/YYYY-MM-DD_HH-MM-SS_ENG-ZZZZ_description.md`, where:

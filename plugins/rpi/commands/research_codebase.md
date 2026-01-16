@@ -83,7 +83,7 @@ Then wait for the user's research query.
    - Answer the user's specific questions with concrete evidence
 
 5. **Gather metadata for the research document:**
-   - Run `spec-metadata` to generate all relevant metadata
+   - Run `spec-metadata` (in the PATH) to generate all relevant metadata
    - Filename: `./thoughts/shared/research/YYYY-MM-DD-ENG-XXXX-description.md`
      - Format: `YYYY-MM-DD-ENG-XXXX-description.md` where:
        - YYYY-MM-DD is today's date
