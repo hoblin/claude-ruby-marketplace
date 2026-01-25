@@ -244,16 +244,15 @@ Compact single-line progress.
 
 ```ruby
 LineGauge.new(
-  data:,                           # Progress value
-  max: nil,                        # Optional max for scaling
+  ratio: nil,              # Float (0.0 - 1.0)
+  percent: nil,            # Integer (0 - 100), alternative to ratio
+  label: nil,              # Overlay text
   style: nil,
-  block: nil,
-  direction: :left_to_right,
-  filled_symbol: nil,
-  unfilled_symbol: nil,
   filled_style: nil,
   unfilled_style: nil,
-  bar_set: nil                     # :nine_levels, :three_levels
+  block: nil,
+  filled_symbol: "█",
+  unfilled_symbol: "░"
 )
 ```
 
@@ -368,7 +367,7 @@ Scroll position indicator. Stateless widget that takes position directly.
 Scrollbar.new(
   content_length:,         # Total scrollable content length (required)
   position:,               # Current scroll position (required)
-  orientation: :vertical,  # :vertical, :horizontal
+  orientation: :vertical,  # :vertical, :horizontal, :vertical_left, :vertical_right, :horizontal_top, :horizontal_bottom
   thumb_symbol: "█",
   thumb_style: nil,
   track_symbol: nil,
@@ -442,13 +441,14 @@ Monthly calendar display.
 
 ```ruby
 Calendar.new(
-  date:,                   # Date/Time for month
-  show_month_header: true,
-  show_weekdays: true,
-  show_surrounding: true,  # Adjacent month days
-  events: [],              # Dates to highlight
-  event_style: nil,
-  style: nil,
+  year:,                      # Integer year (required)
+  month:,                     # Integer month 1-12 (required)
+  events: {},                 # Hash<Date, Style> to highlight
+  default_style: nil,         # Style for days
+  header_style: nil,          # Style for month name header
+  show_month_header: false,
+  show_weekdays_header: true,
+  show_surrounding: nil,      # Style or nil for adjacent month days
   block: nil
 )
 ```
@@ -519,7 +519,7 @@ end
 | State | Widget | Key Methods |
 |-------|--------|-------------|
 | `ListState` | List | `select_next`, `select_previous`, `selected` |
-| `TableState` | Table | `select_next_row`, `select_previous_row` |
+| `TableState` | Table | `select_next`, `select_previous`, `select_next_column`, `select_previous_column` |
 | `ScrollbarState` | (deprecated) | `position=`, `content_length` |
 
 Create via factory methods:

@@ -62,9 +62,9 @@ Cell attributes at coordinates:
 
 ```ruby
 cell = get_cell(0, 0)
-cell["symbol"]  # Character
-cell["fg"]      # Foreground color
-cell["bg"]      # Background color
+cell.symbol  # or cell.char - Character
+cell.fg      # Foreground color
+cell.bg      # Background color
 ```
 
 #### cursor_position
@@ -229,7 +229,7 @@ assert_bg_color(:black, 0, 0)
 assert_area_style({x: 0, y: 0, w: 80, h: 1}, fg: :white, bg: :blue)
 
 # Rect object
-sidebar = RatatuiRuby::Rect.new(x: 0, y: 1, width: 20, height: 23)
+sidebar = RatatuiRuby::Layout::Rect.new(x: 0, y: 1, width: 20, height: 23)
 assert_area_style(sidebar, bg: :dark_gray)
 ```
 
