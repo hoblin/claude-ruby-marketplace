@@ -153,6 +153,9 @@ constraints = [
 ### Batch Creation
 
 ```ruby
+# Full path: RatatuiRuby::Layout::Constraint
+Constraint = RatatuiRuby::Layout::Constraint
+
 Constraint.from_lengths([10, 20, 10])
 Constraint.from_percentages([25, 50, 25])
 Constraint.from_mins([5, 10, 5])
@@ -363,7 +366,7 @@ frame.render_widget(modal_widget, dialog)
 buttons = tui.split(
   control_area,
   direction: :horizontal,
-  constraints: Constraint.from_fills([1, 1, 1, 1]),
+  constraints: RatatuiRuby::Layout::Constraint.from_fills([1, 1, 1, 1]),
   flex: :space_evenly
 )
 ```
@@ -396,7 +399,7 @@ end
 
 | Factory | Purpose |
 |---------|---------|
-| `tui.split(area, direction:, constraints:)` | Split area |
+| `tui.split(area, direction:, constraints:, flex:)` | Split area |
 | `tui.rect(x:, y:, width:, height:)` | Create Rect |
 | `tui.constraint_length(n)` / `tui.fixed(n)` | Fixed size |
 | `tui.constraint_percentage(n)` / `tui.percent(n)` | Proportional |

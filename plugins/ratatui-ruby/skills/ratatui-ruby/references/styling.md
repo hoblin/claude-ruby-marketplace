@@ -108,11 +108,11 @@ tui.style(modifiers: [:bold, :underlined])
 | `:dim` | Reduced brightness |
 | `:italic` | Italicized |
 | `:underlined` | Underline |
-| `:slow_blink` / `:blink` | Slow blink |
+| `:slow_blink` | Slow blink |
 | `:rapid_blink` | Fast blink |
-| `:reversed` / `:inverse` | Swap fg/bg |
+| `:reversed` | Swap fg/bg |
 | `:hidden` | Concealed text |
-| `:crossed_out` / `:strikethrough` | Line-through |
+| `:crossed_out` | Line-through |
 
 ## Text Composition
 
@@ -221,7 +221,7 @@ Widgets accept styles as hashes:
 ```ruby
 tui.paragraph(
   text: "Content",
-  style: {fg: "green", bold: true},
+  style: {fg: "green", modifiers: [:bold]},
   block: tui.block(border_style: {fg: "cyan"})
 )
 ```
