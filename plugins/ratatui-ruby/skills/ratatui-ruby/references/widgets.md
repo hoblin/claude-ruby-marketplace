@@ -14,14 +14,13 @@ Widgets follow structural typing: any object implementing `render(area)` functio
 **Stateful widgets** require external state objects:
 - List → `ListState`
 - Table → `TableState`
-- Scrollbar → `ScrollbarState`
 
 ```ruby
 # Stateless
 frame.render_widget(tui.paragraph(text: "Hello"), area)
 
 # Stateful
-@list_state = tui.list_state(selected: 0)
+@list_state = tui.list_state(0)
 frame.render_stateful_widget(tui.list(items:), area, @list_state)
 ```
 
@@ -33,14 +32,15 @@ Foundation for composition. Provides borders, titles, and padding.
 Block.new(
   title: nil,              # Main title
   titles: [],              # Additional titles [{content:, position:, alignment:}]
-  title_alignment: :left,  # :left, :center, :right
+  title_alignment: nil,    # :left, :center, :right (nil = :left)
   title_style: nil,
   borders: [:all],         # :top, :bottom, :left, :right, :all
   border_style: nil,
-  border_type: :plain,     # :plain, :rounded, :double, :thick, :quadrant
-  border_set: {},          # Custom characters
+  border_type: nil,        # :plain, :rounded, :double, :thick, :quadrant
+  border_set: nil,         # Custom characters
   style: nil,              # Content area style
-  padding: 0               # Integer or [left, right, top, bottom]
+  padding: 0,              # Integer or [left, right, top, bottom]
+  children: []             # Child widgets to render inside
 )
 ```
 
@@ -145,7 +145,7 @@ List.new(
 External state for complex applications:
 
 ```ruby
-@list_state = tui.list_state(selected: 0)
+@list_state = tui.list_state(0)  # positional: initial selected index
 
 # In draw
 frame.render_stateful_widget(list, area, @list_state)
@@ -362,17 +362,23 @@ tui.tabs(
 
 ### Scrollbar
 
-Scroll position indicator.
+Scroll position indicator. Stateless widget that takes position directly.
 
 ```ruby
 Scrollbar.new(
+  content_length:,         # Total scrollable content length (required)
+  position:,               # Current scroll position (required)
   orientation: :vertical,  # :vertical, :horizontal
-  position: :right,        # :right, :left, :top, :bottom
-  state:,                  # ScrollbarState
-  theme: :standard,        # :standard, :rounded, :ascii, :minimal
-  style: nil,
+  thumb_symbol: "█",
+  thumb_style: nil,
+  track_symbol: nil,
   track_style: nil,
-  thumb_style: nil
+  begin_symbol: nil,       # Arrow at start
+  begin_style: nil,
+  end_symbol: nil,         # Arrow at end
+  end_style: nil,
+  style: nil,
+  block: nil
 )
 ```
 
@@ -422,7 +428,7 @@ Canvas.new(
 tui.canvas(
   shapes: [
     tui.shape_line(x1: 0, y1: 0, x2: 100, y2: 100, color: "red"),
-    tui.shape_point(x: 50, y: 50, color: "blue")
+    tui.shape_point(x: 50, y: 50)  # Point only has x: and y:
   ],
   x_bounds: [0.0, 100.0],
   y_bounds: [0.0, 100.0],
@@ -505,7 +511,7 @@ end
 | Tabs | `tui.tabs()` | `titles:`, `selected_index:` |
 | Canvas | `tui.canvas()` | `shapes:`, `x_bounds:`, `y_bounds:` |
 | Calendar | `tui.calendar()` | `date:`, `events:` |
-| Scrollbar | `tui.scrollbar()` | `orientation:`, `state:` |
+| Scrollbar | `tui.scrollbar()` | `content_length:`, `position:`, `orientation:` |
 | Center | `tui.center()` | `child:` |
 
 ## State Objects
@@ -514,12 +520,13 @@ end
 |-------|--------|-------------|
 | `ListState` | List | `select_next`, `select_previous`, `selected` |
 | `TableState` | Table | `select_next_row`, `select_previous_row` |
-| `ScrollbarState` | Scrollbar | `position`, `content_length` |
+| `ScrollbarState` | (deprecated) | `position=`, `content_length` |
 
 Create via factory methods:
 
 ```ruby
-@list_state = tui.list_state(selected: 0)
-@table_state = tui.table_state
-@scrollbar_state = tui.scrollbar_state(position: 0, content_length: 100)
+@list_state = tui.list_state(0)           # positional: initial selected index
+@table_state = tui.table_state            # optional positional: selected index
+@scrollbar_state = tui.scrollbar_state(100)  # positional: content_length
+@scrollbar_state.position = 0             # set position via setter
 ```
