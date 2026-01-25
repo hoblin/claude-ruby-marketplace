@@ -334,8 +334,8 @@ end
 ```ruby
 event = tui.poll_event
 break if event.ctrl_c?
-@list_state.select_next if event.down? || event.key?("j")
-@list_state.select_previous if event.up? || event.key?("k")
+@list_state.select_next if event.down? || event.j?
+@list_state.select_previous if event.up? || event.k?
 ```
 
 ### Predicate Chain
@@ -345,8 +345,8 @@ event = tui.poll_event
 case
 when event.ctrl_c? then break
 when event.enter? then activate_selection
-when event.up?, event.key?("k") then move_up
-when event.down?, event.key?("j") then move_down
+when event.up?, event.k? then move_up
+when event.down?, event.j? then move_down
 end
 ```
 

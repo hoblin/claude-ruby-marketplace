@@ -28,7 +28,7 @@ end
 |--------|---------|---------|
 | `focus_events` | `true` | Enable focus change events |
 | `bracketed_paste` | `true` | Enable bracketed paste mode |
-| `viewport` | `:fullscreen` | Viewport mode (`:fullscreen` or `:inline`) |
+| `viewport` | `nil` | Viewport mode (`nil`/`:fullscreen` or `:inline`) |
 | `height` | `nil` | Lines for inline viewport (required when `viewport: :inline`) |
 
 ```ruby
@@ -290,7 +290,7 @@ event = RatatuiRuby.poll_event(timeout: 0.0)  # Non-blocking
 
 ```ruby
 RatatuiRuby.run do |tui|
-  @list_state = tui.list_state(selected: 0)
+  @list_state = tui.list_state(0)
   items = ["Dashboard", "Settings", "Help", "Quit"]
 
   loop do

@@ -1,12 +1,18 @@
 # Frameworks: Rooibos and Kit
 
-RatatuiRuby provides two architectural frameworks: **Rooibos** (MVU/functional) and **Kit** (component-based/OOP). Both build on the core rendering engine.
+RatatuiRuby ecosystem includes two architectural frameworks: **Rooibos** (MVU/functional) and **Kit** (component-based/OOP). Both build on the core rendering engine.
+
+> **Note:** These frameworks are **separate gems**, not part of the core `ratatui_ruby` gem.
 
 ## Rooibos: Model-View-Update
 
 Functional architecture emphasizing immutability and pure functions. Also called The Elm Architecture.
 
 **Status:** v0.2.0 Pre-Release (ALPHA)
+
+**Installation:** `gem install ratatui_ruby-tea` (provides `RatatuiRuby::TEA`)
+
+**Repository:** https://git.sr.ht/~kerrick/ratatui_ruby-tea
 
 ### Core Principle
 
@@ -465,9 +471,11 @@ Choose raw for prototypes. Use Rooibos or Kit for production applications.
 
 ## Complete Rooibos Example
 
+> Requires the `ratatui_ruby-tea` gem.
+
 ```ruby
 require "ratatui_ruby"
-require "rooibos"
+require "ratatui_ruby/tea"
 
 Model = Data.define(:items, :selected, :loading)
 
