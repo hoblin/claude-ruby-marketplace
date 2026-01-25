@@ -1,10 +1,10 @@
-# Frameworks: Rooibos and Kit
+# Frameworks: Tea and Kit
 
-RatatuiRuby ecosystem includes two architectural frameworks: **Rooibos** (MVU/functional) and **Kit** (component-based/OOP). Both build on the core rendering engine.
+RatatuiRuby ecosystem includes two architectural frameworks: **Tea** (MVU/functional) and **Kit** (component-based/OOP). Both build on the core rendering engine.
 
 > **Note:** These frameworks are **separate gems**, not part of the core `ratatui_ruby` gem.
 
-## Rooibos: Model-View-Update
+## Tea: Model-View-Update
 
 Functional architecture emphasizing immutability and pure functions. Also called The Elm Architecture.
 
@@ -46,7 +46,7 @@ With initial command:
 ```ruby
 Init = -> do
   model = Model.new(text: "Loading...", files: [])
-  command = Rooibos::Command.system('ls -la', :got_files)
+  command = RatatuiRuby::Tea::Command.system('ls -la', :got_files)
   [model, command]
 end
 ```
@@ -81,10 +81,10 @@ Update = -> (msg, model) do
     [model.with(error: "Exit #{status}: #{stderr}"), nil]
 
   in {key: 'q'} | {key: 'ctrl_c'}
-    Rooibos::Command.exit
+    RatatuiRuby::Tea::Command.exit
 
   in {key: 'r'}
-    [model, Rooibos::Command.system('ls -la', :got_files)]
+    [model, RatatuiRuby::Tea::Command.system('ls -la', :got_files)]
 
   else
     [model, nil]
@@ -105,31 +105,31 @@ Commands execute off the main thread, producing messages when complete.
 
 ```ruby
 # Shell execution
-Rooibos::Command.system('git status', :git_result)
+RatatuiRuby::Tea::Command.system('git status', :git_result)
 
 # One-shot timer
-Rooibos::Command.wait(5, :timeout)
+RatatuiRuby::Tea::Command.wait(5, :timeout)
 
 # Recurring timer
-Rooibos::Command.tick(1.0, :clock_tick)
+RatatuiRuby::Tea::Command.tick(1.0, :clock_tick)
 
 # HTTP request
-Rooibos::Command.http(:get, 'https://api.example.com', :got_data)
+RatatuiRuby::Tea::Command.http(:get, 'https://api.example.com', :got_data)
 
 # Parallel execution
-Rooibos::Command.batch([
-  Rooibos::Command.system('git status', :status),
-  Rooibos::Command.http(:get, 'https://api.example.com', :data)
+RatatuiRuby::Tea::Command.batch([
+  RatatuiRuby::Tea::Command.system('git status', :status),
+  RatatuiRuby::Tea::Command.http(:get, 'https://api.example.com', :data)
 ])
 
 # Sequential execution
-Rooibos::Command.sequence([
-  Rooibos::Command.system('npm install', :install_done),
-  Rooibos::Command.system('npm test', :test_done)
+RatatuiRuby::Tea::Command.sequence([
+  RatatuiRuby::Tea::Command.system('npm install', :install_done),
+  RatatuiRuby::Tea::Command.system('npm test', :test_done)
 ])
 
 # Exit application
-Rooibos::Command.exit
+RatatuiRuby::Tea::Command.exit
 ```
 
 ### Message Handling Pattern
@@ -147,10 +147,10 @@ def update(msg, model)
   in [:clock_tick]
     new_model = model.with(time: Time.now.strftime("%H:%M:%S"))
     # Re-dispatch to continue subscription
-    [new_model, Rooibos::Command.tick(1.0, :clock_tick)]
+    [new_model, RatatuiRuby::Tea::Command.tick(1.0, :clock_tick)]
 
   in {key: 'r'}
-    [model.with(loading: true), Rooibos::Command.system('ls', :got_files)]
+    [model.with(loading: true), RatatuiRuby::Tea::Command.system('ls', :got_files)]
 
   else
     [model, nil]
@@ -158,7 +158,7 @@ def update(msg, model)
 end
 ```
 
-### Running Rooibos Application
+### Running Tea Application
 
 ```ruby
 RatatuiRuby::TEA.run(
@@ -371,10 +371,10 @@ end
 
 ## Integration: Adapter Pattern
 
-Reuse Rooibos views in Kit components:
+Reuse Tea views in Kit components:
 
 ```ruby
-# Pure Rooibos view
+# Pure Tea view
 TeaView = -> (model, tui) do
   tui.paragraph(text: "Count: #{model.count}")
 end
@@ -408,7 +408,7 @@ end
 
 ## When to Choose Each
 
-### Choose Rooibos When:
+### Choose Tea When:
 
 - State predictability matters (dashboards, installers)
 - Extensive testing required (pure functions are trivially testable)
@@ -426,7 +426,7 @@ end
 
 ### Decision Matrix
 
-| Criterion | Rooibos | Kit |
+| Criterion | Tea | Kit |
 |-----------|---------|-----|
 | State predictability | Excellent | Good |
 | Testability | Exceptional | Good |
@@ -455,7 +455,7 @@ end
 - Minimal abstraction
 - Best for simple scripts and prototypes
 
-**Rooibos:**
+**Tea:**
 - Declarative MVU
 - Automatic re-rendering
 - Command system for side effects
@@ -465,11 +465,11 @@ end
 - Focus/hover tracking
 - Event propagation system
 
-Choose raw for prototypes. Use Rooibos or Kit for production applications.
+Choose raw for prototypes. Use Tea or Kit for production applications.
 
 ---
 
-## Complete Rooibos Example
+## Complete Tea Example
 
 > Requires the `ratatui_ruby-tea` gem.
 
@@ -481,7 +481,7 @@ Model = Data.define(:items, :selected, :loading)
 
 Init = -> do
   model = Model.new(items: [], selected: 0, loading: true)
-  [model, Rooibos::Command.system('ls', :got_files)]
+  [model, RatatuiRuby::Tea::Command.system('ls', :got_files)]
 end
 
 View = -> (model, tui) do
@@ -511,7 +511,7 @@ Update = -> (msg, model) do
     [model.with(selected: new_idx), nil]
 
   in {key: 'q'} | {key: 'ctrl_c'}
-    Rooibos::Command.exit
+    RatatuiRuby::Tea::Command.exit
 
   else
     [model, nil]

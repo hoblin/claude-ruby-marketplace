@@ -284,10 +284,11 @@ event.key?     # => false
 ## Complete Event Loop
 
 ```ruby
-loop do
-  tui.draw { |frame| render_view(model, frame) }
+RatatuiRuby.run do |tui|
+  loop do
+    tui.draw { |frame| render_view(model, frame) }
 
-  case tui.poll_event
+    case tui.poll_event
   # Exit conditions
   in {type: :key, code: "q"} | {type: :key, code: "c", modifiers: ["ctrl"]}
     break
@@ -323,6 +324,7 @@ loop do
   else
     # Catch unmatched events (required to prevent NoMatchingPatternError)
     nil
+  end
   end
 end
 ```
@@ -377,7 +379,7 @@ For broader key support, use Kitty, WezTerm, or Alacritty with enhanced key prot
 | Event Type | Key Attributes | Common Predicates |
 |------------|----------------|-------------------|
 | Key | `code`, `modifiers`, `kind` | `ctrl_c?`, `enter?`, `up?`, `down?`, `text?` |
-| Mouse | `kind`, `button`, `x`, `y` | `down?`, `up?`, `drag?`, `scroll_up?` |
+| Mouse | `kind`, `button`, `x`, `y`, `modifiers` | `down?`, `up?`, `drag?`, `scroll_up?` |
 | Resize | `width`, `height` | `resize?` |
 | Paste | `content` | `paste?` |
 | FocusGained | — | `focus_gained?` |
