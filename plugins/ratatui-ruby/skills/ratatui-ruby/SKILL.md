@@ -1,7 +1,7 @@
 ---
 name: RatatuiRuby
 description: This skill should be used when the user asks to "create a TUI", "terminal interface", "terminal UI", "ratatui", "ratatui-ruby", "inline viewport", "full-screen terminal app", "terminal widgets", "tui.draw", "tui.poll_event", or mentions RatatuiRuby.run, managed loop, terminal rendering, Rooibos MVU, or building CLI applications with rich UI elements. Should also be used when editing RatatuiRuby application files, working with terminal widgets, or discussing TUI architecture patterns.
-version: 1.0.0
+version: 1.0.1
 ---
 
 # RatatuiRuby
@@ -104,7 +104,7 @@ frame.render_widget(widget, frame.area)
 
 ```ruby
 # Create state once (outside draw loop)
-list_state = tui.list_state(selected: 0)
+list_state = tui.list_state(0)
 
 # In draw block
 list = tui.list(items: ["Item A", "Item B", "Item C"])
@@ -188,7 +188,7 @@ end
 ```ruby
 event = tui.poll_event
 break if event.ctrl_c?
-list_state.select_next if event.down? || event.key?("j")
+list_state.select_next if event.down? || event.j?
 ```
 
 ## Styling
@@ -230,13 +230,13 @@ class MyAppTest < Minitest::Test
   include RatatuiRuby::TestHelper
 
   def test_renders_greeting
-    with_test_terminal(width: 80, height: 24) do |terminal|
+    with_test_terminal(80, 24) do |terminal|
       terminal.draw do |frame|
         widget = tui.paragraph(text: "Hello")
         frame.render_widget(widget, frame.area)
       end
 
-      assert_snapshots(terminal.buffer)
+      assert_snapshots("greeting")  # Creates/compares snapshots/greeting.txt
     end
   end
 
