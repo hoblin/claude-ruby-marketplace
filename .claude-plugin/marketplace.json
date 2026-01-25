@@ -1,7 +1,7 @@
 {
   "name": "claude-ruby-marketplace",
   "metadata": {
-    "description": "Ruby and Rails plugins: LSP integration, RSpec testing patterns, ActiveRecord queries, Draper decorators, MCP server development, and DragonRuby game development"
+    "description": "Ruby and Rails plugins: LSP integration, RSpec testing patterns, ActiveRecord queries, Draper decorators, MCP server development, DragonRuby game development, and RatatuiRuby TUI development"
   },
   "owner": {
     "name": "hoblin"
@@ -48,6 +48,13 @@
       "version": "1.0.1",
       "source": "./plugins/dragonruby",
       "category": "game-development"
+    },
+    {
+      "name": "ratatui-ruby",
+      "description": "RatatuiRuby TUI development for terminal user interfaces",
+      "version": "1.0.0",
+      "source": "./plugins/ratatui-ruby",
+      "category": "tui-development"
     },
     {
       "name": "rpi",
