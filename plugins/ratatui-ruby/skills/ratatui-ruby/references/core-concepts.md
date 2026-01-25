@@ -134,8 +134,12 @@ end
 **Logging during inline mode:**
 
 ```ruby
-RatatuiRuby.insert_before(height, widget) do |frame|
-  # Insert content above viewport into scrollback
+# Option 1: Pass widget directly
+RatatuiRuby.insert_before(height, widget)
+
+# Option 2: Use block to generate widget (block returns widget, doesn't receive frame)
+RatatuiRuby.insert_before(height) do
+  tui.paragraph(text: "Log message")  # Block returns a widget
 end
 ```
 
@@ -243,11 +247,11 @@ para = tui.paragraph(text: "Hello", block: tui.block(borders: [:all]))
 |--------|---------|---------|
 | **WidgetFactories** | `paragraph`, `block`, `list`, `table`, `gauge` | UI components |
 | **LayoutFactories** | `rect`, `constraint_*`, `layout`, `layout_split` | Layouts |
-| **StyleFactories** | `style`, `color`, `modifier` | Formatting |
+| **StyleFactories** | `style` | Formatting |
 | **TextFactories** | `text_span`, `text_line`, `text_width` | Styled text |
 | **StateFactories** | `list_state`, `table_state`, `scrollbar_state` | Widget state |
 | **CanvasFactories** | `shape_map`, `shape_line`, `shape_point` | Canvas shapes |
-| **BufferFactories** | Buffer inspection | Testing |
+| **BufferFactories** | `cell` | Testing |
 | **Core** | `draw`, `poll_event`, `get_cell_at` | Terminal ops |
 
 ### DWIM Coercion

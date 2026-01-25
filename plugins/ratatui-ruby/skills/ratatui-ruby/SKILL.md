@@ -1,6 +1,6 @@
 ---
 name: RatatuiRuby
-description: This skill should be used when the user asks to "create a TUI", "terminal interface", "terminal UI", "ratatui", "ratatui-ruby", "inline viewport", "full-screen terminal app", "terminal widgets", "tui.draw", "tui.poll_event", or mentions RatatuiRuby.run, managed loop, terminal rendering, Rooibos MVU, or building CLI applications with rich UI elements. Should also be used when editing RatatuiRuby application files, working with terminal widgets, or discussing TUI architecture patterns.
+description: This skill should be used when the user asks to "create a TUI", "terminal interface", "terminal UI", "ratatui", "ratatui-ruby", "inline viewport", "full-screen terminal app", "terminal widgets", "tui.draw", "tui.poll_event", or mentions RatatuiRuby.run, managed loop, terminal rendering, Tea MVU, or building CLI applications with rich UI elements. Should also be used when editing RatatuiRuby application files, working with terminal widgets, or discussing TUI architecture patterns.
 version: 1.1.0
 ---
 
@@ -230,9 +230,9 @@ class MyAppTest < Minitest::Test
   include RatatuiRuby::TestHelper
 
   def test_renders_greeting
-    with_test_terminal(80, 24) do |terminal|
-      terminal.draw do |frame|
-        widget = tui.paragraph(text: "Hello")
+    with_test_terminal(80, 24) do
+      RatatuiRuby.draw do |frame|
+        widget = RatatuiRuby::Widgets::Paragraph.new(text: "Hello")
         frame.render_widget(widget, frame.area)
       end
 
@@ -241,8 +241,8 @@ class MyAppTest < Minitest::Test
   end
 
   def test_keyboard_navigation
-    with_test_terminal do |terminal|
-      inject_keys("jjk")  # Down, down, up
+    with_test_terminal do
+      inject_keys("j", "j", "k")  # Down, down, up
       # Assert state changes
     end
   end
@@ -251,15 +251,15 @@ end
 
 ## Frameworks
 
-### Rooibos (MVU Architecture)
+### Tea (MVU Architecture)
 
 Functional, Elm-style architecture for predictable state:
 
 ```ruby
-require "rooibos"
+require "ratatui_ruby/tea"
 
 class Counter
-  include Rooibos::App
+  include RatatuiRuby::Tea::App
 
   def init
     [Model.new(count: 0), nil]
@@ -272,7 +272,7 @@ class Counter
   def update(message, model)
     case message
     in {type: :key, code: "q"}
-      [model, Rooibos::Command.exit]
+      [model, RatatuiRuby::Tea::Command.exit]
     in {type: :key, code: "j"}
       [model.with(count: model.count + 1), nil]
     else
@@ -313,4 +313,4 @@ For detailed API documentation and patterns:
 - **`references/events.md`** - Keyboard, mouse, event handling patterns
 - **`references/styling.md`** - Colors, modifiers, text composition
 - **`references/testing.md`** - TestHelper, snapshots, event injection
-- **`references/frameworks.md`** - Rooibos MVU, Kit components
+- **`references/frameworks.md`** - Tea MVU, Kit components
