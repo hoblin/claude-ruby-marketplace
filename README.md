@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin%20Marketplace-blueviolet)](https://github.com/anthropics/claude-code)
 
-A Claude Code plugin marketplace for Ruby development: Rails applications, testing, and game development with DragonRuby.
+A Claude Code plugin marketplace for Ruby development: Rails applications, testing, game development with DragonRuby, and terminal UI development with RatatuiRuby.
 
 ## Installation
 
@@ -15,6 +15,7 @@ A Claude Code plugin marketplace for Ruby development: Rails applications, testi
 
 - [Rails Development](#rails-development) - rspec, activerecord, draper, mcp, ruby-lsp
 - [Game Development](#game-development) - dragonruby
+- [TUI Development](#tui-development) - ratatui-ruby
 - [Development Tools](#development-tools) - rpi
 
 ### Rails Development
@@ -33,6 +34,12 @@ A Claude Code plugin marketplace for Ruby development: Rails applications, testi
 
 Covers game loop, input handling, entities, collision detection, audio, rendering, animation, scenes, and cross-platform distribution.
 
+### TUI Development
+
+- [`ratatui-ruby`](./plugins/ratatui-ruby/README.md) (Skill) - RatatuiRuby for terminal user interfaces
+
+Covers managed loop, 20+ widgets, constraint-based layouts, event handling, styling, testing infrastructure, and Rooibos/Kit frameworks.
+
 ### Development Tools
 
 - [`rpi`](./plugins/rpi/README.md) (Workflow) - Research, Planning, Implementation - context engineering for AI-assisted development
@@ -47,6 +54,9 @@ Covers game loop, input handling, entities, collision detection, audio, renderin
 
 # Game development
 /plugin install dragonruby@claude-ruby-marketplace
+
+# TUI development
+/plugin install ratatui-ruby@claude-ruby-marketplace
 
 # Development tools
 /plugin install rpi@claude-ruby-marketplace
