@@ -1,6 +1,6 @@
 {
   "name": "ratatui-ruby",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "RatatuiRuby TUI development for terminal user interfaces",
   "author": {
     "name": "hoblin"
