@@ -30,23 +30,14 @@ Extract from PR body:
 Spawn the **thoughts-analyzer** subagent to find historical knowledge about affected features.
 
 ```
-subagent_type: thoughts-analyzer
+subagent_type: rpi:thoughts-analyzer
 
-Prompt: "Analyze the thoughts directory for historical context related to this PR.
+Prompt: "Find relevant historical context for reviewing this feature.
 
-Files changed in PR:
-<list of changed files>
+## Ticket
+<ticket reference, title, description, acceptance criteria from Step 1>
 
-Features affected:
-<extracted from diff - models, controllers, services touched>
-
-Find:
-1. Previous implementation plans for these features
-2. Past research documents about these areas
-3. Known issues or technical debt documented
-4. Architectural decisions that affect this code
-
-Output: Summary of relevant historical context that reviewers should know."
+Search thoughts/ for plans, research, and decisions related to this feature. Extract key decisions, constraints, trade-offs, and technical specs that reviewers should know."
 ```
 
 **Wait for this subagent to complete before proceeding.**
