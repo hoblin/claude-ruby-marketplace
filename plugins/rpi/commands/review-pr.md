@@ -45,7 +45,7 @@ Search thoughts/ for plans, research, and decisions related to this feature. Ext
 ### Step 3: Spawn Review Subagents
 
 Spawn all five review subagents **in parallel** using the Task tool with `subagent_type: Explore`. Each receives:
-- The diff
+- PR number (to fetch diff themselves via `gh pr diff`)
 - Ticket context (from Step 1)
 - Historical context (from Step 2)
 - Their specific review focus
@@ -55,7 +55,9 @@ Spawn all five review subagents **in parallel** using the Task tool with `subage
 #### Subagent 1: RailsGuru
 
 ```
-Prompt: "Review this Rails PR diff for conventions and architecture.
+Prompt: "Review PR #<number> for Rails conventions and architecture.
+
+First, fetch the diff: `gh pr diff <number>`
 
 IMPORTANT: Activate the activerecord:activerecord skill for AR patterns reference.
 
@@ -72,16 +74,15 @@ IMPORTANT: Activate the activerecord:activerecord skill for AR patterns referenc
 - ActiveRecord patterns (associations, validations placement)
 - Service object patterns and naming
 
-## Diff
-<paste diff here>
-
 Output: List findings tagged [major], [minor], or [nit] with file:line references."
 ```
 
 #### Subagent 2: SecurityHawk
 
 ```
-Prompt: "Review this Rails PR diff for security vulnerabilities.
+Prompt: "Review PR #<number> for security vulnerabilities.
+
+First, fetch the diff: `gh pr diff <number>`
 
 IMPORTANT: Activate the activerecord:activerecord skill for SQL injection prevention patterns.
 
@@ -100,16 +101,15 @@ IMPORTANT: Activate the activerecord:activerecord skill for SQL injection preven
 - Secrets or credentials in code
 - Insecure direct object references
 
-## Diff
-<paste diff here>
-
 Output: List findings tagged [major], [minor], or [nit] with file:line references."
 ```
 
 #### Subagent 3: PerfPro
 
 ```
-Prompt: "Review this Rails PR diff for performance issues.
+Prompt: "Review PR #<number> for performance issues.
+
+First, fetch the diff: `gh pr diff <number>`
 
 IMPORTANT: Activate the activerecord:activerecord skill for N+1 and query optimization patterns.
 IMPORTANT: Activate the appsignal-perf skill for performance monitoring insights.
@@ -129,16 +129,15 @@ IMPORTANT: Activate the appsignal-perf skill for performance monitoring insights
 - Missing caching opportunities
 - Background job considerations (should this be async?)
 
-## Diff
-<paste diff here>
-
 Output: List findings tagged [major], [minor], or [nit] with file:line references."
 ```
 
 #### Subagent 4: TestCoach
 
 ```
-Prompt: "Review this Rails PR diff for test quality and coverage.
+Prompt: "Review PR #<number> for test quality and coverage.
+
+First, fetch the diff: `gh pr diff <number>`
 
 IMPORTANT: Activate the rspec:rspec skill for RSpec best practices reference.
 
@@ -156,16 +155,15 @@ IMPORTANT: Activate the rspec:rspec skill for RSpec best practices reference.
 - Assertion quality (testing behavior vs implementation)
 - Missing edge case coverage
 
-## Diff
-<paste diff here>
-
 Output: List findings tagged [major], [minor], or [nit] with file:line references."
 ```
 
 #### Subagent 5: DocScribe
 
 ```
-Prompt: "Review this Rails PR diff for documentation and clarity.
+Prompt: "Review PR #<number> for documentation and clarity.
+
+First, fetch the diff: `gh pr diff <number>`
 
 ## Ticket Context
 <ticket title, acceptance criteria, business context>
@@ -180,9 +178,6 @@ Prompt: "Review this Rails PR diff for documentation and clarity.
 - Changelog updates for notable changes
 - Misleading or outdated comments
 - Magic numbers or strings needing constants
-
-## Diff
-<paste diff here>
 
 Output: List findings tagged [major], [minor], or [nit] with file:line references."
 ```
