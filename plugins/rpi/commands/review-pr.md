@@ -1,7 +1,5 @@
 ---
-name: PR Review Committee
-version: 1.0.0
-description: This skill should be used when the user asks to "review this PR", "review my pull request", "check the diff", "code review", "review changes", or mentions reviewing code before merge. Spawns parallel subagents for comprehensive Rails PR review.
+description: Multi-agent PR review for Rails - spawns parallel subagents for comprehensive code review
 ---
 
 # PR Review Committee
