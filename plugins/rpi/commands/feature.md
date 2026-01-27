@@ -23,11 +23,11 @@ Update Linear ticket: assign to "me", change status to "In Progress"
 
 Spawn `rpi:thoughts-analyzer` with ticket reference, title, description, and acceptance criteria.
 
-Wait for this subagent to complete before proceeding.
+DO NOT proceed to Step 3 until this subagent returns. Its output is required input for Step 3.
 
 ### Step 3: Research Codebase
 
-Spawn research subagents in parallel, passing ticket info and historical context from Step 2:
+After Step 2 completes, spawn research subagents in parallel, passing ticket info and historical context output from Step 2:
 
 `rpi:codebase-pattern-finder` - find similar implementations to model after
 `rpi:codebase-analyzer` - analyze the area being modified
