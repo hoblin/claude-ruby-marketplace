@@ -112,6 +112,8 @@ rpi/
 │   ├── create_handoff.md
 │   ├── resume_handoff.md
 │   ├── commit.md
+│   ├── feature.md
+│   ├── review-pr.md
 │   └── thoughts_init.md
 └── templates/                 # Setup templates
     └── thoughts-bin/          # Scripts for ~/thoughts/bin/
@@ -194,6 +196,20 @@ These agents are spawned by `/rpi:create_plan` and `/rpi:research_codebase` to g
 - Runs automated verification commands
 - Documents pass/fail status
 - Identifies deviations from plan
+
+**`/rpi:feature`** - One-shot feature implementation from branch to PR
+
+- Gathers historical context via `rpi:thoughts-analyzer`
+- Researches codebase via parallel `rpi:codebase-pattern-finder` and `rpi:codebase-analyzer`
+- Implements feature following Rails best practices
+- Runs QA checks and creates draft PR
+- For smaller features that don't need multi-session planning
+
+**`/rpi:review-pr`** - Multi-agent PR review for Rails
+
+- Gathers ticket and historical context
+- Spawns 5 parallel review subagents (Rails, Security, Performance, Testing, Documentation)
+- Presents unified review for confirmation before posting
 
 ### Pre-Planning Research
 
