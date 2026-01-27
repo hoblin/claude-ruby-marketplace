@@ -51,7 +51,7 @@ Then wait for the user's input.
 
    - Use the **rpi:codebase-locator** agent to find all files related to the ticket/task
    - Use the **rpi:codebase-analyzer** agent to understand how the current implementation works
-   - If relevant, use the **rpi:thoughts-locator** agent to find any existing thoughts documents about this feature
+   - Use the **rpi:thoughts-analyzer** agent to extract decisions and insights from any existing plans, research, or handoffs about this feature/area
    - If a Linear ticket is mentioned, use the **linear-ticket-reader** agent to get full details
 
    These agents will:
@@ -110,8 +110,7 @@ After getting initial clarifications:
    - **rpi:codebase-pattern-finder** - To find similar features we can model after
 
    **For historical context:**
-   - **rpi:thoughts-locator** - To find any research, plans, or decisions about this area
-   - **rpi:thoughts-analyzer** - To extract key insights from the most relevant documents
+   - **rpi:thoughts-analyzer** - To find and extract key decisions, constraints, and insights from existing plans, research, and handoffs about this feature/area (handles both discovery and analysis)
 
    **For related tickets:**
    - **linear-searcher** - To find similar issues or past implementations
