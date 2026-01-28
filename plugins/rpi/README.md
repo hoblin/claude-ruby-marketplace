@@ -47,7 +47,7 @@ SESSION 2: Iterate Plan (fresh context)
 ─────────────────────────────────────────────────────────────
 (review plan file yourself first)
 
-/rpi:iterate_plan ./thoughts/shared/plans/2026-01-06-MYX-123.md
+/rpi:iterate_plan ./thoughts/shared/plans/2026-01-06/MYX-123.md
   - Review ticket, parent task, sibling subtasks
   - Narrow scope to current task only
   → Agent reads plan, updates it, runs thoughts-sync
@@ -58,7 +58,7 @@ SESSION 2: Iterate Plan (fresh context)
 
 SESSION 3: Iterate Plan again (fresh context)
 ─────────────────────────────────────────────────────────────
-/rpi:iterate_plan ./thoughts/shared/plans/2026-01-06-MYX-123.md
+/rpi:iterate_plan ./thoughts/shared/plans/2026-01-06/MYX-123.md
   - Wrong order of phases 5 and 6
   → Agent fixes, syncs
 ─────────────────────────────────────────────────────────────
@@ -68,7 +68,7 @@ SESSION 3: Iterate Plan again (fresh context)
 
 SESSION 4: Implement Phase 1 (fresh context)
 ─────────────────────────────────────────────────────────────
-/rpi:implement_plan ./thoughts/shared/plans/2026-01-06-MYX-123.md
+/rpi:implement_plan ./thoughts/shared/plans/2026-01-06/MYX-123.md
   Start phase 1
   → Agent reads plan, implements phase 1
   → Agent updates checkboxes, commits code
@@ -79,7 +79,7 @@ SESSION 4: Implement Phase 1 (fresh context)
 
 SESSION 5: Continue Implementation (fresh context)
 ─────────────────────────────────────────────────────────────
-/rpi:implement_plan ./thoughts/shared/plans/2026-01-06-MYX-123.md
+/rpi:implement_plan ./thoughts/shared/plans/2026-01-06/MYX-123.md
   Phase 1 done, continue with phases 2 and 3
   → Agent reads plan, sees phase 1 ✓, continues
 ─────────────────────────────────────────────────────────────
@@ -174,7 +174,7 @@ These agents are spawned by `/rpi:create_plan` and `/rpi:research_codebase` to g
 - Interactive planning process with user feedback
 - Creates plans with phases, success criteria, and detailed steps
 - Each phase = one atomic commit
-- Output: `thoughts/shared/plans/YYYY-MM-DD-{ticket}-description.md`
+- Output: `thoughts/shared/plans/YYYY-MM-DD/{ticket}-description.md`
 
 **`/rpi:iterate_plan`** - Update existing plans based on feedback
 
@@ -218,7 +218,7 @@ These agents are spawned by `/rpi:create_plan` and `/rpi:research_codebase` to g
 - Spawns parallel sub-agents to investigate specific features
 - Synthesizes findings into research document
 - **ONLY documents, never suggests improvements** (documentarian role)
-- Output: `thoughts/shared/research/YYYY-MM-DD-{ticket}-description.md`
+- Output: `thoughts/shared/research/YYYY-MM-DD/{ticket}-description.md`
 
 ### Session Continuity
 
@@ -227,7 +227,7 @@ These agents are spawned by `/rpi:create_plan` and `/rpi:research_codebase` to g
 - Concise context compaction without losing details
 - Captures: tasks, status, learnings, artifacts, next steps
 - Includes file:line references for recent changes
-- Output: `thoughts/shared/handoffs/{ticket}/YYYY-MM-DD_HH-MM-SS_description.md`
+- Output: `thoughts/shared/handoffs/{ticket}/YYYY-MM-DD/HH-MM-SS_description.md`
 
 **`/rpi:resume_handoff`** - Resume work from handoff document
 
@@ -249,11 +249,11 @@ These agents are spawned by `/rpi:create_plan` and `/rpi:research_codebase` to g
 
 ### Naming Patterns
 
-1. **Ticket-based**: `YYYY-MM-DD-{ticket}-{topic}.md`
-   - Example: `2026-01-06-MYX-123-user-authentication.md`
+1. **Ticket-based**: `YYYY-MM-DD/{ticket}-{topic}.md`
+   - Example: `2026-01-06/MYX-123-user-authentication.md`
 
-2. **Timestamp-based**: `YYYY-MM-DD_HH-MM-SS_{topic}.md`
-   - Example: `2026-01-06_14-30-00_api-flow.md`
+2. **Timestamp-based**: `YYYY-MM-DD/HH-MM-SS_{topic}.md`
+   - Example: `2026-01-06/14-30-00_api-flow.md`
 
 ### YAML Frontmatter
 

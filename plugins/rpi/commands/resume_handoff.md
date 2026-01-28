@@ -19,11 +19,11 @@ When this command is invoked:
 
 2. **If a ticket number (like ENG-XXXX) was provided**:
    - run `thoughts-sync` to ensure your `./thoughts/` directory is up to date.
-   - locate the most recent handoff document for the ticket. Tickets will be located in `./thoughts/shared/handoffs/ENG-XXXX` where `ENG-XXXX` is the ticket number. e.g. for `ENG-1234` the handoffs would be in `./thoughts/shared/handoffs/ENG-1234/`. **List this directory's contents.**
-   - There may be zero, one or multiple files in the directory.
-   - **If there are zero files in the directory, or the directory does not exist**: tell the user: "I'm sorry, I can't seem to find that handoff document. Can you please provide me with a path to it?"
-   - **If there is only one file in the directory**: proceed with that handoff
-   - **If there are multiple files in the directory**: using the date and time specified in the file name (it will be in the format `YYYY-MM-DD_HH-MM-SS` in 24-hour time format), proceed with the _most recent_ handoff document.
+   - locate the most recent handoff document for the ticket. Tickets will be located in `./thoughts/shared/handoffs/ENG-XXXX` where `ENG-XXXX` is the ticket number. e.g. for `ENG-1234` the handoffs would be in `./thoughts/shared/handoffs/ENG-1234/`. **List this directory's contents recursively** (handoffs are in date subdirectories like `YYYY-MM-DD/`).
+   - There may be zero, one or multiple files across the date subdirectories.
+   - **If there are zero files, or the directory does not exist**: tell the user: "I'm sorry, I can't seem to find that handoff document. Can you please provide me with a path to it?"
+   - **If there is only one file**: proceed with that handoff
+   - **If there are multiple files**: using the date from the subdirectory name (`YYYY-MM-DD`) and time from the filename (`HH-MM-SS`), proceed with the _most recent_ handoff document.
    - Immediately read the handoff document FULLY
    - Immediately read any research or plan documents that it links to under `./thoughts/shared/plans` or `./thoughts/shared/research`; do NOT use a sub-agent to read these critical files.
    - Begin the analysis process by ingesting relevant context from the handoff document, reading additional files it mentions
@@ -35,7 +35,7 @@ I'll help you resume work from a handoff document. Let me find the available han
 
 Which handoff would you like to resume from?
 
-Tip: You can invoke this command directly with a handoff path: `/rpi:resume_handoff `./thoughts/shared/handoffs/ENG-XXXX/YYYY-MM-DD_HH-MM-SS_ENG-XXXX_description.md`
+Tip: You can invoke this command directly with a handoff path: `/rpi:resume_handoff `./thoughts/shared/handoffs/ENG-XXXX/YYYY-MM-DD/HH-MM-SS_ENG-XXXX_description.md`
 
 or using a ticket number to resume from the most recent handoff for that ticket: `/rpi:resume_handoff ENG-XXXX`
 ```
