@@ -130,11 +130,13 @@ It is managed by the thoughts sync scripts and should not be committed to the co
 
 ## Structure
 
-- \`${USERNAME}/\` - Your personal notes for this repository (symlink to ~/thoughts/repos/${REPO_NAME}/${USERNAME})
-- \`shared/\` - Team-shared notes for this repository (symlink to ~/thoughts/repos/${REPO_NAME}/shared)
-- \`global/\` - Cross-repository thoughts (symlink to ~/thoughts/global)
-  - \`${USERNAME}/\` - Personal notes that apply across all repositories
-  - \`shared/\` - Team-shared notes that apply across all repositories
+All paths relative to project root:
+
+- \`./thoughts/${USERNAME}/\` - Your personal notes for this repository
+- \`./thoughts/shared/\` - Team-shared notes for this repository
+- \`./thoughts/global/\` - Cross-repository thoughts
+  - \`./thoughts/global/${USERNAME}/\` - Personal notes that apply across all repositories
+  - \`./thoughts/global/shared/\` - Team-shared notes that apply across all repositories
 
 ## Usage
 
@@ -146,9 +148,9 @@ Create markdown files in these directories to document:
 - Any other development thoughts
 
 Quick access:
-- \`thoughts/${USERNAME}/\` for your repo-specific notes (most common)
-- \`thoughts/shared/\` for team-shared repo notes
-- \`thoughts/global/${USERNAME}/\` for your cross-repo notes
+- \`./thoughts/${USERNAME}/\` for your repo-specific notes (most common)
+- \`./thoughts/shared/\` for team-shared repo notes
+- \`./thoughts/global/${USERNAME}/\` for your cross-repo notes
 
 ## Commands
 
