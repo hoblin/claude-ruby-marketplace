@@ -7,6 +7,14 @@ set -euo pipefail
 THOUGHTS_DIR="${HOME}/thoughts"
 MESSAGE=""
 
+# Detect project context: if in a git repo with ./thoughts symlink, show relative path
+DISPLAY_PATH="$THOUGHTS_DIR"
+if command -v git >/dev/null 2>&1 && \
+   git rev-parse --is-inside-work-tree >/dev/null 2>&1 && \
+   [[ -L "./thoughts/shared" ]]; then
+  DISPLAY_PATH="./thoughts"
+fi
+
 # Parse arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -23,7 +31,7 @@ done
 
 # Verify thoughts directory exists
 if [[ ! -d "$THOUGHTS_DIR/.git" ]]; then
-  echo "Error: $THOUGHTS_DIR is not a git repository" >&2
+  echo "Error: $DISPLAY_PATH is not a git repository" >&2
   exit 1
 fi
 
@@ -46,7 +54,7 @@ fi
 if ! git pull --rebase 2>&1; then
   if git status | grep -q "rebase in progress"; then
     echo "Error: Merge conflict detected in thoughts repository" >&2
-    echo "Please resolve conflicts manually in: $THOUGHTS_DIR" >&2
+    echo "Please resolve conflicts manually in: $DISPLAY_PATH" >&2
     echo 'Then run "git rebase --continue" and "thoughts-sync" again' >&2
     exit 1
   fi
