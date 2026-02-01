@@ -45,15 +45,13 @@ Then wait for the user's research query.
    - We now have specialized agents that know how to do specific research tasks:
 
    **For codebase research:**
-   - Use the **rpi:codebase-locator** agent to find WHERE files and components live
-   - Use the **rpi:codebase-analyzer** agent to understand HOW specific code works (without critiquing it)
+   - Use the **rpi:codebase-analyzer** agent to find and understand HOW specific code works (without critiquing it)
    - Use the **rpi:codebase-pattern-finder** agent to find examples of existing patterns (without evaluating them)
 
    **IMPORTANT**: All agents are documentarians, not critics. They will describe what exists without suggesting improvements or identifying issues.
 
    **For thoughts directory:**
-   - Use the **rpi:thoughts-locator** agent to discover what documents exist about the topic
-   - Use the **rpi:thoughts-analyzer** agent to extract key insights from specific documents (only the most relevant ones)
+   - Use the **rpi:thoughts-analyzer** agent to discover and extract key insights from documents (only the most relevant ones)
 
    **For web research (only if user explicitly asks):**
    - Use the **rpi:web-search-researcher** agent for external documentation and resources

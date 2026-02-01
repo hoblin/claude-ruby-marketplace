@@ -69,13 +69,11 @@ If the user's feedback requires understanding new code patterns or validating as
    Use the right agent for each type of research:
 
    **For code investigation:**
-   - **rpi:codebase-locator** - To find relevant files
-   - **rpi:codebase-analyzer** - To understand implementation details
+   - **rpi:codebase-analyzer** - To find and understand implementation details
    - **rpi:codebase-pattern-finder** - To find similar patterns
 
    **For historical context:**
-   - **rpi:thoughts-locator** - To find related research or decisions
-   - **rpi:thoughts-analyzer** - To extract insights from documents
+   - **rpi:thoughts-analyzer** - To discover and extract insights from documents
 
    **Be EXTREMELY specific about directories**:
    - If the change involves "WUI", specify `humanlayer-wui/` directory

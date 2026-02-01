@@ -49,9 +49,8 @@ Then wait for the user's input.
 2. **Spawn initial research tasks to gather context**:
    Before asking the user any questions, use specialized agents to research in parallel:
 
-   - Use the **rpi:codebase-locator** agent to find all files related to the ticket/task
-   - Use the **rpi:codebase-analyzer** agent to understand how the current implementation works
-   - Use the **rpi:thoughts-analyzer** agent to extract decisions and insights from any existing plans, research, or handoffs about this feature/area
+   - Use the **rpi:codebase-analyzer** agent to find and understand how the current implementation works
+   - Use the **rpi:thoughts-analyzer** agent to discover and extract decisions and insights from any existing plans, research, or handoffs about this feature/area
    - If a Linear ticket is mentioned, use the **linear-ticket-reader** agent to get full details
 
    These agents will:
@@ -105,8 +104,7 @@ After getting initial clarifications:
    - Use the right agent for each type of research:
 
    **For deeper investigation:**
-   - **rpi:codebase-locator** - To find more specific files (e.g., "find all files that handle [specific component]")
-   - **rpi:codebase-analyzer** - To understand implementation details (e.g., "analyze how [system] works")
+   - **rpi:codebase-analyzer** - To find and understand implementation details (e.g., "analyze how [system] works")
    - **rpi:codebase-pattern-finder** - To find similar features we can model after
 
    **For historical context:**
