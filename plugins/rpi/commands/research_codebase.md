@@ -62,8 +62,7 @@ Then wait for the user's research query.
    - Use the **linear-searcher** agent to find related tickets or historical context
 
    The key is to use these agents intelligently:
-   - Start with locator agents to find what exists
-   - Then use analyzer agents on the most promising findings to document how they work
+   - Analyzer agents can both find and analyze - they have search tools (Grep, Glob, LS) plus Read
    - Run multiple agents in parallel when they're searching for different things
    - Each agent knows its job - just tell it what you're looking for
    - Don't write detailed prompts about HOW to search - the agents already know
