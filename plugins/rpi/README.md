@@ -97,11 +97,9 @@ SESSION 5: Continue Implementation (fresh context)
 rpi/
 ├── agents/                    # Research subagents
 │   ├── codebase-analyzer.md
-│   ├── codebase-locator.md
 │   ├── codebase-pattern-finder.md
 │   ├── documentation-researcher.md
 │   ├── thoughts-analyzer.md
-│   ├── thoughts-locator.md
 │   └── web-search-researcher.md
 ├── commands/                  # Workflow commands
 │   ├── create_plan.md
@@ -147,7 +145,6 @@ These agents are spawned by `/rpi:create_plan` and `/rpi:research_codebase` to g
 | Agent | Purpose |
 |-------|---------|
 | **rpi:codebase-analyzer** | Traces data flow, understands HOW code works |
-| **rpi:codebase-locator** | Finds WHERE code lives (files, functions, classes) |
 | **rpi:codebase-pattern-finder** | Finds existing patterns to model new code after |
 
 ### External Research Agents
@@ -161,8 +158,7 @@ These agents are spawned by `/rpi:create_plan` and `/rpi:research_codebase` to g
 
 | Agent | Purpose |
 |-------|---------|
-| **rpi:thoughts-locator** | Discovers relevant documents in `thoughts/` directory |
-| **rpi:thoughts-analyzer** | Deep-dives into specific thoughts documents |
+| **rpi:thoughts-analyzer** | Discovers and analyzes documents in `thoughts/` directory |
 
 ## Commands
 
