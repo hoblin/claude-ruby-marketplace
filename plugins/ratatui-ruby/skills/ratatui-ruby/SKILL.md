@@ -1,7 +1,7 @@
 ---
-name: RatatuiRuby
+name: ratatui-ruby
 description: This skill should be used when the user asks to "create a TUI", "terminal interface", "terminal UI", "ratatui", "ratatui-ruby", "inline viewport", "full-screen terminal app", "terminal widgets", "tui.draw", "tui.poll_event", or mentions RatatuiRuby.run, managed loop, terminal rendering, Tea MVU, or building CLI applications with rich UI elements. Should also be used when editing RatatuiRuby application files, working with terminal widgets, or discussing TUI architecture patterns.
-version: 1.2.0
+version: 1.2.1
 ---
 
 # RatatuiRuby

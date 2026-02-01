@@ -1,7 +1,7 @@
 ---
-name: DragonRuby Game Toolkit
+name: dragonruby
 description: This skill should be used when the user asks to "create a game", "make a game", "game development", "dragonruby", "drgtk", "game loop", "tick method", "sprite rendering", "game state", or mentions args.outputs, args.state, args.inputs, coordinate system, collision detection, animation frames, or scene management. Should also be used when editing DragonRuby game files, working on 2D game logic, or discussing game performance optimization.
-version: 1.0.3
+version: 1.0.4
 ---
 
 # DragonRuby Game Toolkit

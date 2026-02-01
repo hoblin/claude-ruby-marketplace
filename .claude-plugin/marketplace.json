@@ -17,42 +17,42 @@
     {
       "name": "rspec",
       "description": "RSpec and FactoryBot testing patterns for Rails",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "source": "./plugins/rspec",
       "category": "testing"
     },
     {
       "name": "draper",
       "description": "Draper decorator patterns for Rails view logic",
-      "version": "1.0.0",
+      "version": "1.1.1",
       "source": "./plugins/draper",
       "category": "patterns"
     },
     {
       "name": "activerecord",
       "description": "ActiveRecord patterns for Rails models and queries",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "source": "./plugins/activerecord",
       "category": "database"
     },
     {
       "name": "mcp",
       "description": "MCP server development with Ruby SDK",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "source": "./plugins/mcp",
       "category": "integrations"
     },
     {
       "name": "dragonruby",
       "description": "DragonRuby Game Toolkit patterns for 2D game development",
-      "version": "1.0.1",
+      "version": "1.0.4",
       "source": "./plugins/dragonruby",
       "category": "game-development"
     },
     {
       "name": "ratatui-ruby",
       "description": "RatatuiRuby TUI development for terminal user interfaces",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "source": "./plugins/ratatui-ruby",
       "category": "tui-development"
     },

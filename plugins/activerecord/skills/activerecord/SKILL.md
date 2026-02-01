@@ -1,7 +1,7 @@
 ---
-name: ActiveRecord
+name: activerecord
 description: This skill should be used when the user asks to "write a migration", "add a column", "add column to table", "create an index", "add a foreign key", "set up associations", "fix N+1 queries", "optimize queries", "add validations", "create callbacks", "use eager loading", or mentions ActiveRecord, belongs_to, has_many, has_one, :through associations, polymorphic associations, inverse_of, touch: true, counter_cache, dependent: destroy, where clauses, scopes, includes, preload, eager_load, joins, find_each, batch processing, counter caches, foreign key constraints, or database constraints. Should also be used when editing *_model.rb files, working in app/models/ directory, db/migrate/, discussing query performance, N+1 prevention, validation vs constraint decisions, or reviewing database schema design.
-version: 1.0.0
+version: 1.0.1
 ---
 
 # ActiveRecord

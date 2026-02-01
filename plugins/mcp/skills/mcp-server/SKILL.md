@@ -1,6 +1,6 @@
 ---
-name: MCP Server (Ruby)
-version: 1.0.0
+name: mcp-server
+version: 1.0.1
 description: This skill should be used when the user asks to "create an MCP server", "build MCP tools", "define MCP prompts", "register MCP resources", "implement Model Context Protocol", or mentions the mcp gem, MCP::Server, MCP::Tool, JSON-RPC transport, stdio transport, or streamable HTTP transport. Should also be used when editing MCP server files, working with tool/prompt/resource definitions, or discussing LLM tool integrations in Ruby.
 ---
 

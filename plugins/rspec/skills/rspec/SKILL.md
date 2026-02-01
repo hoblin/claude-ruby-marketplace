@@ -1,6 +1,6 @@
 ---
-name: RSpec Testing
-version: 1.1.0
+name: rspec
+version: 1.1.1
 description: This skill should be used when the user asks to "write specs", "create spec", "add RSpec tests", "fix failing spec", or mentions RSpec, describe blocks, it blocks, expect syntax, test doubles, or matchers. Should also be used when editing *_spec.rb files, working in spec/ directory, planning implementation phases that include tests (TDD/RGRC workflow), writing Testing Strategy or Success Criteria sections, discussing unit or integration tests, or reviewing spec output and test failures. Comprehensive RSpec and FactoryBot reference with best practices, ready-to-use patterns, and examples.
 ---
 
