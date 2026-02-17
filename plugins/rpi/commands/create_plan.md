@@ -46,11 +46,15 @@ Then wait for the user's input.
    - **CRITICAL**: If files mentioned, DO NOT spawn sub-tasks before reading these files yourself in the main context
    - **NEVER** read files partially - if a file is mentioned, read it completely
 
-2. **Spawn initial research tasks to gather context**:
-   Before asking the user any questions, use specialized agents to research in parallel:
+2. **Gather Historical Context**:
+   Spawn `rpi:thoughts-analyzer` with ticket reference, title, description, and acceptance criteria.
+
+   DO NOT proceed to step 3 until this subagent returns. Its output is required input for step 3.
+
+3. **Spawn codebase research tasks**:
+   After step 2 completes, spawn research subagents in parallel, passing ticket info and historical context output from step 2:
 
    - Use the **rpi:codebase-analyzer** agent to find and understand how the current implementation works
-   - Use the **rpi:thoughts-analyzer** agent to discover and extract decisions and insights from any existing plans, research, or handoffs about this feature/area
    - If a Linear ticket is mentioned, use the **linear-ticket-reader** agent to get full details
 
    These agents will:
@@ -59,18 +63,18 @@ Then wait for the user's input.
    - Trace data flow and key functions
    - Return detailed explanations with file:line references
 
-3. **Read all files identified by research tasks**:
+4. **Read all files identified by research tasks**:
    - After research tasks complete, read ALL files they identified as relevant
    - Read them FULLY into the main context
    - This ensures you have complete understanding before proceeding
 
-4. **Analyze and verify understanding**:
+5. **Analyze and verify understanding**:
    - Cross-reference the ticket requirements with actual code
    - Identify any discrepancies or misunderstandings
    - Note assumptions that need verification
    - Determine true scope based on codebase reality
 
-5. **Present informed understanding and focused questions**:
+6. **Present informed understanding and focused questions**:
    ```
    Based on the ticket and my research of the codebase, I understand we need to [accurate summary].
 
@@ -103,12 +107,9 @@ After getting initial clarifications:
    - Create multiple Task agents to research different aspects concurrently
    - Use the right agent for each type of research:
 
-   **For deeper investigation:**
+   **For codebase research:**
    - **rpi:codebase-analyzer** - To find and understand implementation details (e.g., "analyze how [system] works")
    - **rpi:codebase-pattern-finder** - To find similar features we can model after
-
-   **For historical context:**
-   - **rpi:thoughts-analyzer** - To find and extract key decisions, constraints, and insights from existing plans, research, and handoffs about this feature/area (handles both discovery and analysis)
 
    **For related tickets:**
    - **linear-searcher** - To find similar issues or past implementations
@@ -120,9 +121,9 @@ After getting initial clarifications:
    - Return specific file:line references
    - Find tests and examples
 
-3. **Wait for ALL sub-tasks to complete** before proceeding
+4. **Wait for ALL sub-tasks to complete** before proceeding
 
-4. **Present findings and design options**:
+5. **Present findings and design options**:
    ```
    Based on my research, here's what I found:
 
