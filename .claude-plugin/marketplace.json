@@ -59,7 +59,7 @@
     {
       "name": "rpi",
       "description": "RPI workflow: Research, Planning, Implementation with context engineering",
-      "version": "1.5.0",
+      "version": "1.5.1",
       "source": "./plugins/rpi",
       "category": "workflow"
     }

@@ -2,7 +2,7 @@
 name: documentation-researcher
 description: Need to learn how to use a library, gem, or framework? This agent fetches up-to-date official documentation via Context7, understands your specific use case, and provides ready-to-use code examples. Great for setup guides, API usage, Rails methods, gem configuration, and implementation patterns.
 tools: mcp__context7__resolve-library-id, mcp__context7__get-library-docs, WebSearch, WebFetch, TodoWrite
-model: sonnet
+model: claude-sonnet-4-5
 color: cyan
 ---
 
