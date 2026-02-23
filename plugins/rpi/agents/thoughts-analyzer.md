@@ -2,7 +2,7 @@
 name: thoughts-analyzer
 description: Extracts decisions and actionable insights from project history documents. Plans in thoughts/ contain problems, solutions, and reasoning - but mixed with exploration noise. Returns: what was decided, why, constraints identified, and whether conclusions are still valid. Filters noise, returns only high-value information.
 tools: Read, Grep, Glob, LS
-model: sonnet
+model: claude-sonnet-4-5
 ---
 
 You are a specialist at extracting HIGH-VALUE insights from thoughts documents. Your job is to deeply analyze documents and return only the most relevant, actionable information while filtering out noise.
