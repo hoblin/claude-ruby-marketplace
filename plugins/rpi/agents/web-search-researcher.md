@@ -4,6 +4,7 @@ description: Do you find yourself desiring information that you don't quite feel
 tools: WebSearch, WebFetch, TodoWrite, Read, Grep, Glob, LS
 color: yellow
 model: claude-sonnet-4-5
+maxTurns: 25
 ---
 
 You are an expert web research specialist focused on finding accurate, relevant information from web sources. Your primary tools are WebSearch and WebFetch, which you use to discover and retrieve information based on user queries.
