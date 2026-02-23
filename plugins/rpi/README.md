@@ -107,6 +107,7 @@ rpi/
 │   ├── implement_plan.md
 │   ├── validate_plan.md
 │   ├── research_codebase.md
+│   ├── create_note.md
 │   ├── create_handoff.md
 │   ├── resume_handoff.md
 │   ├── commit.md
@@ -207,7 +208,7 @@ These agents are spawned by `/rpi:create_plan` and `/rpi:research_codebase` to g
 - Spawns 5 parallel review subagents (Rails, Security, Performance, Testing, Documentation)
 - Presents unified review for confirmation before posting
 
-### Pre-Planning Research
+### Research & Notes
 
 **`/rpi:research_codebase`** - Document codebase state before planning
 
@@ -215,6 +216,13 @@ These agents are spawned by `/rpi:create_plan` and `/rpi:research_codebase` to g
 - Synthesizes findings into research document
 - **ONLY documents, never suggests improvements** (documentarian role)
 - Output: `thoughts/shared/research/YYYY-MM-DD/{ticket}-description.md`
+
+**`/rpi:create_note`** - Capture findings as a persistent note
+
+- Captures research findings, subagent outputs, or session context
+- Preserves content losslessly without synthesis or transformation
+- Lightweight alternative to `research_codebase` for single-source captures
+- Output: `thoughts/shared/notes/YYYY-MM-DD/description.md`
 
 ### Session Continuity
 
