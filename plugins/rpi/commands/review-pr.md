@@ -2,10 +2,6 @@
 description: Multi-agent PR review with three modes (review, re-review, self-review) - spawns parallel subagents, saves diff to /tmp for context efficiency, supports file exclusion patterns
 ---
 
-# PR Review Committee
-
-Multi-agent review system for Ruby on Rails pull requests. Gathers context from ticket and historical knowledge, spawns five parallel review subagents, then presents unified findings for confirmation before posting.
-
 ## Input Format
 
 ```
@@ -84,12 +80,7 @@ Spawn the **thoughts-analyzer** subagent to find historical knowledge about affe
 ```
 subagent_type: rpi:thoughts-analyzer
 
-Prompt: "Find relevant historical context for reviewing this feature.
-
-## Ticket
-<ticket reference, title, description, acceptance criteria from Step 1>
-
-Search thoughts/ for plans, research, and decisions related to this feature. Extract key decisions, constraints, trade-offs, and technical specs that reviewers should know."
+Prompt: "What do we know about <ticket reference and title from Step 1>? What decisions, constraints, and trade-offs should reviewers be aware of?"
 ```
 
 **Wait for this subagent to complete before proceeding.**
