@@ -62,13 +62,13 @@ If the user provided file exclusion or inclusion patterns in additional instruct
 
 ```bash
 # Exclude specific paths
-git diff $BASE -- . ':(exclude)config/locales' ':(exclude)*.yml' > /tmp/pr_<NUMBER>_diff.txt
+git diff $BASE -- . ':(exclude)path/to/noisy/dir' ':(exclude)*.ext' > /tmp/pr_<NUMBER>_diff.txt
 
 # Include only specific directories
-git diff $BASE -- app/models/ app/services/ spec/ > /tmp/pr_<NUMBER>_diff.txt
+git diff $BASE -- path/to/dir1/ path/to/dir2/ > /tmp/pr_<NUMBER>_diff.txt
 
 # Combine inclusion with exclusion
-git diff $BASE -- app/ spec/ ':(exclude)spec/fixtures' > /tmp/pr_<NUMBER>_diff.txt
+git diff $BASE -- path/to/dir/ ':(exclude)path/to/dir/subdir' > /tmp/pr_<NUMBER>_diff.txt
 ```
 
 Verify the diff is non-empty: `wc -l < /tmp/pr_<NUMBER>_diff.txt`
