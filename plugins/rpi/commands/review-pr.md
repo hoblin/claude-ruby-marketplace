@@ -6,26 +6,78 @@ description: Multi-agent PR review for Rails - spawns parallel subagents for com
 
 Multi-agent review system for Ruby on Rails pull requests. Gathers context from ticket and historical knowledge, spawns five parallel review subagents, then presents unified findings for confirmation before posting.
 
-## Process
+## Input Format
 
-### Step 1: Gather PR Context
-
-```bash
-# Get PR metadata, body, comments, and reviews
-gh pr view <PR_NUMBER> --json number,title,body,url,comments,reviews
-
-# Get the diff
-gh pr diff <PR_NUMBER>
+```
+/rpi:review-pr [mode] [PR] [additional instructions]
 ```
 
-If no PR exists (local changes only): `git diff <base-branch>...HEAD` (adjust base branch as needed)
+- **mode** (optional): `review` (default), `re-review`, or `self-review`
+- **PR**: PR number or link (required)
+- **additional instructions** (optional): file exclusions, focus areas, or any custom guidance
+
+Examples:
+```
+/rpi:review-pr #1234
+/rpi:review-pr re-review #1234
+/rpi:review-pr self-review #1234
+/rpi:review-pr #1234 exclude config/locales and .yml files
+/rpi:review-pr re-review #1234 skip rails guru because it is not a rails project
+```
+
+## Process
+
+### Step 1: Gather PR Metadata
+
+```bash
+gh pr view <PR_NUMBER> --json number,title,body,url,headRefName,baseRefName
+```
 
 Extract from PR body:
-- **Ticket reference** (e.g., ENG-123, PROJ-456) - if found, fetch ticket details for context
-- **Acceptance criteria** - what the PR should accomplish
-- **Business context** - why this change is needed
+- **Ticket reference** (e.g., ENG-123, PROJ-456) — if found, fetch full ticket details for requirements and acceptance criteria
+- **Business context** — why this change is needed
 
-### Step 2: Gather Historical Context
+If re-review mode is activated, also save all existing review feedback to `/tmp/`:
+```bash
+# Review verdicts and bodies (APPROVED, CHANGES_REQUESTED, COMMENTED)
+gh api repos/<OWNER>/<REPO>/pulls/<PR_NUMBER>/reviews > /tmp/pr_<NUMBER>_reviews.json
+
+# Inline review comments on specific diff lines
+gh api repos/<OWNER>/<REPO>/pulls/<PR_NUMBER>/comments > /tmp/pr_<NUMBER>_inline_comments.json
+
+# Conversation-level comments
+gh api repos/<OWNER>/<REPO>/issues/<PR_NUMBER>/comments > /tmp/pr_<NUMBER>_conversation.json
+```
+
+### Step 2: Fetch and Save Diff
+
+Checkout the PR branch locally and generate the diff. Save it to `/tmp/` — only subagents will read it.
+
+```bash
+git fetch origin
+git checkout <branch>
+
+# Use merge-base for a clean diff (handles diverged base branch)
+BASE=$(git merge-base origin/<baseRefName> HEAD)
+git diff $BASE -- . > /tmp/pr_<NUMBER>_diff.txt
+```
+
+If the user provided file exclusion or inclusion patterns in additional instructions, apply them using git's pathspec syntax:
+
+```bash
+# Exclude specific paths
+git diff $BASE -- . ':(exclude)config/locales' ':(exclude)*.yml' > /tmp/pr_<NUMBER>_diff.txt
+
+# Include only specific directories
+git diff $BASE -- app/models/ app/services/ spec/ > /tmp/pr_<NUMBER>_diff.txt
+
+# Combine inclusion with exclusion
+git diff $BASE -- app/ spec/ ':(exclude)spec/fixtures' > /tmp/pr_<NUMBER>_diff.txt
+```
+
+Verify the diff is non-empty: `wc -l < /tmp/pr_<NUMBER>_diff.txt`
+
+### Step 3: Gather Historical Context
 
 Spawn the **thoughts-analyzer** subagent to find historical knowledge about affected features.
 
@@ -42,13 +94,16 @@ Search thoughts/ for plans, research, and decisions related to this feature. Ext
 
 **Wait for this subagent to complete before proceeding.**
 
-### Step 3: Spawn Review Subagents
+### Step 4: Spawn Review Subagents
 
 Spawn all five review subagents **in parallel** using the Task tool with `subagent_type: Explore`. Each receives:
-- PR number (to fetch diff themselves via `gh pr diff`)
+- Path to the diff file in `/tmp/`
 - Ticket context (from Step 1)
-- Historical context (from Step 2)
+- Historical context (from Step 3)
 - Their specific review focus
+- Any additional instructions from the user's input
+
+If re-review mode is activated, each subagent also receives the paths to `/tmp/pr_<NUMBER>_reviews.json`, `/tmp/pr_<NUMBER>_inline_comments.json`, and `/tmp/pr_<NUMBER>_conversation.json` with this modified instruction: "Primary goal: verify that previously requested changes were addressed. Secondary goal: check for new problems introduced."
 
 **Critical:** Send a single message with all five Task tool calls to ensure parallel execution.
 
@@ -57,15 +112,17 @@ Spawn all five review subagents **in parallel** using the Task tool with `subage
 ```
 Prompt: "Review PR #<number> for Rails conventions and architecture.
 
-First, fetch the diff: `gh pr diff <number>`
+Read the diff from: /tmp/pr_<number>_diff.txt
 
-IMPORTANT: Activate the activerecord:activerecord skill for AR patterns reference.
+*Critical:* Activate the activerecord:activerecord skill for AR patterns reference.
 
 ## Ticket Context
 <ticket title, acceptance criteria, business context>
 
 ## Historical Context
 <output from thoughts-analyzer>
+
+<any additional instructions from user input>
 
 ## Focus Areas
 - MVC boundary violations (fat controllers, logic in views)
@@ -82,15 +139,17 @@ Output: List findings tagged [major], [minor], or [nit] with file:line reference
 ```
 Prompt: "Review PR #<number> for security vulnerabilities.
 
-First, fetch the diff: `gh pr diff <number>`
+Read the diff from: /tmp/pr_<number>_diff.txt
 
-IMPORTANT: Activate the activerecord:activerecord skill for SQL injection prevention patterns.
+*Critical:* Activate the activerecord:activerecord skill for SQL injection prevention patterns.
 
 ## Ticket Context
 <ticket title, acceptance criteria, business context>
 
 ## Historical Context
 <output from thoughts-analyzer>
+
+<any additional instructions from user input>
 
 ## Focus Areas
 - SQL injection (raw queries, interpolation in where clauses)
@@ -109,16 +168,18 @@ Output: List findings tagged [major], [minor], or [nit] with file:line reference
 ```
 Prompt: "Review PR #<number> for performance issues.
 
-First, fetch the diff: `gh pr diff <number>`
+Read the diff from: /tmp/pr_<number>_diff.txt
 
-IMPORTANT: Activate the activerecord:activerecord skill for N+1 and query optimization patterns.
-IMPORTANT: Activate the appsignal-perf skill for performance monitoring insights.
+*Critical:* Activate the activerecord:activerecord skill for N+1 and query optimization patterns.
+*Critical:* Activate the appsignal-perf skill for performance monitoring insights.
 
 ## Ticket Context
 <ticket title, acceptance criteria, business context>
 
 ## Historical Context
 <output from thoughts-analyzer>
+
+<any additional instructions from user input>
 
 ## Focus Areas
 - N+1 query patterns (missing includes/preload/eager_load)
@@ -137,15 +198,17 @@ Output: List findings tagged [major], [minor], or [nit] with file:line reference
 ```
 Prompt: "Review PR #<number> for test quality and coverage.
 
-First, fetch the diff: `gh pr diff <number>`
+Read the diff from: /tmp/pr_<number>_diff.txt
 
-IMPORTANT: Activate the rspec:rspec skill for RSpec best practices reference.
+*Critical:* Activate the rspec:rspec skill for RSpec best practices reference.
 
 ## Ticket Context
 <ticket title, acceptance criteria, business context>
 
 ## Historical Context
 <output from thoughts-analyzer>
+
+<any additional instructions from user input>
 
 ## Focus Areas
 - Missing test coverage for new code paths
@@ -163,13 +226,15 @@ Output: List findings tagged [major], [minor], or [nit] with file:line reference
 ```
 Prompt: "Review PR #<number> for documentation and clarity.
 
-First, fetch the diff: `gh pr diff <number>`
+Read the diff from: /tmp/pr_<number>_diff.txt
 
 ## Ticket Context
 <ticket title, acceptance criteria, business context>
 
 ## Historical Context
 <output from thoughts-analyzer>
+
+<any additional instructions from user input>
 
 ## Focus Areas
 - Method and class naming clarity
@@ -182,45 +247,57 @@ First, fetch the diff: `gh pr diff <number>`
 Output: List findings tagged [major], [minor], or [nit] with file:line references."
 ```
 
-### Step 4: Merge Results
+### Step 5: Merge Results
 
 After all subagents complete, compile findings into a unified review:
 
-1. **Group by severity** - [major] first, then [minor], then [nit]
-2. **Remove duplicates** - Multiple agents may flag the same issue
-3. **Add actionable suggestions** - Include code snippets where helpful
-4. **Preserve file:line references** - Format as `app/models/user.rb:42`
+1. **Group by severity** — [major] first, then [minor], then [nit]
+2. **Remove duplicates** — Multiple agents may flag the same issue
+3. **Add actionable suggestions** — Include code snippets where helpful
+4. **Preserve file:line references** — Format as `app/models/user.rb:42`
 
 Determine verdict:
-- **REQUEST_CHANGES** - If any [major] or multiple [minor] issues exist
-- **COMMENT** - If only [minor] issues or [nit]s remain
-- **APPROVE** - If no significant issues found
+- **REQUEST_CHANGES** — If any [major] or multiple [minor] issues exist
+- **APPROVE** — If no significant issues found
 
-### Step 5: Present Review and Await Confirmation
+### Step 6: Finalize
+
+If self-review mode is activated, skip to **Self-review** below.
+
+#### Present and Post (review / re-review)
 
 Present the merged review to the user, including:
 - PR reference and ticket (if found)
 - Determined verdict
 - All findings grouped by severity
 
-Ask for confirmation: "Shall I post this review to the PR? [Yes/Edit/Cancel]"
-
-### Step 6: Post Review via gh CLI
+Use the AskUserQuestion tool to confirm: "Shall I post this review to the PR? [Yes/Edit/Cancel]"
+- **Yes** — post the review
+- **Edit** — let the user modify the review, then ask again
+- **Cancel** — discard
 
 Once confirmed, post the review:
 
 ```bash
-# For APPROVE
 gh pr review <PR_NUMBER> --approve --body "<review body>"
-
-# For COMMENT (suggestions only)
-gh pr review <PR_NUMBER> --comment --body "<review body>"
-
-# For REQUEST_CHANGES
+# or
 gh pr review <PR_NUMBER> --request-changes --body "<review body>"
 ```
 
-The review body should be formatted as clean markdown without the confirmation prompt.
+#### Self-review
+
+Instead of presenting and posting, act on the findings:
+
+1. **Fix findings** — Address [major] and [minor] issues directly in code. Apply [nit]s at own discretion.
+2. **Commit and push** — Commit the fixes with a descriptive message and push to the PR branch.
+3. **Assign reviewer** — Assign the user and request review from anyone mentioned in additional instructions.
+4. **Wait for CI** — Monitor CI status. Once green, mark the PR as ready for review.
+
+```bash
+gh pr edit <PR_NUMBER> --add-assignee <user> --add-reviewer <reviewer>
+# once CI is green:
+gh pr ready <PR_NUMBER>
+```
 
 ## Posted Review Format
 
@@ -252,4 +329,5 @@ The review body should be formatted as clean markdown without the confirmation p
 
 - Focus only on changed lines, not surrounding unchanged code
 - Provide concrete fix suggestions for [major] issues
-- If user chooses "Edit", allow them to modify the review before posting
+- The main agent must never read the diff file — only subagents read it
+- Pass additional instructions from user input through to all subagents
