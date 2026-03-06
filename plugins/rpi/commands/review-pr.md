@@ -33,7 +33,7 @@ Extract from PR body:
 - **Ticket reference** (e.g., ENG-123, PROJ-456) — if found, fetch full ticket details for requirements and acceptance criteria
 - **Business context** — why this change is needed
 
-If re-review mode is activated, also save all existing review feedback to `/tmp/`:
+If re-review mode is activated, also save all existing review feedback to `/tmp/` without reading them:
 ```bash
 # Review verdicts and bodies (APPROVED, CHANGES_REQUESTED, COMMENTED)
 gh api repos/<OWNER>/<REPO>/pulls/<PR_NUMBER>/reviews > /tmp/pr_<NUMBER>_reviews.json
