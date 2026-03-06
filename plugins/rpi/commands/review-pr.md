@@ -1,5 +1,5 @@
 ---
-description: Multi-agent PR review for Rails - spawns parallel subagents for comprehensive code review
+description: Multi-agent PR review with three modes (review, re-review, self-review) - spawns parallel subagents, saves diff to /tmp for context efficiency, supports file exclusion patterns
 ---
 
 # PR Review Committee
