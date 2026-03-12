@@ -240,7 +240,16 @@ Output: List findings tagged [major], [minor], or [nit] with file:line reference
 
 ### Step 5: Merge Results
 
-After all subagents complete, compile findings into a unified review:
+After all subagents complete, compile findings into a unified review.
+
+**Critical: Subagents are pattern matchers. You are the judgment layer.** Subagents are designed to be paranoid and thorough — they flag everything that matches their heuristics. Your job is to filter their output, not rubber-stamp it. A [major] from a subagent can become a [nit] or be dropped entirely after applying judgment.
+
+For each finding, evaluate:
+- **Real-world probability** — Can this actually happen in practice, or is it purely theoretical? A race condition that requires two users to open a personal link within the same millisecond is not a real issue.
+- **Cost-benefit** — Does the fix add more complexity than the problem warrants? If the "fix" makes the code harder to read without solving a problem a human would encounter, drop it.
+- **Scope** — Review fixes should improve code you're touching, not introduce new artifacts. Clean up, don't build out.
+
+Then compile:
 
 1. **Group by severity** — [major] first, then [minor], then [nit]
 2. **Remove duplicates** — Multiple agents may flag the same issue
@@ -248,8 +257,8 @@ After all subagents complete, compile findings into a unified review:
 4. **Preserve file:line references** — Format as `app/models/user.rb:42`
 
 Determine verdict:
-- **REQUEST_CHANGES** — If any [major] or multiple [minor] issues exist
-- **APPROVE** — If no significant issues found
+- **REQUEST_CHANGES** — If any [major] or multiple [minor] issues survive the judgment filter
+- **APPROVE** — If no significant issues remain after filtering
 
 ### Step 6: Finalize
 
