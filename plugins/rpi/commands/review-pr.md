@@ -24,6 +24,8 @@ Examples:
 
 ## Process
 
+Steps are sequential — later steps depend on earlier results. Complete each step and wait for its results before starting the next. Skipping ahead without subagent results means the judgment layer in "Step 5: Merge Results" has nothing to work with. Only parallelize where explicitly marked (e.g., "spawn in parallel").
+
 ### Step 1: Gather PR Metadata
 
 ```bash
