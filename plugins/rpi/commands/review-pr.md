@@ -94,7 +94,7 @@ subagent_type: rpi:thoughts-analyzer
 Prompt: "What do we know about <ticket reference and title from "Step 1: Gather PR Metadata">? What decisions, constraints, and trade-offs should reviewers be aware of?"
 ```
 
-**Wait for this subagent to complete before proceeding.**
+**Wait for this subagent to complete, then proceed to "Step 4-a: Spawn Review Subagents".**
 
 ### Step 4-a: Spawn Review Subagents
 
