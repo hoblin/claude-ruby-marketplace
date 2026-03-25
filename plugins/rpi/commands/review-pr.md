@@ -86,6 +86,8 @@ Verify the diff is non-empty: `wc -l < /tmp/pr_<NUMBER>_diff.txt`
 
 The PR references the original ticket (e.g., ENG-123, PROJ-456). Fetch full ticket details — requirements and acceptance criteria define what "correct" looks like for this change. You can't review a feature without knowing what was in the task description before it was implemented.
 
+Wait for ticket details before proceeding — "Step 4: Gather Historical Context" needs the ticket context to ask the right questions.
+
 ### Step 4: Gather Historical Context
 
 Spawn the **thoughts-analyzer** subagent to find historical knowledge about affected features.
@@ -93,7 +95,7 @@ Spawn the **thoughts-analyzer** subagent to find historical knowledge about affe
 ```
 subagent_type: rpi:thoughts-analyzer
 
-Prompt: "What do we know about <ticket reference and title from "Step 1: Gather PR Metadata">? What decisions, constraints, and trade-offs should reviewers be aware of?"
+Prompt: "What do we know about <ticket reference and title from "Step 3: Fetch Original Ticket">? What decisions, constraints, and trade-offs should reviewers be aware of?"
 ```
 
 **Wait for this subagent to complete, then proceed to "Step 5-a: Spawn Review Subagents".**
