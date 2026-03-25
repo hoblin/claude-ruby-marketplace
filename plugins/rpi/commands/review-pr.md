@@ -26,19 +26,17 @@ Examples:
 
 Your role is **orchestrator and judge**, not doer. You collect artifacts, delegate analysis to subagents, and apply judgment to their output. The subagents read the code and comments — you decide what to do about their findings. Your context budget is reserved for judgment, not for reading raw data.
 
-Steps are sequential — later steps depend on earlier results. Complete each step and wait for its results before starting the next. Skipping ahead without subagent results means the judgment layer in "Step 5: Merge Results" has nothing to work with. Only parallelize where explicitly marked (e.g., "spawn in parallel").
+Steps are sequential — later steps depend on earlier results. Complete each step and wait for its results before starting the next. Skipping ahead without subagent results means the judgment layer in "Step 6: Merge Results" has nothing to work with. Only parallelize where explicitly marked (e.g., "spawn in parallel").
 
-### Step 1: Gather Feature Context
+### Step 1: Gather PR Metadata
 
 ```bash
 gh pr view <PR_NUMBER> --json number,title,body,url,headRefName,baseRefName
 ```
 
-The PR references the original ticket (e.g., ENG-123, PROJ-456). Fetch full ticket details — requirements and acceptance criteria define what "correct" looks like for this change before proceeding further. You can't review a feature without knowing what was in the task description before it was implemented.
-
 If re-review or address-feedback mode is activated, also save all existing review feedback to `/tmp/`:
 
-**Do not read these files — pass them to subagents by path only.** The subagents will read and analyze the content. Reading them here would consume context budget that the main agent needs for judgment in "Step 5: Merge Results".
+**Do not read these files — pass them to subagents by path only.** The subagents will read and analyze the content. Reading them here would consume context budget that the main agent needs for judgment in "Step 6: Merge Results".
 ```bash
 # Review verdicts and bodies (APPROVED, CHANGES_REQUESTED, COMMENTED)
 gh api repos/<OWNER>/<REPO>/pulls/<PR_NUMBER>/reviews \
@@ -84,26 +82,30 @@ git diff $BASE -- path/to/dir/ ':(exclude)path/to/dir/subdir' > /tmp/pr_<NUMBER>
 
 Verify the diff is non-empty: `wc -l < /tmp/pr_<NUMBER>_diff.txt`
 
-### Step 3: Gather Historical Context
+### Step 3: Fetch Original Ticket
+
+The PR references the original ticket (e.g., ENG-123, PROJ-456). Fetch full ticket details — requirements and acceptance criteria define what "correct" looks like for this change. You can't review a feature without knowing what was in the task description before it was implemented.
+
+### Step 4: Gather Historical Context
 
 Spawn the **thoughts-analyzer** subagent to find historical knowledge about affected features.
 
 ```
 subagent_type: rpi:thoughts-analyzer
 
-Prompt: "What do we know about <ticket reference and title from "Step 1: Gather Feature Context">? What decisions, constraints, and trade-offs should reviewers be aware of?"
+Prompt: "What do we know about <ticket reference and title from "Step 1: Gather PR Metadata">? What decisions, constraints, and trade-offs should reviewers be aware of?"
 ```
 
-**Wait for this subagent to complete, then proceed to "Step 4-a: Spawn Review Subagents".**
+**Wait for this subagent to complete, then proceed to "Step 5-a: Spawn Review Subagents".**
 
-### Step 4-a: Spawn Review Subagents
+### Step 5-a: Spawn Review Subagents
 
-If address-feedback mode is activated, skip to "Step 4-b: Spawn Codebase Research Subagents (address-feedback)" below.
+If address-feedback mode is activated, skip to "Step 5-b: Spawn Codebase Research Subagents (address-feedback)" below.
 
 Spawn all five review subagents **in parallel** using the Task tool with `subagent_type: Explore`. Each receives:
 - Path to the diff file in `/tmp/`
-- Ticket context (from "Step 1: Gather Feature Context")
-- Historical context (from "Step 3: Gather Historical Context")
+- Ticket context (from "Step 1: Gather PR Metadata")
+- Historical context (from "Step 4: Gather Historical Context")
 - Their specific review focus
 - Any additional instructions from the user's input
 
@@ -251,16 +253,16 @@ Read the diff from: /tmp/pr_<number>_diff.txt
 Output: List findings tagged [major], [minor], or [nit] with file:line references."
 ```
 
-### Step 4-b: Spawn Codebase Research Subagents (address-feedback)
+### Step 5-b: Spawn Codebase Research Subagents (address-feedback)
 
-Unless address-feedback mode is activated, skip to "Step 5: Merge Results" below.
+Unless address-feedback mode is activated, skip to "Step 6: Merge Results" below.
 
 Spawn **rpi:codebase-analyzer** and **rpi:codebase-pattern-finder** in parallel. Each receives:
 - Paths to comment files and diff file in `/tmp/`
-- Historical context (from "Step 3: Gather Historical Context")
+- Historical context (from "Step 4: Gather Historical Context")
 - Any additional instructions from the user's input
 
-### Step 5: Merge Results
+### Step 6: Merge Results
 
 After all subagents complete, compile findings into a unified review.
 
@@ -288,7 +290,7 @@ Determine verdict:
 - **REQUEST_CHANGES** — If any [major] or multiple [minor] concerns are accepted
 - **APPROVE** — If no significant concerns survive the judgment filter
 
-### Step 6: Finalize
+### Step 7: Finalize
 
 If self-review or address-feedback mode is activated, skip to "Address Feedback" below.
 
