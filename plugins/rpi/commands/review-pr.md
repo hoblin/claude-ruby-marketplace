@@ -28,7 +28,9 @@ Your role is **orchestrator and judge**, not doer. You collect artifacts, delega
 
 Steps are sequential — later steps depend on earlier results. Complete each step and wait for its results before starting the next. Skipping ahead without subagent results means the judgment layer in "Step 5: Merge Results" has nothing to work with. Only parallelize where explicitly marked (e.g., "spawn in parallel").
 
-### Step 1: Gather PR Metadata
+### Step 1: Gather Feature Context
+
+A PR implements a feature. Trace back to the original ticket to understand what "correct" looks like.
 
 ```bash
 gh pr view <PR_NUMBER> --json number,title,body,url,headRefName,baseRefName
@@ -95,7 +97,7 @@ Spawn the **thoughts-analyzer** subagent to find historical knowledge about affe
 ```
 subagent_type: rpi:thoughts-analyzer
 
-Prompt: "What do we know about <ticket reference and title from "Step 1: Gather PR Metadata">? What decisions, constraints, and trade-offs should reviewers be aware of?"
+Prompt: "What do we know about <ticket reference and title from "Step 1: Gather Feature Context">? What decisions, constraints, and trade-offs should reviewers be aware of?"
 ```
 
 **Wait for this subagent to complete, then proceed to "Step 4-a: Spawn Review Subagents".**
@@ -106,7 +108,7 @@ If address-feedback mode is activated, skip to "Step 4-b: Spawn Codebase Researc
 
 Spawn all five review subagents **in parallel** using the Task tool with `subagent_type: Explore`. Each receives:
 - Path to the diff file in `/tmp/`
-- Ticket context (from "Step 1: Gather PR Metadata")
+- Ticket context (from "Step 1: Gather Feature Context")
 - Historical context (from "Step 3: Gather Historical Context")
 - Their specific review focus
 - Any additional instructions from the user's input
