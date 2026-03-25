@@ -1,5 +1,5 @@
 ---
-description: Multi-agent PR review with three modes (review, re-review, self-review) - spawns parallel subagents, saves diff to /tmp for context efficiency, supports file exclusion patterns
+description: Multi-agent PR review with four modes (review, re-review, self-review, address-feedback) - spawns parallel subagents, saves diff to /tmp for context efficiency, supports file exclusion patterns
 ---
 
 ## Input Format
@@ -8,7 +8,7 @@ description: Multi-agent PR review with three modes (review, re-review, self-rev
 /rpi:review-pr [mode] [PR] [additional instructions]
 ```
 
-- **mode** (optional): `review` (default), `re-review`, or `self-review`
+- **mode** (optional): `review` (default), `re-review`, `self-review`, or `address-feedback`
 - **PR**: PR number or link (required)
 - **additional instructions** (optional): file exclusions, focus areas, or any custom guidance
 
@@ -17,6 +17,7 @@ Examples:
 /rpi:review-pr #1234
 /rpi:review-pr re-review #1234
 /rpi:review-pr self-review #1234
+/rpi:review-pr address-feedback #1234
 /rpi:review-pr #1234 exclude config/locales and .yml files
 /rpi:review-pr re-review #1234 skip rails guru because it is not a rails project
 ```
@@ -33,7 +34,7 @@ Extract from PR body:
 - **Ticket reference** (e.g., ENG-123, PROJ-456) — if found, fetch full ticket details for requirements and acceptance criteria
 - **Business context** — why this change is needed
 
-If re-review mode is activated, also save all existing review feedback to `/tmp/` without reading them:
+If re-review or address-feedback mode is activated, also save all existing review feedback to `/tmp/` without reading them:
 ```bash
 # Review verdicts and bodies (APPROVED, CHANGES_REQUESTED, COMMENTED)
 gh api repos/<OWNER>/<REPO>/pulls/<PR_NUMBER>/reviews | tee /tmp/pr_<NUMBER>_reviews.json | jq length
@@ -85,7 +86,9 @@ Prompt: "What do we know about <ticket reference and title from Step 1>? What de
 
 **Wait for this subagent to complete before proceeding.**
 
-### Step 4: Spawn Review Subagents
+### Step 4-a: Spawn Review Subagents
+
+If address-feedback mode is activated, skip to **Step 4-b** below.
 
 Spawn all five review subagents **in parallel** using the Task tool with `subagent_type: Explore`. Each receives:
 - Path to the diff file in `/tmp/`
@@ -238,31 +241,47 @@ Read the diff from: /tmp/pr_<number>_diff.txt
 Output: List findings tagged [major], [minor], or [nit] with file:line references."
 ```
 
+### Step 4-b: Spawn Codebase Research Subagents (address-feedback)
+
+Unless address-feedback mode is activated, skip to **Step 5** below.
+
+Spawn **rpi:codebase-analyzer** and **rpi:codebase-pattern-finder** in parallel. Each receives:
+- Paths to comment files and diff file in `/tmp/`
+- Historical context (from Step 3)
+- Any additional instructions from the user's input
+
 ### Step 5: Merge Results
 
 After all subagents complete, compile findings into a unified review.
 
 **Critical: Subagents are pattern matchers. You are the judgment layer.** Subagents are designed to be paranoid and thorough — they flag everything that matches their heuristics. Your job is to filter their output, not rubber-stamp it. A [major] from a subagent can become a [nit] or be dropped entirely after applying judgment.
 
-For each finding, evaluate:
+For each concern, evaluate:
 - **Real-world probability** — Can this actually happen in practice, or is it purely theoretical? A race condition that requires two users to open a personal link within the same millisecond is not a real issue.
 - **Cost-benefit** — Does the fix add more complexity than the problem warrants? If the "fix" makes the code harder to read without solving a problem a human would encounter, drop it.
 - **Scope** — Review fixes should improve code you're touching, not introduce new artifacts. Clean up, don't build out.
+- **Design intent** — Was this a deliberate choice? A concern that flags a conscious trade-off documented in historical context is a decline, not a fix.
+
+Then classify:
+- **Accept & fix** — concern valid, apply the suggested fix or a better one
+- **Accept, different approach** — concern valid, but context points to a different solution
+- **Decline** — not valid in context, or a deliberate design choice
 
 Then compile:
 
 1. **Group by severity** — [major] first, then [minor], then [nit]
-2. **Remove duplicates** — Multiple agents may flag the same issue
+2. **Remove duplicates** — Multiple sources may flag the same issue
 3. **Add actionable suggestions** — Include code snippets where helpful
 4. **Preserve file:line references** — Format as `app/models/user.rb:42`
 
 Determine verdict:
-- **REQUEST_CHANGES** — If any [major] or multiple [minor] issues survive the judgment filter
-- **APPROVE** — If no significant issues remain after filtering
+- **REQUEST_CHANGES** — If any [major] or multiple [minor] concerns are accepted
+- **APPROVE** — If no significant concerns survive the judgment filter
 
 ### Step 6: Finalize
 
 If self-review mode is activated, skip to **Self-review** below.
+If address-feedback mode is activated, skip to **Address Feedback** below.
 
 #### Present and Post (review / re-review)
 
@@ -297,6 +316,36 @@ Instead of presenting and posting, act on the findings:
 gh pr edit <PR_NUMBER> --add-assignee <user> --add-reviewer <reviewer>
 # once CI is green:
 gh pr ready <PR_NUMBER>
+```
+
+#### Address Feedback
+
+Present the classified concerns to the user, grouped by classification.
+
+Use the AskUserQuestion tool to confirm: "Shall I proceed with these fixes and reply to the reviewer? [Yes/Edit/Cancel]"
+- **Yes** — proceed
+- **Edit** — let the user adjust classifications, then ask again
+- **Cancel** — discard
+
+Once confirmed:
+
+1. **Fix concerns** — Apply all "accept & fix" and "accept, different approach" changes in code.
+2. **Commit and push** — Commit the fixes with a descriptive message and push to the PR branch.
+3. **Reply to comments** — Reply to each reviewer comment on GitHub with the resolution:
+   - Accept & fix: "Fixed in `<commit sha>`."
+   - Accept, different approach: "Agreed with the concern. Took a different approach: [explanation]. Fixed in `<commit sha>`."
+   - Decline: "This was intentional — [rationale]."
+4. **Request re-review** — Request re-review from the original reviewer.
+
+```bash
+# Reply to an inline comment
+gh api repos/<OWNER>/<REPO>/pulls/<PR_NUMBER>/comments/<COMMENT_ID>/replies -f body="<reply>"
+
+# Reply to a conversation-level comment
+gh api repos/<OWNER>/<REPO>/issues/<PR_NUMBER>/comments -f body="<reply>"
+
+# Request re-review
+gh pr edit <PR_NUMBER> --add-reviewer <original_reviewer>
 ```
 
 ## Posted Review Format

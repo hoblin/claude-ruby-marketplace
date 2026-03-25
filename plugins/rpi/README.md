@@ -202,11 +202,12 @@ These agents are spawned by `/rpi:create_plan` and `/rpi:research_codebase` to g
 - Runs QA checks and creates draft PR
 - For smaller features that don't need multi-session planning
 
-**`/rpi:review-pr`** - Multi-agent PR review with three modes
+**`/rpi:review-pr`** - Multi-agent PR review with four modes
 
 - **review** (default) — full review, post findings to GitHub
 - **re-review** — verify previously requested changes were addressed
 - **self-review** — fix findings directly, commit, push, and prepare PR for human review
+- **address-feedback** — contextualize reviewer feedback against codebase and design intent, fix accepted concerns, reply to reviewer
 - Supports file exclusion/inclusion patterns and custom instructions
 - Saves diff to `/tmp/` for context-efficient subagent delegation
 
