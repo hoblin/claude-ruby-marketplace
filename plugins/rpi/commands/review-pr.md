@@ -280,8 +280,7 @@ Determine verdict:
 
 ### Step 6: Finalize
 
-If self-review mode is activated, skip to **Self-review** below.
-If address-feedback mode is activated, skip to **Address Feedback** below.
+If self-review or address-feedback mode is activated, skip to **Self-review** below.
 
 #### Present and Post (review / re-review)
 
@@ -318,24 +317,10 @@ gh pr edit <PR_NUMBER> --add-assignee <user> --add-reviewer <reviewer>
 gh pr ready <PR_NUMBER>
 ```
 
-#### Address Feedback
-
-Present the classified concerns to the user, grouped by classification.
-
-Use the AskUserQuestion tool to confirm: "Shall I proceed with these fixes and reply to the reviewer? [Yes/Edit/Cancel]"
-- **Yes** — proceed
-- **Edit** — let the user adjust classifications, then ask again
-- **Cancel** — discard
-
-Once confirmed:
-
-1. **Fix concerns** — Apply all "accept & fix" and "accept, different approach" changes in code.
-2. **Commit and push** — Commit the fixes with a descriptive message and push to the PR branch.
-3. **Reply to comments** — Reply to each reviewer comment on GitHub with the resolution:
-   - Accept & fix: "Fixed in `<commit sha>`."
-   - Accept, different approach: "Agreed with the concern. Took a different approach: [explanation]. Fixed in `<commit sha>`."
-   - Decline: "This was intentional — [rationale]."
-4. **Request re-review** — Request re-review from the original reviewer.
+If address-feedback mode, also reply to each reviewer comment on GitHub with the resolution:
+- Accept & fix: "Fixed in `<commit sha>`."
+- Accept, different approach: "Agreed with the concern. Took a different approach: [explanation]. Fixed in `<commit sha>`."
+- Decline: "This was intentional — [rationale]."
 
 ```bash
 # Reply to an inline comment
@@ -343,9 +328,6 @@ gh api repos/<OWNER>/<REPO>/pulls/<PR_NUMBER>/comments/<COMMENT_ID>/replies -f b
 
 # Reply to a conversation-level comment
 gh api repos/<OWNER>/<REPO>/issues/<PR_NUMBER>/comments -f body="<reply>"
-
-# Request re-review
-gh pr edit <PR_NUMBER> --add-reviewer <original_reviewer>
 ```
 
 ## Posted Review Format
