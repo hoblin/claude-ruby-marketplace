@@ -306,7 +306,7 @@ gh pr review <PR_NUMBER> --request-changes --body "<review body>"
 
 Instead of presenting and posting, act on the findings:
 
-1. **Fix findings** — Address [major] and [minor] issues directly in code. Apply [nit]s at own discretion.
+1. **Fix concerns** — Address [major] and [minor] issues directly in code. Apply [nit]s at own discretion.
 2. **Commit and push** — Commit the fixes with a descriptive message and push to the PR branch.
 3. **Assign reviewer** — Assign the user and request review from anyone mentioned in additional instructions.
 4. **Wait for CI** — Monitor CI status. Once green, mark the PR as ready for review.
