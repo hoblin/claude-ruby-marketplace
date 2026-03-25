@@ -280,7 +280,7 @@ Determine verdict:
 
 ### Step 6: Finalize
 
-If self-review or address-feedback mode is activated, skip to **Self-review** below.
+If self-review or address-feedback mode is activated, skip to **Address Feedback** below.
 
 #### Present and Post (review / re-review)
 
@@ -302,7 +302,7 @@ gh pr review <PR_NUMBER> --approve --body "<review body>"
 gh pr review <PR_NUMBER> --request-changes --body "<review body>"
 ```
 
-#### Self-review
+#### Address Feedback
 
 Instead of presenting and posting, act on the findings:
 
