@@ -292,11 +292,9 @@ Determine verdict:
 - **REQUEST_CHANGES** — If any [major] or multiple [minor] concerns are accepted
 - **APPROVE** — If no significant concerns survive the judgment filter
 
-### Step 7: Finalize
+### Step 7: Present Review (review / re-review)
 
-If self-review or address-feedback mode is activated, skip to "Address Feedback" below.
-
-#### Present and Post (review / re-review)
+If self-review or address-feedback mode is activated, skip to "Step 8: Apply Fixes".
 
 Present the merged review to the user, including:
 - PR reference and ticket (if found)
@@ -316,22 +314,34 @@ gh pr review <PR_NUMBER> --approve --body "<review body>"
 gh pr review <PR_NUMBER> --request-changes --body "<review body>"
 ```
 
-#### Address Feedback
+### Step 8: Apply Fixes (self-review / address-feedback)
 
-Your role changes from orchestrator to doer. You now have the judgment results — act on them:
+Your role changes from orchestrator to doer. You now have the judgment results — act on them.
 
 1. **Fix concerns** — Address [major] and [minor] issues directly in code. Apply [nit]s at own discretion.
 2. **Commit and push** — Commit the fixes with a descriptive message and push to the PR branch.
-3. **Assign reviewer** — Assign the user and request review from anyone mentioned in additional instructions.
-4. **Wait for CI** — Monitor CI status. Once green, mark the PR as ready for review.
+3. **Monitor CI** — Wait for CI to pass. The PR cannot be finalized until CI is green.
+
+```bash
+gh pr checks <PR_NUMBER> --watch
+```
+
+Fixes are pushed and CI is green. Now finalize the PR — proceed to the section matching your mode below.
+
+#### Self-Review Finalization
+
+Assign the user and request review from anyone mentioned in additional instructions. Then mark the PR as ready for human review.
 
 ```bash
 gh pr edit <PR_NUMBER> --add-assignee <user> --add-reviewer <reviewer>
-# once CI is green:
 gh pr ready <PR_NUMBER>
 ```
 
-If address-feedback mode, also reply to each reviewer comment on GitHub with the resolution:
+Done when the PR is marked ready and appears in the reviewer's queue.
+
+#### Address-Feedback Finalization
+
+Reply to each reviewer comment on GitHub with the resolution:
 - Accept & fix: "Fixed in `<commit sha>`."
 - Accept, different approach: "Agreed with the concern. Took a different approach: [explanation]. Fixed in `<commit sha>`."
 - Decline: "This was intentional — [rationale]."
@@ -343,6 +353,14 @@ gh api repos/<OWNER>/<REPO>/pulls/<PR_NUMBER>/comments/<COMMENT_ID>/replies -f b
 # Reply to a conversation-level comment
 gh api repos/<OWNER>/<REPO>/issues/<PR_NUMBER>/comments -f body="<reply>"
 ```
+
+Then request re-review from the original reviewers:
+
+```bash
+gh pr edit <PR_NUMBER> --add-reviewer <original_reviewer>
+```
+
+Done when all comments are answered and re-review is requested.
 
 ## Posted Review Format
 
