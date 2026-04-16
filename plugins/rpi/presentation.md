@@ -347,6 +347,103 @@ But in practice: decompose into small tickets works **better**
 
 <!-- _class: title -->
 
+# Bonus: Anima
+## What we're building with these ideas
+
+---
+
+## Every AI agent today is a tool pretending to be a person
+
+- One brain doing everything
+- Static context that fills up and **degrades**
+- Sub-agents that start blind
+- System prompt: *"you are a helpful assistant"*
+
+---
+
+## Anima's architecture choices
+
+---
+
+## Brain as microservices, not monolith
+
+```
+  Traditional agent:          Anima:
+
+  ┌──────────────────┐        ┌─────────┐
+  │                  │        │  Nous   │  Main LLM (thinking)
+  │  ONE LLM does    │        ├─────────┤
+  │  everything      │        │  Anal.  │  Subconscious (skills,
+  │                  │        │  Brain  │  goals, context mgmt)
+  │                  │        ├─────────┤
+  │                  │        │  Mneme  │  Memory department
+  └──────────────────┘        └─────────┘
+                              Shared event bus
+```
+
+Specialized subsystems, like the human brain
+
+---
+
+## Context that never degrades
+
+```
+  Traditional:  static array, fills up → model gets dumb
+
+  ┌──────────────────────────────────────────┐
+  │ msg msg msg msg msg msg msg msg FULL     │
+  └──────────────────────────────────────────┘
+  Older messages compressed → lossy → "dumb zone"
+
+
+  Anima:  fresh viewport assembled every iteration
+
+  ┌──────────────────────────────────────────┐
+  │ [L2 long-term 5%] [L1 recent 15%] [80%] │
+  └──────────────────────────────────────────┘
+  No compaction. No lossy rewriting. Endless sessions.
+```
+
+---
+
+## Memory that works like memory
+
+- **Not a filing cabinet** the agent has to consciously open
+- Runs as a **background process** on the event bus
+- Summarizes what's leaving the viewport
+- Compresses short-term → long-term (like sleep consolidation)
+- Pins critical moments to **active goals**
+- Recalls relevant memories **automatically**
+
+*The agent doesn't decide to remember. It just remembers.*
+
+---
+
+## A soul the agent writes itself
+
+First session = **birth**
+
+The agent wakes up, explores its world, meets its human,
+and **writes its own identity**
+
+Not a personality in a config file —
+a living document the agent authors and evolves
+
+---
+
+## Built with RPI + Thoughts
+
+Anima itself is developed using:
+- **Thoughts repo** for architectural decisions
+- **`feature`** + **`review-pr`** for all implementation
+- **`create_note`** after every brainstorm session
+
+The tools we just discussed → used to build this
+
+---
+
+<!-- _class: title -->
+
 # Key Takeaway
 
 ---
