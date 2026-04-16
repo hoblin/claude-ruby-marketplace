@@ -362,27 +362,31 @@ But in practice: decompose into small tickets works **better**
 
 ---
 
-## Anima's architecture choices
+## Anima: Three Muses on a shared event bus
 
----
-
-## Brain as microservices, not monolith
+Named after the three original Muses described by Pausanias:
 
 ```
-  Traditional agent:          Anima:
+  Traditional agent:        Anima:
 
-  ┌──────────────────┐        ┌─────────┐
-  │                  │        │  Nous   │  Main LLM (thinking)
-  │  ONE LLM does    │        ├─────────┤
-  │  everything      │        │  Anal.  │  Subconscious (skills,
-  │                  │        │  Brain  │  goals, context mgmt)
-  │                  │        ├─────────┤
-  │                  │        │  Mneme  │  Memory department
-  └──────────────────┘        └─────────┘
-                              Shared event bus
+  ┌────────────────┐        ┌──────────┐
+  │                │        │  Aoide   │  The performer
+  │  ONE LLM does  │        │          │  (voice, thinking,
+  │  everything    │        │          │   decisions, tools)
+  │                │        ├──────────┤
+  │                │        │  Melete  │  The preparer
+  │                │        │          │  (skills, workflows,
+  │                │        │          │   goals, naming)
+  │                │        ├──────────┤
+  │                │        │  Mneme   │  The rememberer
+  │                │        │          │  (memory, recall,
+  └────────────────┘        │          │   compression)
+                            └──────────┘
+                            Shared event bus
 ```
 
-Specialized subsystems, like the human brain
+Three independent LLM processes — don't call each other,
+react to the same stream of events
 
 ---
 
@@ -399,15 +403,17 @@ Specialized subsystems, like the human brain
 
   Anima:  fresh viewport assembled every iteration
 
-  ┌──────────────────────────────────────────┐
-  │ [L2 long-term 5%] [L1 recent 15%] [80%] │
-  └──────────────────────────────────────────┘
+  ┌──────────────────────────────────────────────┐
+  │ [L2 long-term 5%] [L1 recent 15%] [live 80%]│
+  └──────────────────────────────────────────────┘
   No compaction. No lossy rewriting. Endless sessions.
 ```
 
+Melete curates what Aoide sees in real time
+
 ---
 
-## Memory that works like memory
+## Mneme: Memory that works like memory
 
 - **Not a filing cabinet** the agent has to consciously open
 - Runs as a **background process** on the event bus
@@ -416,7 +422,7 @@ Specialized subsystems, like the human brain
 - Pins critical moments to **active goals**
 - Recalls relevant memories **automatically**
 
-*The agent doesn't decide to remember. It just remembers.*
+*Aoide doesn't decide to remember. She just remembers.*
 
 ---
 
