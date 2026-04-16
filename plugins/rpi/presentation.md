@@ -164,12 +164,61 @@ WITH thoughts repo:
 
 ---
 
+## The universal tool: `create_note`
+
+---
+
+## `create_note`
+
+Saves **any** information to the thoughts repository
+
+Used in two key scenarios:
+
+---
+
+### Scenario 1: Research + Note combo
+
+```
+ "I'm unfamiliar with the auth system.
+  research_codebase: how does auth work?
+  Then create_note with the findings."
+```
+
+`research_codebase` explores → `create_note` **saves the artifact**
+
+Now every future session has this knowledge
+
+---
+
+### Scenario 2: After a brainstorm session
+
+Using Claude Code as a **rubber duck** 🦆
+
+Discussing ideas, making decisions, exploring trade-offs...
+
+At the end:
+
+> *"create_note: store decisions, gotchas, and insights
+> from this session that might be valuable for future work"*
+
+---
+
+## Why `create_note` matters
+
+- Not just for workflows — works in **any** free-form session
+- Shares knowledge with the **entire team**
+- Agents in **all future sessions** benefit automatically
+- Universal communication tool:
+  **human → thoughts → agent → agent → human**
+
+---
+
 ## Prerequisites: Research before tickets
 
 Before any implementation starts:
 
-1. `research_codebase` — document how things work **today**
-2. Save to thoughts repo — grand perspective for agents
+1. `research_codebase` + `create_note` — document how things work **today**
+2. Grand perspective saved for all agents and team members
 
 This happens during **ticket creation**, not during implementation
 
@@ -289,7 +338,8 @@ But in practice: decompose into small tickets works **better**
 
 ## Other useful commands
 
-- `research_codebase` — document codebase state (pre-work research)
+- `research_codebase` — explore how code works (pair with `create_note`)
+- `create_note` — save any insights to thoughts repo
 - `create_handoff` / `resume_handoff` — transfer context between sessions
 - `commit` — git commit without AI attribution
 
