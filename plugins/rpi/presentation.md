@@ -19,7 +19,8 @@ style: |
   strong { color: #e94560; }
   em { color: #16c79a; }
   code { background: #0f3460; padding: 0.1em 0.3em; border-radius: 4px; font-size: 0.7em; }
-  pre { text-align: left; font-size: 0.55em; background: #0f3460; padding: 0.8em; border-radius: 8px; }
+  pre { text-align: left; font-size: 0.65em; line-height: 1.4; background: #0f3460; padding: 0.8em; border-radius: 8px; }
+  pre code { font-size: 1em; }
   ul { text-align: left; }
   li { margin: 0.2em 0; }
   section.title { background: #0f3460; }
