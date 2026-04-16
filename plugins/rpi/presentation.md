@@ -123,19 +123,23 @@ They have no awareness of:
 
 ---
 
-## How it helps AI agents
+## Without thoughts repo
 
 ```
-WITHOUT thoughts repo:
-
   Agent reads 10 files → local view → reinvents wheel
+
   ┌──────────┐
   │ 10 files │ ──→  decisions based on incomplete picture
   └──────────┘
+```
 
-WITH thoughts repo:
+---
 
-  Agent reads thoughts FIRST → grand perspective → builds within
+## With thoughts repo
+
+```
+  Agent reads thoughts FIRST → grand perspective
+
   ┌──────────────────────────────────┐
   │ Architecture research            │
   │ Decision history                 │ ──→  informed decisions
@@ -209,8 +213,12 @@ At the end:
 - Not just for workflows — works in **any** free-form session
 - Shares knowledge with the **entire team**
 - Agents in **all future sessions** benefit automatically
-- Universal communication tool:
-  **human → thoughts → agent → agent → human**
+
+---
+
+## Universal communication tool
+
+**human → thoughts → agent → agent → human**
 
 ---
 
@@ -331,6 +339,10 @@ Still available for **very large features**
 
 But in practice: decompose into small tickets works **better**
 
+---
+
+## Why decompose beats planning
+
 - Plans duplicate the work (plan → implement = write twice)
 - Planning is slow — review is faster on actual code
 - Small tickets = small context = better agent output
@@ -418,6 +430,11 @@ Melete curates what Aoide sees in real time
 - **Not a filing cabinet** the agent has to consciously open
 - Runs as a **background process** on the event bus
 - Summarizes what's leaving the viewport
+
+---
+
+## Mneme: How it works
+
 - Compresses short-term → long-term (like sleep consolidation)
 - Pins critical moments to **active goals**
 - Recalls relevant memories **automatically**
