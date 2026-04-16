@@ -24,7 +24,6 @@ style: |
   li { margin: 0.2em 0; }
   section.title { background: #0f3460; }
   section.title h1 { color: #e94560; font-size: 2em; }
-  section.diagram pre { font-size: 0.5em; }
 ---
 
 <!-- _class: title -->
@@ -136,12 +135,12 @@ WITHOUT thoughts repo:
 WITH thoughts repo:
 
   Agent reads thoughts FIRST → grand perspective → builds within
-  ┌──────────────────────────────┐
-  │ Architecture research        │
-  │ Decision history             │ ──→  informed decisions
-  │ Related brainstorms          │
-  │ + the 10 files it needs      │
-  └──────────────────────────────┘
+  ┌──────────────────────────────────┐
+  │ Architecture research            │
+  │ Decision history                 │ ──→  informed decisions
+  │ Related brainstorms              │
+  │ + the 10 files it needs          │
+  └──────────────────────────────────┘
 ```
 
 ---
@@ -161,88 +160,136 @@ WITH thoughts repo:
 <!-- _class: title -->
 
 # Part 2: RPI Plugin
-## Research → Plan → Implement
+## The Day-to-Day Workflow
 
 ---
 
-## Core principle
+## Prerequisites: Research before tickets
 
-> "The context window is the **ONLY lever**
-> to affect output quality"
+Before any implementation starts:
 
-Research and exploration fill context with **noise**.
-Solution: compress into artifacts, start fresh.
+1. `research_codebase` — document how things work **today**
+2. Save to thoughts repo — grand perspective for agents
+
+This happens during **ticket creation**, not during implementation
 
 ---
 
-## Frequent Intentional Compaction
+## Decompose, don't plan
+
+Large features → break into **small tickets** (human decision)
+
+Each small ticket → one `feature` command
+
+Planning happens during **decomposition**, not inside the agent
+
+---
+
+## The two commands we use daily
+
+---
+
+## `feature`
+
+End-to-end: from ticket to **draft PR**
 
 ```
-Session 1: Research + Create Plan
-  Context fills with: search results, file reads, exploration
-  OUTPUT: plan artifact (compressed understanding)
-
-  ── fresh session ──
-
-Session 2: Review + Iterate Plan
-  Loads ONLY the plan artifact (clean context)
-  OUTPUT: refined plan
-
-  ── fresh session ──
-
-Session 3: Implement Phase 1
-  Loads plan + relevant code (focused context)
-  OUTPUT: working code + updated checkboxes
+  Ticket description
+       │
+       ▼
+  ┌─────────────────────────────────┐
+  │  1. Read thoughts repo          │
+  │     (architecture context)      │
+  │                                 │
+  │  2. Research codebase           │
+  │     (patterns, existing code)   │
+  │                                 │
+  │  3. Implement                   │
+  │     (following existing style)  │
+  │                                 │
+  │  4. QA checks                   │
+  │     (tests, linting)            │
+  │                                 │
+  │  5. Create draft PR             │
+  └─────────────────────────────────┘
 ```
 
 ---
 
-## The workflow
+## `review-pr`
+
+Three modes for different stages:
+
+---
+
+### Mode 1: Self-review
+
+*Right after implementation, before human review*
+
+Agent spawns subagents → checks everything →
+**fixes issues automatically** → marks PR as ready
+
+---
+
+### Mode 2: Human-requested review
+
+*When you're assigned as reviewer*
+
+Agent runs 5 parallel reviewers → leaves comments
+
+| Reviewer | Checks |
+|----------|--------|
+| Rails | Architecture, patterns, conventions |
+| Security | Vulnerabilities, input validation |
+| Performance | N+1, slow queries, memory |
+| Testing | Coverage, edge cases |
+| Documentation | Missing docs, outdated comments |
+
+---
+
+### Mode 3: Address feedback
+
+*After reviewer left comments*
+
+Agent reads PR comments →
+**applies fixes** (like self-review, but guided by feedback)
+
+---
+
+## The full cycle
 
 ```
-  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-  │ create_plan  │ ──→ │ iterate_plan │ ──→ │implement_plan│
-  │              │     │              │     │              │
-  │ Research +   │     │ Review +     │     │ Phase by     │
-  │ plan draft   │     │ refine       │     │ phase        │
-  └──────┬───────┘     └──────┬───────┘     └──────┬───────┘
-         │                    │                    │
-         ▼                    ▼                    ▼
-    thoughts/            thoughts/             code +
-    plans/               plans/                plan updated
-    (artifact)           (refined)             with ✅
+  Decompose ticket (human)
+       │
+       ▼
+  ┌──────────┐    ┌───────────────┐    ┌──────────────┐
+  │ feature  │ →  │ review-pr     │ →  │ review-pr    │
+  │          │    │ (self-review) │    │ (feedback)   │
+  │ Ticket   │    │ Auto-fix +    │    │ Apply human  │
+  │ → PR     │    │ mark ready    │    │ comments     │
+  └──────────┘    └───────────────┘    └──────────────┘
+                                              │
+                                              ▼
+                                        ✅ Merge
 ```
 
 ---
 
-## Research subagents (spawned in parallel)
+## What about `create_plan` / `iterate_plan`?
 
-| Agent | Answers |
-|-------|---------|
-| `codebase-analyzer` | **HOW** does this code work? |
-| `codebase-pattern-finder` | **What patterns** exist to follow? |
-| `documentation-researcher` | What do the **library docs** say? |
-| `web-search-researcher` | What are **current best practices**? |
-| `thoughts-analyzer` | What **decisions** were made before? |
+Still available for **very large features**
 
----
+But in practice: decompose into small tickets works **better**
 
-## Don't outsource thinking
-
-Agent **researches** and **drafts**
-You **review** and **refine**
-
-The plan is not ready until **you** say it's ready
-
-A bad line in code = **one** bad line
-A bad line in a plan = **hundreds** of bad lines
+- Plans duplicate the work (plan → implement = write twice)
+- Planning is slow — review is faster on actual code
+- Small tickets = small context = better agent output
 
 ---
 
-## Bonus commands
+## Other useful commands
 
-- `feature` — one-shot for smaller features
-- `review-pr` — 5 parallel reviewers (Rails, Security, Perf, Testing, Docs)
+- `research_codebase` — document codebase state (pre-work research)
 - `create_handoff` / `resume_handoff` — transfer context between sessions
 - `commit` — git commit without AI attribution
 
@@ -258,9 +305,9 @@ A bad line in a plan = **hundreds** of bad lines
 
 **Thoughts repo** = team memory for decisions and architecture
 
-**RPI plugin** = disciplined workflow with compaction
+**RPI plugin** = disciplined workflow: `feature` → `review-pr`
 
-Together: agents build **within** the architecture, not beside it
+Research **before** tickets. Decompose **before** implementation.
 
 ---
 
