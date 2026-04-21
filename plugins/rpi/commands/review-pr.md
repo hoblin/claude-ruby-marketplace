@@ -170,7 +170,7 @@ Map each requirement in the ticket — Tasks, Acceptance Criteria, named targets
 
 A requirement is delivered when the code does what the ticket asked for in meaning, not merely in mention. Match semantics against the ticket's verbs: 'add Y' needs Y; 'replace X with Y' needs Y and no X. When the ticket lists multiple targets, verify each separately.
 
-Output: the verification table first. Then findings tagged [major] (requirement not delivered), [minor] (partial delivery), [nit] (scope drift / advisory)."
+Output: the verification table first. Then findings tagged [major], [minor], or [nit] with file:line references."
 ```
 
 #### Subagent 3: PerfPro
