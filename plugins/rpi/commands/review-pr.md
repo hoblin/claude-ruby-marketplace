@@ -110,6 +110,8 @@ Spawn all five review subagents **in parallel** using the Task tool with `subage
 - Historical context (from "Step 4: Gather Historical Context")
 - Their specific review focus
 - Any additional instructions from the user's input
+- Verification discipline: before claiming code is missing, grep or read to verify absence; before citing a line as problematic, read its context. Every "X is missing" or "X is broken" finding must include the exact search performed.
+- Spillover mandate: flag any vulnerability, bug, or regression you notice outside your primary focus — injection, auth bypass, secrets in code, obvious logic errors. You are not the dedicated security reviewer, but the remaining subagents share that surface.
 
 If re-review mode is activated, each subagent also receives the paths to `/tmp/pr_<NUMBER>_reviews.json`, `/tmp/pr_<NUMBER>_inline_comments.json`, and `/tmp/pr_<NUMBER>_conversation.json` with this modified instruction: "Primary goal: verify that previously requested changes were addressed. Secondary goal: check for new problems introduced."
 
@@ -138,21 +140,25 @@ Read the diff from: /tmp/pr_<number>_diff.txt
 - REST conventions and route design
 - ActiveRecord patterns (associations, validations placement)
 - Service object patterns and naming
+- Security-adjacent AR patterns: raw SQL interpolation, mass assignment gaps, missing tenant/org scoping on shared-model queries
 
 Output: List findings tagged [major], [minor], or [nit] with file:line references."
 ```
 
-#### Subagent 2: SecurityHawk
+#### Subagent 2: TicketDelivery
 
 ```
-Prompt: "Review PR #<number> for security vulnerabilities.
+Prompt: "Your role: verify this PR delivers the ticket. Not 'is the code good' — that is the other subagents' job. Yours is 'does the PR do what the ticket said, and only that.'
 
 Read the diff from: /tmp/pr_<number>_diff.txt
 
-*Critical:* Activate the activerecord:activerecord skill for SQL injection prevention patterns.
+The ticket is the contract. The PR description is advocacy — it frames the author's chosen approach. When the two disagree, the ticket wins, and the disagreement itself is a finding.
 
-## Ticket Context
-<ticket title, acceptance criteria, business context>
+## Ticket (verbatim — do not summarize)
+<full ticket title, description, every Task, every Acceptance Criterion>
+
+## PR description (verbatim)
+<PR body from Step 1>
 
 ## Historical Context
 <output from thoughts-analyzer>
@@ -160,15 +166,14 @@ Read the diff from: /tmp/pr_<number>_diff.txt
 <any additional instructions from user input>
 
 ## Focus Areas
-- SQL injection (raw queries, interpolation in where clauses)
-- XSS vulnerabilities (unescaped output, html_safe misuse)
-- CSRF protection gaps
-- Mass assignment vulnerabilities (permit params)
-- Authentication/authorization bypasses
-- Secrets or credentials in code
-- Insecure direct object references
+- Per numbered Task in the ticket: produce one line — ✅ delivered, ⚠️ partial, or ❌ missing — with file:line evidence from the diff
+- Per Acceptance Criterion: same format
+- Per named target when the ticket lists multiple (metrics, endpoints, components, models): one verification row each — do not treat the PR as a single blob
+- Migration / refactor / rename tickets specifically: verify the old pattern is actually gone. Grep for remaining references to what the ticket said to remove. A backward-compat fallback is valid only if the ticket explicitly requests it — cite the line. Otherwise flag as migration-incomplete.
+- PR description vs ticket framing: flag any disagreement (PR adds constraints like 'backward compat' not present in the ticket; PR narrows scope; PR reframes a 'replace' as an 'add').
+- Dead code left behind by the stated migration — references to the removed pattern still reachable anywhere in the diff or surrounding files.
 
-Output: List findings tagged [major], [minor], or [nit] with file:line references."
+Output: List findings tagged [major] (AC or Task not delivered), [minor] (partial delivery), [nit] (scope drift / advisory). Include the per-Task / per-AC verification table as the first section of your output."
 ```
 
 #### Subagent 3: PerfPro
@@ -197,6 +202,7 @@ Read the diff from: /tmp/pr_<number>_diff.txt
 - Memory bloat (loading large datasets)
 - Missing caching opportunities
 - Background job considerations (should this be async?)
+- Cross-tenant data leakage in aggregation (missing organization_id scope on joins, unscoped WHERE in reports)
 
 Output: List findings tagged [major], [minor], or [nit] with file:line references."
 ```
@@ -225,6 +231,7 @@ Read the diff from: /tmp/pr_<number>_diff.txt
 - Test isolation issues (shared state, missing cleanup)
 - Assertion quality (testing behavior vs implementation)
 - Missing edge case coverage
+- Missing coverage for authorization boundaries (cross-org access denial, role-based access denied, unauthenticated request rejected)
 
 Output: List findings tagged [major], [minor], or [nit] with file:line references."
 ```
@@ -251,6 +258,7 @@ Read the diff from: /tmp/pr_<number>_diff.txt
 - Changelog updates for notable changes
 - Misleading or outdated comments
 - Magic numbers or strings needing constants
+- Secrets, tokens, or credentials appearing in logs, comments, error messages, or test fixtures; permission-gating magic constants that should be named
 
 Output: List findings tagged [major], [minor], or [nit] with file:line references."
 ```
@@ -268,13 +276,15 @@ Spawn **rpi:codebase-analyzer** and **rpi:codebase-pattern-finder** in parallel.
 
 After all subagents complete, compile findings into a unified review.
 
-**Critical: Subagents are pattern matchers. You are the judgment layer.** Subagents are designed to be paranoid and thorough — they flag everything that matches their heuristics. Your job is to filter their output, not rubber-stamp it. A [major] from a subagent can become a [nit] or be dropped entirely after applying judgment.
+**Critical: Subagents are pattern matchers. You are the judgment layer.** Subagents are designed to be paranoid and thorough — they flag everything that matches their heuristics. Your job is to filter their output, not rubber-stamp it. A [major] from a code-quality subagent can become a [nit] or be dropped entirely after applying judgment.
 
-For each concern, evaluate:
+**Exception: TicketDelivery findings are not filterable.** Code-quality findings (Rails, Perf, Tests, Docs) are judgment calls — they can be reclassified or declined based on context. Delivery findings are binary: either the ticket's Task/AC is delivered or it isn't. A well-coded half-migration is still a half-migration. If TicketDelivery reports any Task or AC as ❌ missing or ⚠️ partial, that finding carries through to the final verdict as-is; do not downgrade it to accommodate the author's chosen approach.
+
+For each code-quality concern, evaluate:
 - **Real-world probability** — Can this actually happen in practice, or is it purely theoretical? A race condition that requires two users to open a personal link within the same millisecond is not a real issue.
 - **Cost-benefit** — Does the fix add more complexity than the problem warrants? If the "fix" makes the code harder to read without solving a problem a human would encounter, drop it.
 - **Scope** — Review fixes should improve code you're touching, not introduce new artifacts. Clean up, don't build out.
-- **Design intent** — Was this a deliberate choice? A concern that flags a conscious trade-off documented in historical context is a decline, not a fix.
+- **Design intent** — Was this a deliberate choice? A concern that flags a conscious trade-off documented in historical context is a decline, not a fix. But "the PR description frames this as intentional" is not sufficient — verify the ticket asks for it, since PR descriptions are advocacy.
 
 Then classify:
 - **Accept & fix** — concern valid, apply the suggested fix or a better one
@@ -289,8 +299,8 @@ Then compile:
 4. **Preserve file:line references** — Format as `app/models/user.rb:42`
 
 Determine verdict:
-- **REQUEST_CHANGES** — If any [major] or multiple [minor] concerns are accepted
-- **APPROVE** — If no significant concerns survive the judgment filter
+- **REQUEST_CHANGES** — If TicketDelivery reports any Task/AC as ❌ missing or ⚠️ partial, OR any code-quality [major] concern is accepted, OR multiple [minor] concerns are accepted
+- **APPROVE** — Only if every TicketDelivery Task and AC is ✅ delivered AND no significant code-quality concerns survive the judgment filter
 
 ### Step 7: Present Review (review / re-review)
 
