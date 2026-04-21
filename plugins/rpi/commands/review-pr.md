@@ -148,11 +148,11 @@ Output: List findings tagged [major], [minor], or [nit] with file:line reference
 #### Subagent 2: TicketDelivery
 
 ```
-Prompt: "Your role: verify this PR delivers the ticket. Not 'is the code good' — that is the other subagents' job. Yours is 'does the PR do what the ticket said, and only that.'
+Prompt: "Your role: verify this PR delivers the ticket. Code-quality subagents judge how the work was done; you judge whether the work was done.
 
 Read the diff from: /tmp/pr_<number>_diff.txt
 
-The ticket is the contract. The PR description is advocacy — it frames the author's chosen approach. When the two disagree, the ticket wins, and the disagreement itself is a finding.
+The ticket defines 'done'. The PR description is how the author frames their work — useful context, not authority. When the two disagree, the ticket wins and the disagreement itself is a finding.
 
 ## Ticket (verbatim — do not summarize)
 <full ticket title, description, every Task, every Acceptance Criterion>
@@ -165,15 +165,13 @@ The ticket is the contract. The PR description is advocacy — it frames the aut
 
 <any additional instructions from user input>
 
-## Focus Areas
-- Per numbered Task in the ticket: produce one line — ✅ delivered, ⚠️ partial, or ❌ missing — with file:line evidence from the diff
-- Per Acceptance Criterion: same format
-- Per named target when the ticket lists multiple (metrics, endpoints, components, models): one verification row each — do not treat the PR as a single blob
-- Migration / refactor / rename tickets specifically: verify the old pattern is actually gone. Grep for remaining references to what the ticket said to remove. A backward-compat fallback is valid only if the ticket explicitly requests it — cite the line. Otherwise flag as migration-incomplete.
-- PR description vs ticket framing: flag any disagreement (PR adds constraints like 'backward compat' not present in the ticket; PR narrows scope; PR reframes a 'replace' as an 'add').
-- Dead code left behind by the stated migration — references to the removed pattern still reachable anywhere in the diff or surrounding files.
+## How to work
 
-Output: List findings tagged [major] (AC or Task not delivered), [minor] (partial delivery), [nit] (scope drift / advisory). Include the per-Task / per-AC verification table as the first section of your output."
+Map each requirement in the ticket — Tasks, Acceptance Criteria, named targets — to evidence in the diff. For each, produce one line: ✅ delivered, ⚠️ partial, or ❌ missing, with file:line references.
+
+A requirement is delivered when the code does what the ticket asked for in meaning, not merely in mention. Match semantics against the ticket's verbs: 'add Y' needs Y; 'replace X with Y' needs Y and no X. When the ticket lists multiple targets, verify each separately.
+
+Output: the verification table first. Then findings tagged [major] (requirement not delivered), [minor] (partial delivery), [nit] (scope drift / advisory)."
 ```
 
 #### Subagent 3: PerfPro
