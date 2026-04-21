@@ -111,7 +111,6 @@ Spawn all five review subagents **in parallel** using the Task tool with `subage
 - Their specific review focus
 - Any additional instructions from the user's input
 - Verification discipline: before claiming code is missing, grep or read to verify absence; before citing a line as problematic, read its context. Every "X is missing" or "X is broken" finding must include the exact search performed.
-- Spillover mandate: flag any vulnerability, bug, or regression you notice outside your primary focus — injection, auth bypass, secrets in code, obvious logic errors. You are not the dedicated security reviewer, but the remaining subagents share that surface.
 
 If re-review mode is activated, each subagent also receives the paths to `/tmp/pr_<NUMBER>_reviews.json`, `/tmp/pr_<NUMBER>_inline_comments.json`, and `/tmp/pr_<NUMBER>_conversation.json` with this modified instruction: "Primary goal: verify that previously requested changes were addressed. Secondary goal: check for new problems introduced."
 
