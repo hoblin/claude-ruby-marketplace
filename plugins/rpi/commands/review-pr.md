@@ -274,15 +274,13 @@ Spawn **rpi:codebase-analyzer** and **rpi:codebase-pattern-finder** in parallel.
 
 After all subagents complete, compile findings into a unified review.
 
-**Critical: Subagents are pattern matchers. You are the judgment layer.** Subagents are designed to be paranoid and thorough — they flag everything that matches their heuristics. Your job is to filter their output, not rubber-stamp it. A [major] from a code-quality subagent can become a [nit] or be dropped entirely after applying judgment.
+**Critical: Subagents are pattern matchers. You are the judgment layer.** Subagents are designed to be paranoid and thorough — they flag everything that matches their heuristics. Your job is to filter their output, not rubber-stamp it. A [major] from a subagent can become a [nit] or be dropped entirely after applying judgment.
 
-**Exception: TicketDelivery findings are not filterable.** Code-quality findings (Rails, Perf, Tests, Docs) are judgment calls — they can be reclassified or declined based on context. Delivery findings are binary: either the ticket's Task/AC is delivered or it isn't. A well-coded half-migration is still a half-migration. If TicketDelivery reports any Task or AC as ❌ missing or ⚠️ partial, that finding carries through to the final verdict as-is; do not downgrade it to accommodate the author's chosen approach.
-
-For each code-quality concern, evaluate:
+For each concern, evaluate:
 - **Real-world probability** — Can this actually happen in practice, or is it purely theoretical? A race condition that requires two users to open a personal link within the same millisecond is not a real issue.
 - **Cost-benefit** — Does the fix add more complexity than the problem warrants? If the "fix" makes the code harder to read without solving a problem a human would encounter, drop it.
 - **Scope** — Review fixes should improve code you're touching, not introduce new artifacts. Clean up, don't build out.
-- **Design intent** — Was this a deliberate choice? A concern that flags a conscious trade-off documented in historical context is a decline, not a fix. But "the PR description frames this as intentional" is not sufficient — verify the ticket asks for it, since PR descriptions are advocacy.
+- **Design intent** — Was this a deliberate choice? A concern that flags a conscious trade-off documented in historical context is a decline, not a fix.
 
 Then classify:
 - **Accept & fix** — concern valid, apply the suggested fix or a better one
@@ -297,8 +295,8 @@ Then compile:
 4. **Preserve file:line references** — Format as `app/models/user.rb:42`
 
 Determine verdict:
-- **REQUEST_CHANGES** — If TicketDelivery reports any Task/AC as ❌ missing or ⚠️ partial, OR any code-quality [major] concern is accepted, OR multiple [minor] concerns are accepted
-- **APPROVE** — Only if every TicketDelivery Task and AC is ✅ delivered AND no significant code-quality concerns survive the judgment filter
+- **REQUEST_CHANGES** — If any [major] or multiple [minor] concerns are accepted
+- **APPROVE** — If no significant concerns survive the judgment filter
 
 ### Step 7: Present Review (review / re-review)
 
