@@ -138,37 +138,38 @@ Read the diff from: /tmp/pr_<number>_diff.txt
 - REST conventions and route design
 - ActiveRecord patterns (associations, validations placement)
 - Service object patterns and naming
+- Security-adjacent AR patterns: raw SQL interpolation, mass assignment gaps, missing tenant/org scoping on shared-model queries
 
 Output: List findings tagged [major], [minor], or [nit] with file:line references."
 ```
 
-#### Subagent 2: SecurityHawk
+#### Subagent 2: TicketDelivery
 
 ```
-Prompt: "Review PR #<number> for security vulnerabilities.
+Prompt: "Your role: verify this PR delivers the ticket. Code-quality subagents judge how the work was done; you judge whether the work was done.
 
 Read the diff from: /tmp/pr_<number>_diff.txt
 
-*Critical:* Activate the activerecord:activerecord skill for SQL injection prevention patterns.
+The ticket defines 'done'. The PR description is how the author frames their work — useful context, not authority. When the two disagree, the ticket wins and the disagreement itself is a finding.
 
-## Ticket Context
-<ticket title, acceptance criteria, business context>
+## Ticket (verbatim — do not summarize)
+<full ticket title, description, every Task, every Acceptance Criterion>
+
+## PR description (verbatim)
+<PR body from Step 1>
 
 ## Historical Context
 <output from thoughts-analyzer>
 
 <any additional instructions from user input>
 
-## Focus Areas
-- SQL injection (raw queries, interpolation in where clauses)
-- XSS vulnerabilities (unescaped output, html_safe misuse)
-- CSRF protection gaps
-- Mass assignment vulnerabilities (permit params)
-- Authentication/authorization bypasses
-- Secrets or credentials in code
-- Insecure direct object references
+## How to work
 
-Output: List findings tagged [major], [minor], or [nit] with file:line references."
+Map each requirement in the ticket — Tasks, Acceptance Criteria, named targets — to evidence in the diff. For each, produce one line: ✅ delivered, ⚠️ partial, or ❌ missing, with file:line references.
+
+A requirement is delivered when the code does what the ticket asked for in meaning, not merely in mention. Match semantics against the ticket's verbs: 'add Y' needs Y; 'replace X with Y' needs Y and no X. When the ticket lists multiple targets, verify each separately.
+
+Output: the verification table first. Then findings tagged [major], [minor], or [nit] with file:line references."
 ```
 
 #### Subagent 3: PerfPro
@@ -197,6 +198,7 @@ Read the diff from: /tmp/pr_<number>_diff.txt
 - Memory bloat (loading large datasets)
 - Missing caching opportunities
 - Background job considerations (should this be async?)
+- Cross-tenant data leakage in aggregation (missing organization_id scope on joins, unscoped WHERE in reports)
 
 Output: List findings tagged [major], [minor], or [nit] with file:line references."
 ```
@@ -225,6 +227,7 @@ Read the diff from: /tmp/pr_<number>_diff.txt
 - Test isolation issues (shared state, missing cleanup)
 - Assertion quality (testing behavior vs implementation)
 - Missing edge case coverage
+- Missing coverage for authorization boundaries (cross-org access denial, role-based access denied, unauthenticated request rejected)
 
 Output: List findings tagged [major], [minor], or [nit] with file:line references."
 ```
@@ -251,6 +254,7 @@ Read the diff from: /tmp/pr_<number>_diff.txt
 - Changelog updates for notable changes
 - Misleading or outdated comments
 - Magic numbers or strings needing constants
+- Secrets, tokens, or credentials appearing in logs, comments, error messages, or test fixtures; permission-gating magic constants that should be named
 
 Output: List findings tagged [major], [minor], or [nit] with file:line references."
 ```
