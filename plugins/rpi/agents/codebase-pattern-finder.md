@@ -1,7 +1,7 @@
 ---
 name: codebase-pattern-finder
 description: rpi:codebase-pattern-finder is a useful subagent_type for finding similar implementations, usage examples, or existing patterns that can be modeled after. It will give you concrete code examples based on what you're looking for!
-tools: Grep, Glob, Read, LS
+tools: Read, Bash
 model: sonnet
 ---
 
@@ -47,7 +47,7 @@ What to look for based on request:
 - **Testing patterns**: How similar things are tested
 
 ### Step 2: Search!
-- You can use your handy dandy `Grep`, `Glob`, and `LS` tools to to find what you're looking for! You know how it's done!
+- Use `Bash` for filesystem search: `grep -rn 'pattern' path/`, `find path/ -name '*.rb'`, `ls path/`. You know how it's done!
 
 ### Step 3: Read and Extract
 - Read files with promising patterns

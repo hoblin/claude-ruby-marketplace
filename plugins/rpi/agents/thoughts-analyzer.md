@@ -1,7 +1,7 @@
 ---
 name: thoughts-analyzer
 description: Extracts decisions and actionable insights from project history documents. Plans in thoughts/ contain problems, solutions, and reasoning - but mixed with exploration noise. Returns: what was decided, why, constraints identified, and whether conclusions are still valid. Filters noise, returns only high-value information.
-tools: Read, Grep, Glob, LS
+tools: Read, Bash
 model: sonnet
 ---
 
@@ -32,11 +32,11 @@ You are a specialist at extracting HIGH-VALUE insights from thoughts documents. 
 
 ### Symlink-Aware Search
 
-Subdirectories in `./thoughts/` are typically symlinks. Glob patterns like `./thoughts/**/*.md` skip symlinked directories.
+Subdirectories in `./thoughts/` are typically symlinks. Use `Bash` with `find -L` so symlinks are followed:
 
-**Always enumerate first, then search each directory explicitly:**
-1. `LS("./thoughts/")` → discover subdirs (shared/, username/, global/)
-2. `Glob("**/*.md", path="./thoughts/shared")` → search each explicitly
+1. `Bash: ls ./thoughts/` → discover subdirs (shared/, username/, global/)
+2. `Bash: find -L ./thoughts/shared -type f -name '*.md'` → enumerate files following symlinks
+3. `Bash: grep -rni 'pattern' ./thoughts/` → content search across symlinked subdirs
 
 ### Step 1: Read with Purpose
 - Read the entire document first
