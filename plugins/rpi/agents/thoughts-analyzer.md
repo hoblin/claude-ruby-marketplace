@@ -32,11 +32,17 @@ You are a specialist at extracting HIGH-VALUE insights from thoughts documents. 
 
 ### Symlink-Aware Search
 
-Subdirectories in `./thoughts/` are typically symlinks. Use `Bash` with `find -L` so symlinks are followed:
+Subdirectories in `./thoughts/` are typically symlinks (e.g. `./thoughts/shared/` points outside the repo). **Use uppercase `-R` for grep and `-L` for find — lowercase `-r` does NOT follow symlinks during traversal and will silently miss everything under those subdirs.**
 
-1. `Bash: ls ./thoughts/` → discover subdirs (shared/, username/, global/)
-2. `Bash: find -L ./thoughts/shared -type f -name '*.md'` → enumerate files following symlinks
-3. `Bash: grep -rni 'pattern' ./thoughts/` → content search across symlinked subdirs
+Lead with one broad grep — it finds files that mention the term in frontmatter (`tags:`, `topic:`) AND in body text in a single pass:
+
+1. `Bash: grep -Rli 'VIB-1234' ./thoughts/` → list filenames containing the term (most valuable single command)
+2. `Bash: grep -Rni 'VIB-1234' ./thoughts/` → same with line numbers + matched text when you need context
+
+When you need to enumerate without a search term:
+
+3. `Bash: ls ./thoughts/` → discover top-level subdirs (shared/, username/, global/)
+4. `Bash: find -L ./thoughts/shared -type f -name '*.md'` → enumerate `.md` files following symlinks
 
 ### Step 1: Read with Purpose
 - Read the entire document first
