@@ -4,7 +4,7 @@
 /feature <FEATURE_DESCRIPTION> [additional instructions]
 ```
 
-- **FEATURE_DESCRIPTION**: Linear issue URL or plain description (required)
+- **FEATURE_DESCRIPTION**: issue URL or plain description (required)
 - **additional instructions** (optional): constraints, focus areas, or any custom guidance
 
 Examples:
@@ -15,10 +15,10 @@ Examples:
 
 ## Context
 
-Create and complete a new feature or chore for this Ruby on Rails project, from branch creation to PR readiness. Input can be a Linear issue URL or a plain description.
+Create and complete a new feature or chore for this project, from branch creation to PR readiness. Input can be an issue URL or a plain description.
 
-With Linear issue URL: Extract ID, fetch details via Linear MCP.
-With description only: Create new Linear issue in the appropriate project.
+With issue URL: Extract ID, fetch ticket details.
+With description only: Create new issue in the appropriate project.
 
 Pass any additional instructions from user input through to all subagents and apply them during implementation.
 
@@ -28,7 +28,7 @@ Pass any additional instructions from user input through to all subagents and ap
 
 Pull latest base branch (usually `main` or `master`)
 Create feature branch: `<type>/<issue-id>-<short-description>` (e.g., `feature/eng-1234-add-api-endpoint`)
-Update Linear ticket: assign to "me", change status to "In Progress"
+Update the ticket: assign to "me", change status to "In Progress"
 
 ### Step 2: Gather Historical Context
 
@@ -72,7 +72,7 @@ Add missing translations (manually or via OpenAI)
 Push branch.
 `gh pr create --draft`
 Title: `<issue-id> feat: <description>` or `<issue-id> chore: <description>` or `<issue-id> fix: <description>`
-Description: summary, test plan, breaking changes. Link to Linear issue.
+Description: summary, test plan, breaking changes. Link to the issue.
 
 ### Step 8: CI Monitoring
 
