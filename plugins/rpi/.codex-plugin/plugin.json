@@ -1,0 +1,37 @@
+{
+  "name": "rpi",
+  "version": "1.9.0",
+  "description": "RPI workflow: Research, Planning, Implementation. Context engineering system with structured agents and skills for AI-assisted development.",
+  "author": {
+    "name": "hoblin"
+  },
+  "repository": "https://github.com/hoblin/claude-ruby-marketplace",
+  "license": "MIT",
+  "keywords": [
+    "context-engineering",
+    "rpi-workflow",
+    "research",
+    "planning",
+    "implementation",
+    "handoffs",
+    "session-continuity"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "RPI Workflow",
+    "shortDescription": "Research, Planning, Implementation workflow for AI-assisted development",
+    "longDescription": "Context engineering workflow with skills, agents, templates, plans, handoffs, and validation patterns for longer-running development work.",
+    "developerName": "hoblin",
+    "category": "Workflow",
+    "capabilities": [
+      "Skills",
+      "Agents",
+      "Templates"
+    ],
+    "defaultPrompt": [
+      "Research this codebase.",
+      "Create an implementation plan.",
+      "Resume from this handoff."
+    ]
+  }
+}

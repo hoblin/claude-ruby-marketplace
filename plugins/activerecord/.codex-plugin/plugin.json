@@ -1,0 +1,33 @@
+{
+  "name": "activerecord",
+  "version": "1.0.1",
+  "description": "ActiveRecord patterns for Rails models and queries",
+  "author": {
+    "name": "hoblin"
+  },
+  "repository": "https://github.com/hoblin/claude-ruby-marketplace",
+  "license": "MIT",
+  "keywords": [
+    "rails",
+    "activerecord",
+    "database",
+    "queries",
+    "models"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "ActiveRecord",
+    "shortDescription": "ActiveRecord patterns for Rails models and queries",
+    "longDescription": "Rails ActiveRecord guidance for associations, querying, validations, migrations, callbacks, and database constraints.",
+    "developerName": "hoblin",
+    "category": "Database",
+    "capabilities": [
+      "Skills"
+    ],
+    "defaultPrompt": [
+      "Review my ActiveRecord associations.",
+      "Optimize this Rails query.",
+      "Write a safe Rails migration."
+    ]
+  }
+}

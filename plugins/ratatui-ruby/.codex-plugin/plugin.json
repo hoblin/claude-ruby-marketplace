@@ -1,0 +1,33 @@
+{
+  "name": "ratatui-ruby",
+  "version": "1.2.1",
+  "description": "RatatuiRuby TUI development for terminal user interfaces",
+  "author": {
+    "name": "hoblin"
+  },
+  "repository": "https://github.com/hoblin/claude-ruby-marketplace",
+  "license": "MIT",
+  "keywords": [
+    "ratatui-ruby",
+    "tui",
+    "terminal",
+    "ruby",
+    "widgets"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "RatatuiRuby",
+    "shortDescription": "RatatuiRuby TUI development for terminal user interfaces",
+    "longDescription": "RatatuiRuby guidance for terminal UI loops, widgets, layouts, events, styling, testing, and framework patterns.",
+    "developerName": "hoblin",
+    "category": "TUI Development",
+    "capabilities": [
+      "Skills"
+    ],
+    "defaultPrompt": [
+      "Build a RatatuiRuby layout.",
+      "Handle TUI events.",
+      "Test a terminal UI."
+    ]
+  }
+}

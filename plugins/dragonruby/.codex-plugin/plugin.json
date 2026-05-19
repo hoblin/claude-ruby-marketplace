@@ -1,0 +1,32 @@
+{
+  "name": "dragonruby",
+  "version": "1.0.4",
+  "description": "DragonRuby Game Toolkit patterns for 2D game development",
+  "author": {
+    "name": "hoblin"
+  },
+  "repository": "https://github.com/hoblin/claude-ruby-marketplace",
+  "license": "MIT",
+  "keywords": [
+    "dragonruby",
+    "game-development",
+    "ruby",
+    "2d-games"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "DragonRuby",
+    "shortDescription": "DragonRuby Game Toolkit patterns for 2D game development",
+    "longDescription": "DragonRuby guidance for game loop structure, input, entities, collision detection, rendering, animation, audio, scenes, and distribution.",
+    "developerName": "hoblin",
+    "category": "Game Development",
+    "capabilities": [
+      "Skills"
+    ],
+    "defaultPrompt": [
+      "Build a DragonRuby game loop.",
+      "Add collision detection.",
+      "Structure DragonRuby scenes."
+    ]
+  }
+}

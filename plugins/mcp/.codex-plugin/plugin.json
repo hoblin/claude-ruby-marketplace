@@ -1,0 +1,33 @@
+{
+  "name": "mcp",
+  "version": "1.0.1",
+  "description": "MCP server development with Ruby SDK",
+  "author": {
+    "name": "hoblin"
+  },
+  "repository": "https://github.com/hoblin/claude-ruby-marketplace",
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "ruby",
+    "sdk",
+    "integrations",
+    "tools"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "MCP Ruby",
+    "shortDescription": "MCP server development with Ruby SDK",
+    "longDescription": "Ruby MCP guidance for stdio and HTTP servers, tool definitions, client usage, file manager tools, and Rails integration.",
+    "developerName": "hoblin",
+    "category": "Integrations",
+    "capabilities": [
+      "Skills"
+    ],
+    "defaultPrompt": [
+      "Create a Ruby MCP server.",
+      "Add an MCP tool.",
+      "Integrate MCP with Rails."
+    ]
+  }
+}

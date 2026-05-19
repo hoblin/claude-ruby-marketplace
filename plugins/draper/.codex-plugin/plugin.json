@@ -1,0 +1,33 @@
+{
+  "name": "draper",
+  "version": "1.1.1",
+  "description": "Draper decorator patterns for Rails view logic",
+  "author": {
+    "name": "hoblin"
+  },
+  "repository": "https://github.com/hoblin/claude-ruby-marketplace",
+  "license": "MIT",
+  "keywords": [
+    "rails",
+    "draper",
+    "decorators",
+    "view-logic",
+    "presenters"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Draper",
+    "shortDescription": "Draper decorator patterns for Rails view logic",
+    "longDescription": "Rails Draper guidance for decorators, presentation boundaries, testing patterns, and avoiding view logic anti-patterns.",
+    "developerName": "hoblin",
+    "category": "Patterns",
+    "capabilities": [
+      "Skills"
+    ],
+    "defaultPrompt": [
+      "Extract view logic to Draper.",
+      "Review this decorator.",
+      "Test a Draper decorator."
+    ]
+  }
+}

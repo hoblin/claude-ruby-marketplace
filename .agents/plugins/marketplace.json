@@ -1,0 +1,92 @@
+{
+  "name": "claude-ruby-marketplace",
+  "interface": {
+    "displayName": "Ruby and Rails Plugins"
+  },
+  "plugins": [
+    {
+      "name": "rspec",
+      "source": {
+        "source": "local",
+        "path": "./plugins/rspec"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Testing"
+    },
+    {
+      "name": "draper",
+      "source": {
+        "source": "local",
+        "path": "./plugins/draper"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Patterns"
+    },
+    {
+      "name": "activerecord",
+      "source": {
+        "source": "local",
+        "path": "./plugins/activerecord"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Database"
+    },
+    {
+      "name": "mcp",
+      "source": {
+        "source": "local",
+        "path": "./plugins/mcp"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Integrations"
+    },
+    {
+      "name": "dragonruby",
+      "source": {
+        "source": "local",
+        "path": "./plugins/dragonruby"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Game Development"
+    },
+    {
+      "name": "ratatui-ruby",
+      "source": {
+        "source": "local",
+        "path": "./plugins/ratatui-ruby"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "TUI Development"
+    },
+    {
+      "name": "rpi",
+      "source": {
+        "source": "local",
+        "path": "./plugins/rpi"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Workflow"
+    }
+  ]
+}

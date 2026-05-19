@@ -1,0 +1,33 @@
+{
+  "name": "rspec",
+  "version": "1.1.1",
+  "description": "RSpec and FactoryBot testing patterns for Rails",
+  "author": {
+    "name": "hoblin"
+  },
+  "repository": "https://github.com/hoblin/claude-ruby-marketplace",
+  "license": "MIT",
+  "keywords": [
+    "rspec",
+    "factorybot",
+    "rails",
+    "testing",
+    "ruby"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "RSpec",
+    "shortDescription": "RSpec and FactoryBot testing patterns for Rails",
+    "longDescription": "RSpec and FactoryBot guidance for Rails specs, matchers, mocks, request specs, model specs, jobs, mailers, and system tests.",
+    "developerName": "hoblin",
+    "category": "Testing",
+    "capabilities": [
+      "Skills"
+    ],
+    "defaultPrompt": [
+      "Write an RSpec request spec.",
+      "Improve this FactoryBot setup.",
+      "Review this Rails spec."
+    ]
+  }
+}
