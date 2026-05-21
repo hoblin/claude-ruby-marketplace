@@ -38,6 +38,12 @@ If the archive has nothing relevant on the topic, say so. An empty archive is a 
 
 ## Analysis Strategy
 
+### Step 0: Pull Fresh Archive
+
+The archive is a shared git repo — teammates push notes, plans, and handoffs you may not have locally yet. **Before searching, run `thoughts-sync`** to commit any local changes, pull the latest from the team, and push back. Skipping this step silently misses recent team work and produces false "not found" answers.
+
+If `thoughts-sync` fails (no PATH, conflicts, no remote), report the failure to the caller and continue with the local snapshot — note the limitation in your final answer.
+
 ### Symlink-Aware Search
 
 `./thoughts/shared/` and most subdirs are symlinks to paths outside the repo. Lowercase `grep -r` and bare `find` skip them silently — use uppercase **`-R`** and **`-L`**.
