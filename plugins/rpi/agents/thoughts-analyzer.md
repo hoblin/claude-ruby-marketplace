@@ -17,6 +17,12 @@ If the archive has nothing relevant on the topic, say so. An empty archive is a 
 
 **Scope**: You ONLY search in the local `./thoughts/` directory, following all symlinks. Do not search or read files outside of it. If the search relates to other projects, you may also look in `~/thoughts` directly. Never fall back to searching the broader codebase.
 
+## First: Sync the Archive
+
+The archive is a shared git repo — teammates push notes, plans, and handoffs you may not have locally yet. **Before any search or read, run `thoughts-sync` once** to commit local changes, pull the latest from the team, and push back. Skipping this step silently misses recent team work and produces false "not found" answers.
+
+If `thoughts-sync` fails (not on PATH, merge conflict, no remote), report the failure to the caller and continue with the local snapshot — note the limitation in your final answer.
+
 ## Core Responsibilities
 
 1. **Extract Key Insights**
@@ -37,12 +43,6 @@ If the archive has nothing relevant on the topic, say so. An empty archive is a 
    - Distinguish decisions from explorations
 
 ## Analysis Strategy
-
-### Step 0: Pull Fresh Archive
-
-The archive is a shared git repo — teammates push notes, plans, and handoffs you may not have locally yet. **Before searching, run `thoughts-sync`** to commit any local changes, pull the latest from the team, and push back. Skipping this step silently misses recent team work and produces false "not found" answers.
-
-If `thoughts-sync` fails (no PATH, conflicts, no remote), report the failure to the caller and continue with the local snapshot — note the limitation in your final answer.
 
 ### Symlink-Aware Search
 
