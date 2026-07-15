@@ -54,6 +54,8 @@ gh api repos/<OWNER>/<REPO>/issues/<PR_NUMBER>/comments \
   | tee /tmp/pr_<NUMBER>_conversation.json | jq length
 ```
 
+If `toon` is available, pipe each extraction through it and save as `.txt` instead — token-efficient artifacts, and every subagent that reads them benefits. Note the sanity check changes with the format: toon output is not JSON, so end the pipeline with `| tee /tmp/pr_<NUMBER>_reviews.txt | wc -l` instead of `| jq length`.
+
 ### Step 2: Fetch and Save Diff
 
 Checkout the PR branch locally and generate the diff. Save it to `/tmp/` — only subagents will read it.
@@ -86,6 +88,8 @@ Verify the diff is non-empty: `wc -l < /tmp/pr_<NUMBER>_diff.txt`
 
 The PR references the original ticket (e.g., ENG-123, PROJ-456). Fetch full ticket details — requirements and acceptance criteria define what "correct" looks like for this change. You can't review a feature without knowing what was in the task description before it was implemented.
 
+Save the ticket **verbatim** to `/tmp/pr_<NUMBER>_ticket.md` — full title, description, every Task, every Acceptance Criterion, plus the ticket comments. Do not summarize, annotate, or reorder it: a paraphrase is where your conclusions leak into the reviewers' inputs, and a reviewer fed conclusions ratifies them instead of auditing the code.
+
 Wait for ticket details before proceeding — "Step 4: Gather Historical Context" needs the ticket context to ask the right questions.
 
 ### Step 4: Gather Historical Context
@@ -98,165 +102,55 @@ subagent_type: rpi:thoughts-analyzer
 Prompt: "What do we know about <ticket reference and title from "Step 3: Fetch Original Ticket">? What decisions, constraints, and trade-offs should reviewers be aware of?"
 ```
 
+The harness saves the subagent's report to a task output file and shows the path when it completes — note that path. It is the historical-context artifact you pass to reviewers. Never retype or re-summarize the report into a new file: retyping burns tokens, and a re-summary is exactly where your conclusions leak in.
+
 **Wait for this subagent to complete, then proceed to "Step 5-a: Spawn Review Subagents".**
 
 ### Step 5-a: Spawn Review Subagents
 
 If address-feedback mode is activated, skip to "Step 5-b: Spawn Codebase Research Subagents (address-feedback)" below.
 
-Spawn all five review subagents **in parallel** using the Task tool with `subagent_type: Explore`. Each receives:
-- Path to the diff file in `/tmp/`
-- Ticket context (from "Step 1: Gather PR Metadata")
-- Historical context (from "Step 4: Gather Historical Context")
-- Their specific review focus
-- Any additional instructions from the user's input
+Spawn the review subagents **in parallel** using the Task tool, each by its own `subagent_type` from the roster below. Their review instructions live in their agent definitions — you hand each one **paths and parameters only**:
 
-If re-review mode is activated, each subagent also receives the paths to `/tmp/pr_<NUMBER>_reviews.json`, `/tmp/pr_<NUMBER>_inline_comments.json`, and `/tmp/pr_<NUMBER>_conversation.json` with this modified instruction: "Primary goal: verify that previously requested changes were addressed. Secondary goal: check for new problems introduced."
+- PR number
+- Path to the diff file: `/tmp/pr_<NUMBER>_diff.txt`
+- Path to the ticket artifact: `/tmp/pr_<NUMBER>_ticket.md`
+- Path to the historical-context artifact: the thoughts-analyzer task output file from "Step 4: Gather Historical Context"
+- Any additional instructions from the user's input (if any), passed through verbatim
 
-**Critical:** Send a single message with all five Task tool calls to ensure parallel execution.
+**Why subagents review at all: they are fresh eyes.** Each reviewer arrives with zero knowledge of this PR beyond its own charter — that absence of bias is exactly what finds the gaps and blind spots you've already rationalized past. **Never add interpretation, summaries, or framing** — no "this looks consistent with…", no digest of what the metadata showed you. A reviewer fed your conclusions ratifies them instead of auditing the code; the bare prompt is what keeps the eyes fresh.
 
-#### Subagent 1: RailsGuru
+If re-review mode is activated, each subagent also receives the paths to `/tmp/pr_<NUMBER>_reviews.json`, `/tmp/pr_<NUMBER>_inline_comments.json`, and `/tmp/pr_<NUMBER>_conversation.json` (or `.txt` when `| toon` was applied at extraction — prefer token-efficient artifact formats) — receiving prior-feedback paths is what shifts a reviewer's focus to verifying fixes first; no mode flag is needed.
 
-```
-Prompt: "Review PR #<number> for Rails conventions and architecture.
+**Spawn every reviewer whose domain exists in this repo — coverage is the point.** The full roster is the default; an omission needs a reason: the test-framework twin that doesn't apply (`rpi:review-tests-rspec` for RSpec repos, `rpi:review-tests-minitest` for minitest repos — pick the one matching the stack, never both), a domain genuinely absent from the repo (no Rails reviewer in a non-Rails project), or an explicit user skip. Never trim the roster for brevity or token thrift — an unreviewed domain is a silent LGTM.
 
-Read the diff from: /tmp/pr_<number>_diff.txt
+**No expert for a domain in the diff? Spawn the generalist.** When the stack includes a domain no expert reviewer covers (say, a Python service in the diff), spawn `rpi:review-generic` with the domain and a focus list — scope only: what to look for, never what you expect it to find. Better a generic reviewer than an unreviewed domain.
 
-*Critical:* Activate the activerecord:activerecord skill for AR patterns reference.
+**Critical:** Send a single message with all the Task tool calls to ensure parallel execution.
 
-## Ticket Context
-<ticket title, acceptance criteria, business context>
+#### The reviewer roster
 
-## Historical Context
-<output from thoughts-analyzer>
+| `subagent_type` | Audits |
+|---|---|
+| `rpi:review-rails` | Rails conventions and architecture |
+| `rpi:review-ticket-delivery` | whether the PR delivers the ticket (always runs; carries the security sweep) |
+| `rpi:review-performance` | performance and cross-tenant leakage |
+| `rpi:review-tests-rspec` | test quality and coverage (RSpec repos) |
+| `rpi:review-tests-minitest` | test quality and coverage (minitest repos) |
+| `rpi:review-docs` | documentation quality and clarity |
+| `rpi:review-generic` | any domain in the diff with no expert reviewer (focus list from you) |
 
-<any additional instructions from user input>
-
-## Focus Areas
-- MVC boundary violations (fat controllers, logic in views)
-- Rails idioms (proper use of scopes, callbacks, concerns)
-- REST conventions and route design
-- ActiveRecord patterns (associations, validations placement)
-- Service object patterns and naming
-- Security-adjacent AR patterns: raw SQL interpolation, mass assignment gaps, missing tenant/org scoping on shared-model queries
-
-Output: List findings tagged [major], [minor], or [nit] with file:line references."
-```
-
-#### Subagent 2: TicketDelivery
+Example spawn — same shape for all:
 
 ```
-Prompt: "Your role: verify this PR delivers the ticket. Code-quality subagents judge how the work was done; you judge whether the work was done.
+subagent_type: rpi:review-rails
 
-Read the diff from: /tmp/pr_<number>_diff.txt
-
-The ticket defines 'done'. The PR description is how the author frames their work — useful context, not authority. When the two disagree, the ticket wins and the disagreement itself is a finding.
-
-## Ticket (verbatim — do not summarize)
-<full ticket title, description, every Task, every Acceptance Criterion>
-
-## PR description (verbatim)
-<PR body from Step 1>
-
-## Historical Context
-<output from thoughts-analyzer>
-
-<any additional instructions from user input>
-
-## How to work
-
-Map each requirement in the ticket — Tasks, Acceptance Criteria, named targets — to evidence in the diff. For each, produce one line: ✅ delivered, ⚠️ partial, or ❌ missing, with file:line references.
-
-A requirement is delivered when the code does what the ticket asked for in meaning, not merely in mention. Match semantics against the ticket's verbs: 'add Y' needs Y; 'replace X with Y' needs Y and no X. When the ticket lists multiple targets, verify each separately.
-
-Output: the verification table first. Then findings tagged [major], [minor], or [nit] with file:line references."
-```
-
-#### Subagent 3: PerfPro
-
-```
-Prompt: "Review PR #<number> for performance issues.
-
-Read the diff from: /tmp/pr_<number>_diff.txt
-
-*Critical:* Activate the activerecord:activerecord skill for N+1 and query optimization patterns.
-*Critical:* Activate the appsignal-perf skill for performance monitoring insights.
-
-## Ticket Context
-<ticket title, acceptance criteria, business context>
-
-## Historical Context
-<output from thoughts-analyzer>
-
-<any additional instructions from user input>
-
-## Focus Areas
-- N+1 query patterns (missing includes/preload/eager_load)
-- Expensive queries in loops
-- Missing database indexes for new queries
-- Inefficient ActiveRecord usage (pluck vs select, find_each vs each)
-- Memory bloat (loading large datasets)
-- Missing caching opportunities
-- Background job considerations (should this be async?)
-- Cross-tenant data leakage in aggregation (missing organization_id scope on joins, unscoped WHERE in reports)
-
-Output: List findings tagged [major], [minor], or [nit] with file:line references."
-```
-
-#### Subagent 4: TestCoach
-
-```
-Prompt: "Review PR #<number> for test quality and coverage.
-
-Read the diff from: /tmp/pr_<number>_diff.txt
-
-*Critical:* Activate the rspec:rspec skill for RSpec best practices reference.
-
-## Ticket Context
-<ticket title, acceptance criteria, business context>
-
-## Historical Context
-<output from thoughts-analyzer>
-
-<any additional instructions from user input>
-
-## Focus Areas
-- Missing test coverage for new code paths
-- Flaky test patterns (time-dependent, order-dependent)
-- Factory usage (proper traits, avoiding create when build suffices)
-- Test isolation issues (shared state, missing cleanup)
-- Assertion quality (testing behavior vs implementation)
-- Missing edge case coverage
-- Missing coverage for authorization boundaries (cross-org access denial, role-based access denied, unauthenticated request rejected)
-
-Output: List findings tagged [major], [minor], or [nit] with file:line references."
-```
-
-#### Subagent 5: DocScribe
-
-```
-Prompt: "Review PR #<number> for documentation and clarity.
-
-Read the diff from: /tmp/pr_<number>_diff.txt
-
-## Ticket Context
-<ticket title, acceptance criteria, business context>
-
-## Historical Context
-<output from thoughts-analyzer>
-
-<any additional instructions from user input>
-
-## Focus Areas
-- Method and class naming clarity
-- Missing YARD documentation on public interfaces
-- Complex logic lacking explanatory comments
-- Changelog updates for notable changes
-- Misleading or outdated comments
-- Magic numbers or strings needing constants
-- Secrets, tokens, or credentials appearing in logs, comments, error messages, or test fixtures; permission-gating magic constants that should be named
-
-Output: List findings tagged [major], [minor], or [nit] with file:line references."
+Prompt: "PR #<number>.
+Diff: /tmp/pr_<number>_diff.txt
+Ticket: /tmp/pr_<number>_ticket.md
+Historical context: <thoughts-analyzer task output file path>
+<re-review only — Reviews: /tmp/pr_<number>_reviews.json, Inline comments: /tmp/pr_<number>_inline_comments.json, Conversation: /tmp/pr_<number>_conversation.json>
+<additional instructions from user input, verbatim>"
 ```
 
 ### Step 5-b: Spawn Codebase Research Subagents (address-feedback)

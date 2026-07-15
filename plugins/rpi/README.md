@@ -95,10 +95,17 @@ SESSION 5: Continue Implementation (fresh context)
 
 ```
 rpi/
-├── agents/                    # Research subagents
+├── agents/                    # Research + review subagents
 │   ├── codebase-analyzer.md
 │   ├── codebase-pattern-finder.md
 │   ├── documentation-researcher.md
+│   ├── review-docs.md
+│   ├── review-generic.md
+│   ├── review-performance.md
+│   ├── review-rails.md
+│   ├── review-tests-minitest.md
+│   ├── review-tests-rspec.md
+│   ├── review-ticket-delivery.md
 │   ├── thoughts-analyzer.md
 │   └── web-search-researcher.md
 ├── commands/                  # Workflow commands
@@ -160,6 +167,20 @@ These agents are spawned by `/rpi:create_plan` and `/rpi:research_codebase` to g
 | Agent | Purpose |
 |-------|---------|
 | **rpi:thoughts-analyzer** | Discovers and analyzes documents in `thoughts/` directory |
+
+## Review Subagents
+
+These agents are spawned in parallel by `/rpi:review-pr`, which picks the roster for the repo's tech stack. Each carries a static system prompt — the orchestrator hands them artifact paths and parameters, never interpretation:
+
+| Agent | Audits |
+|-------|--------|
+| **rpi:review-rails** | Rails conventions and architecture |
+| **rpi:review-ticket-delivery** | whether the PR delivers the ticket (always runs; carries the security sweep) |
+| **rpi:review-performance** | performance and cross-tenant leakage |
+| **rpi:review-tests-rspec** | test quality and coverage (RSpec repos) |
+| **rpi:review-tests-minitest** | test quality and coverage (minitest repos) |
+| **rpi:review-docs** | documentation quality and clarity |
+| **rpi:review-generic** | any domain in the diff with no expert reviewer |
 
 ## Commands
 
