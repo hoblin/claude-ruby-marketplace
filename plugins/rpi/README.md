@@ -221,6 +221,7 @@ These agents are spawned in parallel by `/rpi:review-pr`, which picks the roster
 - Researches codebase via parallel `rpi:codebase-pattern-finder` and `rpi:codebase-analyzer`
 - Implements feature following Rails best practices
 - Runs QA checks and creates draft PR
+- Self-reviews automatically once CI is green (`/rpi:review-pr` self-review) and marks the PR ready
 - For smaller features that don't need multi-session planning
 
 **`/rpi:review-pr`** - Multi-agent PR review with four modes

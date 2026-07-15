@@ -79,9 +79,11 @@ Description: summary, test plan, breaking changes. Link to the issue.
 Monitor checks until all pass.
 If tests fail, investigate root cause vs flakiness.
 Fix flaky tests – don't just retry; stabilize the test.
+When all checks are green, proceed to "Step 9: Self-Review & Finalization". If the repo has no CI, proceed there directly after Step 7.
 
-### Step 9: Finalization
+### Step 9: Self-Review & Finalization
 
+Run the `/rpi:review-pr` command in `self-review` mode on the PR, passing through any additional instructions from user input. It fans out the review subagents, fixes accepted findings, pushes, waits for CI again, and marks the PR ready with the user assigned — the pipeline isn't done at green, it's done at ready.
 Update PR title/description if needed.
 
 ## Requirements
