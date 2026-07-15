@@ -102,7 +102,8 @@ rpi/
 │   ├── review-docs.md
 │   ├── review-perf.md
 │   ├── review-rails.md
-│   ├── review-tests.md
+│   ├── review-tests-minitest.md
+│   ├── review-tests-rspec.md
 │   ├── review-ticket-delivery.md
 │   ├── thoughts-analyzer.md
 │   └── web-search-researcher.md
@@ -168,15 +169,16 @@ These agents are spawned by `/rpi:create_plan` and `/rpi:research_codebase` to g
 
 ## Review Subagents
 
-These agents are spawned in parallel by `/rpi:review-pr`. Each carries a static system prompt — the orchestrator hands them artifact paths and parameters, never interpretation:
+These agents are spawned in parallel by `/rpi:review-pr`, which picks the roster for the repo's tech stack. Each carries a static system prompt — the orchestrator hands them artifact paths and parameters, never interpretation:
 
-| Agent | Persona | Audits |
-|-------|---------|--------|
-| **rpi:review-rails** | RailsGuru | Rails conventions and architecture |
-| **rpi:review-ticket-delivery** | TicketDelivery | whether the PR delivers the ticket |
-| **rpi:review-perf** | PerfPro | performance and cross-tenant leakage |
-| **rpi:review-tests** | TestCoach | test quality and coverage |
-| **rpi:review-docs** | DocScribe | documentation and clarity |
+| Agent | Audits |
+|-------|--------|
+| **rpi:review-rails** | Rails conventions and architecture |
+| **rpi:review-ticket-delivery** | whether the PR delivers the ticket |
+| **rpi:review-perf** | performance and cross-tenant leakage |
+| **rpi:review-tests-rspec** | test quality and coverage (RSpec repos) |
+| **rpi:review-tests-minitest** | test quality and coverage (minitest repos) |
+| **rpi:review-docs** | documentation quality and clarity |
 
 ## Commands
 

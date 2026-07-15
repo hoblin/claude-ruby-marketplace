@@ -100,7 +100,7 @@ subagent_type: rpi:thoughts-analyzer
 Prompt: "What do we know about <ticket reference and title from "Step 3: Fetch Original Ticket">? What decisions, constraints, and trade-offs should reviewers be aware of?"
 ```
 
-Save the subagent's report **verbatim** to `/tmp/pr_<NUMBER>_context.md` — same rule as the ticket: no summarizing, no framing, no highlights of what you found interesting.
+The harness saves the subagent's report to a task output file and shows the path when it completes — note that path. It is the historical-context artifact you pass to reviewers. Never retype or re-summarize the report into a new file: retyping burns tokens, and a re-summary is exactly where your conclusions leak in.
 
 **Wait for this subagent to complete, then proceed to "Step 5-a: Spawn Review Subagents".**
 
@@ -108,41 +108,42 @@ Save the subagent's report **verbatim** to `/tmp/pr_<NUMBER>_context.md` — sam
 
 If address-feedback mode is activated, skip to "Step 5-b: Spawn Codebase Research Subagents (address-feedback)" below.
 
-Spawn all five review subagents **in parallel** using the Task tool, each by its own `subagent_type` from the table below. Their review instructions live in their agent definitions — you hand each one **paths and parameters only**:
+Spawn the review subagents **in parallel** using the Task tool, each by its own `subagent_type` from the roster below. Their review instructions live in their agent definitions — you hand each one **paths and parameters only**:
 
-- PR number and mode
+- PR number
 - Path to the diff file: `/tmp/pr_<NUMBER>_diff.txt`
 - Path to the ticket artifact: `/tmp/pr_<NUMBER>_ticket.md`
-- Path to the historical-context artifact: `/tmp/pr_<NUMBER>_context.md`
+- Path to the historical-context artifact: the thoughts-analyzer task output file from "Step 4: Gather Historical Context"
 - Any additional instructions from the user's input, passed through verbatim
 
 **Never add interpretation, summaries, or framing** — no "this looks consistent with…", no digest of what the metadata showed you. A reviewer fed your conclusions ratifies them instead of auditing the code; the bare prompt is what keeps the audit honest.
 
-If re-review mode is activated, each subagent also receives the paths to `/tmp/pr_<NUMBER>_reviews.json`, `/tmp/pr_<NUMBER>_inline_comments.json`, and `/tmp/pr_<NUMBER>_conversation.json` — the agents know what to do with them.
+If re-review mode is activated, each subagent also receives the paths to `/tmp/pr_<NUMBER>_reviews.json`, `/tmp/pr_<NUMBER>_inline_comments.json`, and `/tmp/pr_<NUMBER>_conversation.json` — receiving prior-feedback paths is what shifts a reviewer's focus to verifying fixes first; no mode flag is needed.
 
-If the user's additional instructions skip a reviewer (e.g. "skip rails guru because it is not a rails project"), omit that reviewer's Task call entirely.
+**Pick the roster for the current tech stack.** Use `rpi:review-tests-rspec` when the repo tests with RSpec (`spec/`, rspec in the Gemfile) and `rpi:review-tests-minitest` when it tests with minitest (`test/`) — never both. Apply the same judgment across the roster: omit reviewers whose domain doesn't exist in this repo (e.g. the Rails reviewer in a non-Rails project), and omit any reviewer the user's additional instructions skip.
 
-**Critical:** Send a single message with all five Task tool calls to ensure parallel execution.
+**Critical:** Send a single message with all the Task tool calls to ensure parallel execution.
 
-#### The five reviewers
+#### The reviewer roster
 
-| Reviewer | `subagent_type` | Audits |
-|---|---|---|
-| RailsGuru | `rpi:review-rails` | Rails conventions and architecture |
-| TicketDelivery | `rpi:review-ticket-delivery` | whether the PR delivers the ticket |
-| PerfPro | `rpi:review-perf` | performance and cross-tenant leakage |
-| TestCoach | `rpi:review-tests` | test quality and coverage |
-| DocScribe | `rpi:review-docs` | documentation and clarity |
+| `subagent_type` | Audits |
+|---|---|
+| `rpi:review-rails` | Rails conventions and architecture |
+| `rpi:review-ticket-delivery` | whether the PR delivers the ticket |
+| `rpi:review-perf` | performance and cross-tenant leakage |
+| `rpi:review-tests-rspec` | test quality and coverage (RSpec repos) |
+| `rpi:review-tests-minitest` | test quality and coverage (minitest repos) |
+| `rpi:review-docs` | documentation quality and clarity |
 
-Example spawn — same shape for all five:
+Example spawn — same shape for all:
 
 ```
 subagent_type: rpi:review-rails
 
-Prompt: "PR #<number>. Mode: <mode>.
+Prompt: "PR #<number>.
 Diff: /tmp/pr_<number>_diff.txt
 Ticket: /tmp/pr_<number>_ticket.md
-Historical context: /tmp/pr_<number>_context.md
+Historical context: <thoughts-analyzer task output file path>
 <re-review only — Reviews: /tmp/pr_<number>_reviews.json, Inline comments: /tmp/pr_<number>_inline_comments.json, Conversation: /tmp/pr_<number>_conversation.json>
 <additional instructions from user input, verbatim>"
 ```
