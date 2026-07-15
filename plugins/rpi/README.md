@@ -95,10 +95,15 @@ SESSION 5: Continue Implementation (fresh context)
 
 ```
 rpi/
-├── agents/                    # Research subagents
+├── agents/                    # Research + review subagents
 │   ├── codebase-analyzer.md
 │   ├── codebase-pattern-finder.md
 │   ├── documentation-researcher.md
+│   ├── review-docs.md
+│   ├── review-perf.md
+│   ├── review-rails.md
+│   ├── review-tests.md
+│   ├── review-ticket-delivery.md
 │   ├── thoughts-analyzer.md
 │   └── web-search-researcher.md
 ├── commands/                  # Workflow commands
@@ -160,6 +165,18 @@ These agents are spawned by `/rpi:create_plan` and `/rpi:research_codebase` to g
 | Agent | Purpose |
 |-------|---------|
 | **rpi:thoughts-analyzer** | Discovers and analyzes documents in `thoughts/` directory |
+
+## Review Subagents
+
+These agents are spawned in parallel by `/rpi:review-pr`. Each carries a static system prompt — the orchestrator hands them artifact paths and parameters, never interpretation:
+
+| Agent | Persona | Audits |
+|-------|---------|--------|
+| **rpi:review-rails** | RailsGuru | Rails conventions and architecture |
+| **rpi:review-ticket-delivery** | TicketDelivery | whether the PR delivers the ticket |
+| **rpi:review-perf** | PerfPro | performance and cross-tenant leakage |
+| **rpi:review-tests** | TestCoach | test quality and coverage |
+| **rpi:review-docs** | DocScribe | documentation and clarity |
 
 ## Commands
 
