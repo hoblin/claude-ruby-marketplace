@@ -54,7 +54,7 @@ gh api repos/<OWNER>/<REPO>/issues/<PR_NUMBER>/comments \
   | tee /tmp/pr_<NUMBER>_conversation.json | jq length
 ```
 
-If `toon` is available, pipe each extraction through it and save as `.txt` instead — token-efficient artifacts, and every subagent that reads them benefits.
+If `toon` is available, pipe each extraction through it and save as `.txt` instead — token-efficient artifacts, and every subagent that reads them benefits. Note the sanity check changes with the format: toon output is not JSON, so end the pipeline with `| tee /tmp/pr_<NUMBER>_reviews.txt | wc -l` instead of `| jq length`.
 
 ### Step 2: Fetch and Save Diff
 

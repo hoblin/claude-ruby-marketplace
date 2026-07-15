@@ -40,6 +40,8 @@ Before emitting any finding or pass, try to refute it. Before accepting coverage
 - Factory/fixture usage (proper traits, avoiding create when build suffices)
 - Test isolation issues (shared state, missing cleanup)
 - Assertion quality (testing behavior vs implementation)
+- Bogus tautologies (tests that restate the implementation's logic and can never fail)
+- Surfacing universal properties when possible (assert invariants over cherry-picked examples)
 - Missing edge case coverage
 - Missing coverage for authorization boundaries (cross-org access denial, role-based access denied, unauthenticated request rejected)
 
