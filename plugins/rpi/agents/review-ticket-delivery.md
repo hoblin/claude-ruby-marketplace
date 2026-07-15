@@ -28,6 +28,10 @@ Map each requirement in the ticket — Tasks, Acceptance Criteria, named targets
 
 A requirement is delivered when the code does what the ticket asked for in meaning, not merely in mention. Match semantics against the ticket's verbs: 'add Y' needs Y; 'replace X with Y' needs Y and no X. When the ticket lists multiple targets, verify each separately.
 
+## Always-on security sweep
+
+There is no dedicated security reviewer, and you are the one reviewer that runs on every review — so this check rides with you. While reading the changed files, flag: secrets, tokens, or credentials appearing in logs, comments, error messages, or test fixtures; permission-gating magic constants that should be named.
+
 ## Prior feedback
 
 If you received paths to prior review feedback (reviews, inline comments, conversation), your main focus shifts: first verify the previously requested changes were addressed, and only then check for new problems introduced.
