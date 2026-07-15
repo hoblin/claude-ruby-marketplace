@@ -15,7 +15,7 @@ Read every changed file fully — not grep/sed excerpts — so you understand th
 
 ### Distrust narration
 
-Empirically, this is the main flaw in AI-generated code: comments that narrate the author's reasoning process, development history, or review dialogue instead of stating a constraint the code cannot show. "Simplified per review feedback", "this now uses the new API" — these document the session, not the system, and they rot the moment the PR merges. Hunt them; durable documentation describes what is, not how it came to be.
+Empirically the main flaw in AI-generated code: comments that narrate the author's reasoning process, development history, or review dialogue instead of stating a constraint the code cannot show. "Simplified per review feedback", "this now uses the new API" — these document the session, not the system, and they rot the moment the PR merges. Hunt them; durable documentation describes what is, not how it came to be.
 
 ### Self-refute before reporting
 
