@@ -54,6 +54,8 @@ gh api repos/<OWNER>/<REPO>/issues/<PR_NUMBER>/comments \
   | tee /tmp/pr_<NUMBER>_conversation.json | jq length
 ```
 
+If `toon` is available, pipe each extraction through it and save as `.txt` instead — token-efficient artifacts, and every subagent that reads them benefits.
+
 ### Step 2: Fetch and Save Diff
 
 Checkout the PR branch locally and generate the diff. Save it to `/tmp/` — only subagents will read it.
@@ -86,7 +88,7 @@ Verify the diff is non-empty: `wc -l < /tmp/pr_<NUMBER>_diff.txt`
 
 The PR references the original ticket (e.g., ENG-123, PROJ-456). Fetch full ticket details — requirements and acceptance criteria define what "correct" looks like for this change. You can't review a feature without knowing what was in the task description before it was implemented.
 
-Save the ticket **verbatim** to `/tmp/pr_<NUMBER>_ticket.md` — full title, description, every Task, every Acceptance Criterion. Do not summarize, annotate, or reorder it: a paraphrase is where your conclusions leak into the reviewers' inputs, and a reviewer fed conclusions ratifies them instead of auditing the code.
+Save the ticket **verbatim** to `/tmp/pr_<NUMBER>_ticket.md` — full title, description, every Task, every Acceptance Criterion, plus the ticket comments. Do not summarize, annotate, or reorder it: a paraphrase is where your conclusions leak into the reviewers' inputs, and a reviewer fed conclusions ratifies them instead of auditing the code.
 
 Wait for ticket details before proceeding — "Step 4: Gather Historical Context" needs the ticket context to ask the right questions.
 
@@ -114,13 +116,15 @@ Spawn the review subagents **in parallel** using the Task tool, each by its own 
 - Path to the diff file: `/tmp/pr_<NUMBER>_diff.txt`
 - Path to the ticket artifact: `/tmp/pr_<NUMBER>_ticket.md`
 - Path to the historical-context artifact: the thoughts-analyzer task output file from "Step 4: Gather Historical Context"
-- Any additional instructions from the user's input, passed through verbatim
+- Any additional instructions from the user's input (if any), passed through verbatim
 
-**Never add interpretation, summaries, or framing** — no "this looks consistent with…", no digest of what the metadata showed you. A reviewer fed your conclusions ratifies them instead of auditing the code; the bare prompt is what keeps the audit honest.
+**Why subagents review at all: they are fresh eyes.** Each reviewer arrives with zero knowledge of this PR beyond its own charter — that absence of bias is exactly what finds the gaps and blind spots you've already rationalized past. **Never add interpretation, summaries, or framing** — no "this looks consistent with…", no digest of what the metadata showed you. A reviewer fed your conclusions ratifies them instead of auditing the code; the bare prompt is what keeps the eyes fresh.
 
-If re-review mode is activated, each subagent also receives the paths to `/tmp/pr_<NUMBER>_reviews.json`, `/tmp/pr_<NUMBER>_inline_comments.json`, and `/tmp/pr_<NUMBER>_conversation.json` — receiving prior-feedback paths is what shifts a reviewer's focus to verifying fixes first; no mode flag is needed.
+If re-review mode is activated, each subagent also receives the paths to `/tmp/pr_<NUMBER>_reviews.json`, `/tmp/pr_<NUMBER>_inline_comments.json`, and `/tmp/pr_<NUMBER>_conversation.json` (or `.txt` when `| toon` was applied at extraction — prefer token-efficient artifact formats) — receiving prior-feedback paths is what shifts a reviewer's focus to verifying fixes first; no mode flag is needed.
 
-**Pick the roster for the current tech stack.** Use `rpi:review-tests-rspec` when the repo tests with RSpec (`spec/`, rspec in the Gemfile) and `rpi:review-tests-minitest` when it tests with minitest (`test/`) — never both. Apply the same judgment across the roster: omit reviewers whose domain doesn't exist in this repo (e.g. the Rails reviewer in a non-Rails project), and omit any reviewer the user's additional instructions skip.
+**Spawn every reviewer whose domain exists in this repo — coverage is the point.** The full roster is the default; an omission needs a reason: the test-framework twin that doesn't apply (`rpi:review-tests-rspec` for RSpec repos, `rpi:review-tests-minitest` for minitest repos — pick the one matching the stack, never both), a domain genuinely absent from the repo (no Rails reviewer in a non-Rails project), or an explicit user skip. Never trim the roster for brevity or token thrift — an unreviewed domain is a silent LGTM.
+
+**No expert for a domain in the diff? Spawn the generalist.** When the stack includes a domain no expert reviewer covers (say, a Python service in the diff), spawn `rpi:review-generic` with the domain and a focus list — scope only: what to look for, never what you expect it to find. Better a generic reviewer than an unreviewed domain.
 
 **Critical:** Send a single message with all the Task tool calls to ensure parallel execution.
 
@@ -129,11 +133,12 @@ If re-review mode is activated, each subagent also receives the paths to `/tmp/p
 | `subagent_type` | Audits |
 |---|---|
 | `rpi:review-rails` | Rails conventions and architecture |
-| `rpi:review-ticket-delivery` | whether the PR delivers the ticket |
-| `rpi:review-perf` | performance and cross-tenant leakage |
+| `rpi:review-ticket-delivery` | whether the PR delivers the ticket (always runs; carries the security sweep) |
+| `rpi:review-performance` | performance and cross-tenant leakage |
 | `rpi:review-tests-rspec` | test quality and coverage (RSpec repos) |
 | `rpi:review-tests-minitest` | test quality and coverage (minitest repos) |
 | `rpi:review-docs` | documentation quality and clarity |
+| `rpi:review-generic` | any domain in the diff with no expert reviewer (focus list from you) |
 
 Example spawn — same shape for all:
 

@@ -100,7 +100,8 @@ rpi/
 │   ├── codebase-pattern-finder.md
 │   ├── documentation-researcher.md
 │   ├── review-docs.md
-│   ├── review-perf.md
+│   ├── review-generic.md
+│   ├── review-performance.md
 │   ├── review-rails.md
 │   ├── review-tests-minitest.md
 │   ├── review-tests-rspec.md
@@ -174,11 +175,12 @@ These agents are spawned in parallel by `/rpi:review-pr`, which picks the roster
 | Agent | Audits |
 |-------|--------|
 | **rpi:review-rails** | Rails conventions and architecture |
-| **rpi:review-ticket-delivery** | whether the PR delivers the ticket |
-| **rpi:review-perf** | performance and cross-tenant leakage |
+| **rpi:review-ticket-delivery** | whether the PR delivers the ticket (always runs; carries the security sweep) |
+| **rpi:review-performance** | performance and cross-tenant leakage |
 | **rpi:review-tests-rspec** | test quality and coverage (RSpec repos) |
 | **rpi:review-tests-minitest** | test quality and coverage (minitest repos) |
 | **rpi:review-docs** | documentation quality and clarity |
+| **rpi:review-generic** | any domain in the diff with no expert reviewer |
 
 ## Commands
 
