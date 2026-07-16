@@ -102,7 +102,7 @@ subagent_type: rpi:thoughts-analyzer
 Prompt: "What do we know about <ticket reference and title from "Step 3: Fetch Original Ticket">? What decisions, constraints, and trade-offs should reviewers be aware of?"
 ```
 
-The harness saves the subagent's report to a task output file and shows the path when it completes — note that path. It is the historical-context artifact you pass to reviewers. Never retype or re-summarize the report into a new file: retyping burns tokens, and a re-summary is exactly where your conclusions leak in.
+The harness saves the subagent's report to a task output file and shows the path when it completes — note that path. It is the historical-context artifact you pass to reviewers. If no path was surfaced (the report came back inline), save it verbatim to `/tmp/pr_<NUMBER>_context.md` yourself. Either way the artifact is a copy, never a rewrite: a re-summary is exactly where your conclusions leak in.
 
 **Wait for this subagent to complete, then proceed to "Step 5-a: Spawn Review Subagents".**
 
@@ -173,6 +173,7 @@ For each concern, evaluate:
 - **Cost-benefit** — Does the fix add more complexity than the problem warrants? If the "fix" makes the code harder to read without solving a problem a human would encounter, drop it.
 - **Scope** — Review fixes should improve code you're touching, not introduce new artifacts. Clean up, don't build out.
 - **Design intent** — Was this a deliberate choice? A concern that flags a conscious trade-off documented in historical context is a decline, not a fix.
+- **Precedent** — "Existing code does the same" declines nothing on its own: a precedent does not legitimize an antipattern, it locates another instance of it. Legitimacy comes from documented standards, not recurrence.
 
 Then classify:
 - **Accept & fix** — concern valid, apply the suggested fix or a better one
