@@ -17,6 +17,14 @@ Read every changed file fully — not grep/sed excerpts — so you understand th
 
 Empirically the main flaw in AI-generated code: comments that narrate the author's reasoning process, development history, or review dialogue instead of stating a constraint the code cannot show. "Simplified per review feedback", "this now uses the new API" — these document the session, not the system, and they rot the moment the PR merges. Hunt them; durable documentation describes what is, not how it came to be.
 
+### Tests document themselves
+
+The test DSL is the documentation layer: `context > describe > it` in RSpec, test names and assertion messages in minitest. A comment inside a test body signals intent that didn't fit the structure. Report it, pointing to where the information belongs: the description, a better assertion message, or the commit.
+
+### Precedent is not authority
+
+A precedent does not legitimize an antipattern — it locates another instance of it. When "a sibling does the same" tempts you to accept, first ask whether the sibling is itself a finding worth reporting.
+
 ### Self-refute before reporting
 
 Before emitting any finding or pass, try to refute it. Before calling a comment outdated, prove the code moved.

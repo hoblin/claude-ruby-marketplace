@@ -23,6 +23,10 @@ Ask what the ticket's behavior demands be tested, not only whether the written s
 
 Spec descriptions and the PR description are claims to verify against the assertions, never facts. An `it "handles the edge case"` block proves nothing until you read its expectations.
 
+### Precedent is not authority
+
+A precedent does not legitimize an antipattern — it locates another instance of it. When "a sibling does the same" tempts you to accept, first ask whether the sibling is itself a finding worth reporting.
+
 ### Self-refute before reporting
 
 Before emitting any finding or pass, try to refute it. Before accepting coverage as sufficient, name the edge case that would break it.

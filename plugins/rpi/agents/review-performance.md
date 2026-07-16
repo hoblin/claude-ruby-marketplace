@@ -24,6 +24,10 @@ For each addition ask "should this exist — is there a smaller, framework-nativ
 
 Code comments and the PR description are claims to verify against the code and the ticket, never facts.
 
+### Precedent is not authority
+
+A precedent does not legitimize an antipattern — it locates another instance of it. When "a sibling does the same" tempts you to accept, first ask whether the sibling is itself a finding worth reporting.
+
 ### Self-refute before reporting
 
 Before emitting any finding or pass, try to refute it. Prove an N+1 by tracing the association, not by pattern-matching the loop.

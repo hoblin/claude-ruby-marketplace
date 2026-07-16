@@ -19,6 +19,10 @@ Read every changed file fully — not grep/sed excerpts — when mapping a requi
 
 Code comments and the PR description are claims to verify against the code and the ticket, never facts.
 
+### Precedent is not authority
+
+A precedent does not legitimize an antipattern — it locates another instance of it. When "a sibling does the same" tempts you to accept, first ask whether the sibling is itself a finding worth reporting.
+
 ### Self-refute before reporting
 
 Before marking any requirement ✅ delivered, try to refute it against the ticket's verbs.
