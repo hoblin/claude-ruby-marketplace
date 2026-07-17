@@ -193,12 +193,14 @@ Determine verdict:
 
 ### Step 7: Present Review (review / re-review)
 
-If self-review or address-feedback mode is activated, skip to "Step 8: Apply Fixes".
+If self-review or address-feedback mode is activated, skip to "Step 9: Apply Fixes".
 
 Present the merged review to the user, including:
 - PR reference and ticket (if found)
 - Determined verdict
 - All findings grouped by severity
+
+### Step 8: Confirm and Post (review / re-review)
 
 Use the AskUserQuestion tool to confirm: "Shall I post this review to the PR? [Yes/Edit/Cancel]"
 - **Yes** — post the review
@@ -216,7 +218,7 @@ gh pr review <PR_NUMBER> --approve --body "<review body>"
 gh pr review <PR_NUMBER> --request-changes --body "<review body>"
 ```
 
-### Step 8: Apply Fixes (self-review / address-feedback)
+### Step 9: Apply Fixes (self-review / address-feedback)
 
 Your role changes from orchestrator to doer. You now have the judgment results — act on them.
 
