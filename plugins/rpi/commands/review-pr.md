@@ -205,6 +205,9 @@ Use the AskUserQuestion tool to confirm: "Shall I post this review to the PR? [Y
 - **Edit** — let the user modify the review, then ask again
 - **Cancel** — discard
 
+If the verdict is APPROVE and nothing in the gathered artifacts blocks delivery (no "don't merge until…" notes, dependent PRs, or coordinated-deploy requirements in the ticket, reviews, or findings), include a fourth option: **Approve & merge**.
+- **Approve & merge** — post the approving review, then monitor `gh pr checks <PR_NUMBER> --watch`; when green, merge using the repository's convention (e.g. squash). If CI fails, stop and report — never merge red.
+
 Once confirmed, post the review:
 
 ```bash
