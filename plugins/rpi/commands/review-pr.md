@@ -193,17 +193,22 @@ Determine verdict:
 
 ### Step 7: Present Review (review / re-review)
 
-If self-review or address-feedback mode is activated, skip to "Step 8: Apply Fixes".
+If self-review or address-feedback mode is activated, skip to "Step 9: Apply Fixes".
 
 Present the merged review to the user, including:
 - PR reference and ticket (if found)
 - Determined verdict
 - All findings grouped by severity
 
+### Step 8: Confirm and Post (review / re-review)
+
 Use the AskUserQuestion tool to confirm: "Shall I post this review to the PR? [Yes/Edit/Cancel]"
 - **Yes** — post the review
 - **Edit** — let the user modify the review, then ask again
 - **Cancel** — discard
+
+If the verdict is APPROVE and nothing in the gathered artifacts blocks delivery (no "don't merge until…" notes, dependent PRs, or coordinated-deploy requirements in the ticket, reviews, or findings), include a fourth option: **Approve & merge**.
+- **Approve & merge** — post the approving review, then monitor `gh pr checks <PR_NUMBER> --watch`; when green, merge using the repository's convention (e.g. squash). If CI fails, stop and report — never merge red.
 
 Once confirmed, post the review:
 
@@ -213,7 +218,7 @@ gh pr review <PR_NUMBER> --approve --body "<review body>"
 gh pr review <PR_NUMBER> --request-changes --body "<review body>"
 ```
 
-### Step 8: Apply Fixes (self-review / address-feedback)
+### Step 9: Apply Fixes (self-review / address-feedback)
 
 Your role changes from orchestrator to doer. You now have the judgment results — act on them.
 
