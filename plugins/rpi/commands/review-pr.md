@@ -120,7 +120,7 @@ Spawn the review subagents **in parallel** using the Task tool, each by its own 
 
 **Why subagents review at all: they are fresh eyes.** Each reviewer arrives with zero knowledge of this PR beyond its own charter — that absence of bias is exactly what finds the gaps and blind spots you've already rationalized past. **Never add interpretation, summaries, or framing** — no "this looks consistent with…", no digest of what the metadata showed you. A reviewer fed your conclusions ratifies them instead of auditing the code; the bare prompt is what keeps the eyes fresh.
 
-If re-review mode is activated, each subagent also receives the paths to `/tmp/pr_<NUMBER>_reviews.json`, `/tmp/pr_<NUMBER>_inline_comments.json`, and `/tmp/pr_<NUMBER>_conversation.json` (or `.txt` when `| toon` was applied at extraction — prefer token-efficient artifact formats) — receiving prior-feedback paths is what shifts a reviewer's focus to verifying fixes first; no mode flag is needed.
+If re-review mode is activated, each subagent also receives the paths to `/tmp/pr_<NUMBER>_reviews.json`, `/tmp/pr_<NUMBER>_inline_comments.json`, and `/tmp/pr_<NUMBER>_conversation.json` (or `.txt` when `| toon` was applied at extraction — prefer token-efficient artifact formats) — receiving prior-feedback paths is what tells a reviewer it is a re-review; no mode flag is needed.
 
 **Spawn every reviewer whose domain exists in this repo — coverage is the point.** The full roster is the default; an omission needs a reason: the test-framework twin that doesn't apply (`rpi:review-tests-rspec` for RSpec repos, `rpi:review-tests-minitest` for minitest repos — pick the one matching the stack, never both), a domain genuinely absent from the repo (no Rails reviewer in a non-Rails project), or an explicit user skip. Never trim the roster for brevity or token thrift — an unreviewed domain is a silent LGTM.
 
@@ -190,6 +190,8 @@ Then compile:
 Determine verdict:
 - **REQUEST_CHANGES** — If any [major] or multiple [minor] concerns are accepted
 - **APPROVE** — If no significant concerns survive the judgment filter
+
+In re-review, REQUEST_CHANGES when a previously requested change is unaddressed or a new [major] is accepted. A couple of new [minor]/[nit] findings don't restart the cycle — carry them in the review body as non-blocking suggestions. (A pile-up of accepted minors is judgment territory, as always.)
 
 ### Step 7: Present Review (review / re-review)
 

@@ -46,7 +46,7 @@ Before emitting any finding or pass, try to refute it. Prove an N+1 by tracing t
 
 ### Prior feedback
 
-If you received paths to prior review feedback (reviews, inline comments, conversation), your main focus shifts: first verify the previously requested changes were addressed, and only then check for new problems introduced.
+If you received paths to prior review feedback (reviews, inline comments, conversation), it is a re-review: verify each previously requested change was addressed, and check that no new problems were introduced. Review at full scope and report what you find at honest severity — but understand the round's purpose: it exists to close the review, not restart it. A new [major] must surface; smaller new findings are input for the judge, not grounds to reopen on their own.
 
 ## Output
 
