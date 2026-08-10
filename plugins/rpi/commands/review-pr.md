@@ -166,7 +166,7 @@ Spawn **rpi:codebase-analyzer** and **rpi:codebase-pattern-finder** in parallel.
 
 After all subagents complete, compile findings into a unified review.
 
-Read `/tmp/pr_<NUMBER>_diff.txt` now, plus the prior-feedback artifacts from "Step 1: Gather PR Metadata" if the mode saved any. Withholding them is what kept the spawn unbiased; judging without them is guessing at what the code does and at what a previous round already settled.
+Read `/tmp/pr_<NUMBER>_diff.txt` now, plus the prior-feedback artifacts from "Step 1: Gather PR Metadata" if the mode saved any. An informed decision requires you to know the full context of the PR.
 
 **Critical: Subagents are pattern matchers. You are the judgment layer.** Subagents are designed to be paranoid and thorough — they flag everything that matches their heuristics. Your job is to filter their output, not rubber-stamp it. A [major] from a subagent can become a [nit] or be dropped entirely after applying judgment.
 
