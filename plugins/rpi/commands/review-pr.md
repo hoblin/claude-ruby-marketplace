@@ -24,9 +24,9 @@ Examples:
 
 ## Process
 
-Your role is **orchestrator and judge**, not doer. You collect artifacts, delegate analysis to subagents, and apply judgment to their output. The subagents read the code and comments — you decide what to do about their findings. Your context budget is reserved for judgment, not for reading raw data.
+Your role is **orchestrator and judge**, not doer. You collect artifacts, delegate analysis to subagents, and apply judgment to their output. The subagents read the code and comments — you decide what to do about their findings.
 
-Steps are sequential — later steps depend on earlier results. Complete each step and wait for its results before starting the next. Skipping ahead without subagent results means the judgment layer in "Step 6: Merge Results" has nothing to work with. Only parallelize where explicitly marked (e.g., "spawn in parallel").
+Steps are sequential — later steps depend on earlier results. Complete each step and wait for its results before starting the next. Skipping ahead without subagent results means the judgment layer in "Step 6: Judge Findings" has nothing to work with. Only parallelize where explicitly marked (e.g., "spawn in parallel").
 
 ### Step 1: Gather PR Metadata
 
@@ -36,7 +36,7 @@ gh pr view <PR_NUMBER> --json number,title,body,url,headRefName,baseRefName
 
 If re-review or address-feedback mode is activated, also save all existing review feedback to `/tmp/`:
 
-**Do not read these files — pass them to subagents by path only.** The subagents will read and analyze the content. Reading them here would consume context budget that the main agent needs for judgment in "Step 6: Merge Results".
+**Do not read these files — pass them to subagents by path only.** The subagents will read and analyze the content.
 ```bash
 # Review verdicts and bodies (APPROVED, CHANGES_REQUESTED, COMMENTED)
 gh api repos/<OWNER>/<REPO>/pulls/<PR_NUMBER>/reviews \
@@ -58,7 +58,7 @@ If `toon` is available, pipe each extraction through it and save as `.txt` inste
 
 ### Step 2: Fetch and Save Diff
 
-Checkout the PR branch locally and generate the diff. Save it to `/tmp/` — only subagents will read it.
+Checkout the PR branch locally and generate the diff. Save it to `/tmp/`.
 
 ```bash
 git fetch origin
@@ -155,16 +155,18 @@ Historical context: <thoughts-analyzer task output file path>
 
 ### Step 5-b: Spawn Codebase Research Subagents (address-feedback)
 
-Unless address-feedback mode is activated, skip to "Step 6: Merge Results" below.
+Unless address-feedback mode is activated, skip to "Step 6: Judge Findings" below.
 
 Spawn **rpi:codebase-analyzer** and **rpi:codebase-pattern-finder** in parallel. Each receives:
 - Paths to comment files and diff file in `/tmp/`
 - Historical context (from "Step 4: Gather Historical Context")
 - Any additional instructions from the user's input
 
-### Step 6: Merge Results
+### Step 6: Judge Findings
 
 After all subagents complete, compile findings into a unified review.
+
+Read `/tmp/pr_<NUMBER>_diff.txt` now, plus the prior-feedback artifacts from "Step 1: Gather PR Metadata" if the mode saved any. An informed decision requires you to know the full context of the PR.
 
 **Critical: Subagents are pattern matchers. You are the judgment layer.** Subagents are designed to be paranoid and thorough — they flag everything that matches their heuristics. Your job is to filter their output, not rubber-stamp it. A [major] from a subagent can become a [nit] or be dropped entirely after applying judgment.
 
@@ -298,5 +300,5 @@ Done when all comments are answered and re-review is requested.
 
 - Focus only on changed lines, not surrounding unchanged code
 - Provide concrete fix suggestions for [major] issues
-- The main agent must never read the diff file — only subagents read it
+- The main agent must not read the diff file before Step 6
 - Pass additional instructions from user input through to all subagents
