@@ -1,3 +1,7 @@
+---
+description: Deliver a feature or chore end to end, from branch creation to PR readiness, starting from an issue URL or a plain description
+---
+
 ## Input Format
 
 ```
