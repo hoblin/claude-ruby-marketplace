@@ -24,6 +24,7 @@ If no plan path provided, ask for one.
 Plans are carefully designed, but reality can be messy. Your job is to:
 - Follow the plan's intent while adapting to what you find
 - Implement each phase fully before moving to the next
+- Write no comments while implementing; once a phase's code works, make the documentation pass with `rpi:document-code`
 - Verify your work makes sense in the broader codebase context
 - Update checkboxes in the plan as you complete sections
 

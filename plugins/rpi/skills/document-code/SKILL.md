@@ -12,15 +12,24 @@ It starts when the code works, and not before. A comment written while the code 
 
 ## Which mode you are in
 
-Decide this once for the unit, before any of what follows. The question is not whether the repository is public. It is whether there is a consumer who is expected **not** to read the source.
+Decide this **before the first line of code**, not at the documentation pass. A person carries the answer without ever stating it — nobody comments a script they threw into `~/bin` the way they comment a gem — and that tacit step is the one you have to make explicit. Skip it and you default to whichever register the surrounding text suggests.
 
-**Library.** A gem, an npm package, an extracted engine — and equally an internal package another team consumes. The reader is in generated docs, in an IDE hover, in `ri`: the source is hidden by choice. Here the comment *is* the interface.
+The question is not whether the repository is public. It is who reads this, and whether they are expected to read the source.
 
-**Application.** `app/`, `lib/` of a service, anything a teammate or an agent reads by opening it. The source is the interface. Nobody generates docs over it, and whoever wants to know what a service does opens the service. A comment restating behaviour has no reader in this mode.
+| Mode | Its reader | What a comment is for |
+| --- | --- | --- |
+| **Library** — a gem, an engine, a package another team consumes | someone in generated docs, an IDE hover, `ri` | the comment *is* the interface: contract |
+| **Application** — `app/`, a service's `lib/` | a teammate or an agent, who opens the file | only what reading cannot give: constraint |
+| **Tests, config, migrations** | whoever edits them, with the code beside | nothing in prose; markers stay |
+| **Teaching artifact** — a tutorial, a README sample, a demo | someone learning the language | narrate the next line — here that is correct |
+| **Assessed work** — a take-home, coursework | a grader | show the reasoning — here that is the deliverable |
+| **Throwaway** — a script that runs once | nobody, including you next month | nothing |
 
-**Neither.** Tests, config, migrations carry no prose at all. Machine-facing markers stay.
+No register is wrong in itself; each is right in its own row. Every anti-pattern below is one of them transplanted into a row it does not belong to — most often a teaching or an assessed register carried into an application.
 
-Rails settles this inside one file. `ActiveRecord::Transactions` carries some 190 lines above `module ClassMethods`, its public entry point — and `def destroy # :nodoc:` carries none, while `restore_transaction_record_state`, thirty lines of branching over composite primary keys, carries one. `:nodoc:` marks "no contract here". **An application lives entirely in the `:nodoc:` half.**
+The rest of this skill is written for the first two rows, and mostly for the second.
+
+Rails settles the library/application line inside one file. `ActiveRecord::Transactions` carries some 190 lines above `module ClassMethods`, its public entry point — and `def destroy # :nodoc:` carries none, while `restore_transaction_record_state`, thirty lines of branching over composite primary keys, carries one. `:nodoc:` marks "no contract here". **An application lives entirely in the `:nodoc:` half.**
 
 Two boundaries worth naming, because they are guessed wrong:
 
@@ -131,18 +140,9 @@ Underneath it sits a simpler motive. Code does not show effort — it works or i
 
 Cutting them once does not inoculate. Removed at one layer, the same instinct surfaces at the next: delete the defensive default and it wants to become a docstring caveat; delete the caveat and it wants to become a test for the impossible case; delete that and it wants to become a paragraph in the pull request.
 
-### Where the habit was learned
+### Why the wrong register is the default
 
-Public code is mostly written for a stranger who lacks the context, not for a colleague who will maintain it. Each genre has a reader production does not have, and each teaches a register that is wrong here:
-
-| Genre | Its reader | What it teaches |
-| --- | --- | --- |
-| Tutorials, README samples, Stack Overflow | someone learning the language | narrate the next line |
-| Take-home tests, coursework | a grader | prove the author understood |
-| Notebooks | the author, thinking | reason out loud in the file |
-| Review threads | an opponent | argue the choice |
-| Legacy file headers | a team without version control | record who changed what, when |
-| Config templates | a newcomer configuring | annotate every setting |
+Public code is dominated by the rows an application is not. Tutorials, Stack Overflow answers, coursework, notebooks, config templates and review threads are all written for a reader who lacks the context — a learner, a grader, an opponent. Application code written for a colleague who will maintain it is mostly private, so the register with the fewest public examples is the one needed most often.
 
 The corpus also holds only the comments that were written. One a reviewer had removed leaves no public trace, so writing has millions of examples behind it and deleting has almost none.
 

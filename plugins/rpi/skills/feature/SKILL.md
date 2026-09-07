@@ -53,7 +53,7 @@ Wait for both subagents to complete before proceeding.
 ### Step 4: Implementation
 
 Follow Rails best practices, CLAUDE.md, and any additional instructions from user input.
-Keep code clean, DRY, well-documented.
+Keep code clean and DRY. Name the mode you are writing in before the first line — `rpi:document-code` defines them — and write no comments while implementing: documenting is its own pass, in Step 5.
 When modifying code: fix lurking bugs, refactor, add missing tests and regression tests.
 Ensure solid RSpec coverage with well-documented business logic (viewable with `--format documentation`).
 Review changes for completeness.
@@ -65,6 +65,7 @@ Run specs for changed/affected files only (never full suite locally): `bundle ex
 `bundle exec standardrb --fix`
 `npx @herb-tools/linter --fix app/views/**/*.erb` (if views changed)
 Fix all issues, even flaky tests.
+Documentation pass: activate `rpi:document-code` and read the diff once with each comment beside its code — add what the mode requires, delete what carries no type.
 
 ### Step 6: Translations (i18n)
 
@@ -105,7 +106,7 @@ Boy Scout Rule: Leave the code cleaner than you found it.
 Favor Plain Old Ruby Objects (POROs) and service objects; keep controllers and models thin.
 Avoid N+1 queries by using includes (and consider Bullet for detection).
 Use clear, explicit naming; avoid magic values.
-Document all public APIs.
+Document public APIs in library mode; in application code, see `rpi:document-code`.
 Use squash merges to keep commit history clean.
 Write small, focused commits using Conventional Commits (feat:, chore:, fix:)
 
