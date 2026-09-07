@@ -83,8 +83,9 @@ Published interfaces need interface comments as a matter of course; implementati
 
 The single most common defect is **rationale in place of documentation**: the comment explains why its author reached for something, in place of stating what the code guarantees or what a reader must not break. Ousterhout calls the interface-comment version of this **information leakage** — implementation detail in a comment whose job is to hide it.
 
+**Bad** — rationale, and implementation leaking into an interface comment:
+
 ```ruby
-# BAD - rationale, and implementation leaking into an interface comment
 # Read in a transaction so it reaches the writer. A caller writes an order and
 # asks for the summary immediately afterwards; served by a replica that has not
 # caught up, the summary would omit the very order it exists to report, and
@@ -96,8 +97,9 @@ def call
 end
 ```
 
+**Good** — what the code cannot show, and where the rest is written down:
+
 ```ruby
-# GOOD - what the code cannot show, and where the rest is written down
 # The transaction pins this read to the writer — see doc/read-after-write.md.
 #
 # @return [ActiveRecord::Relation<Order>] oldest first
@@ -112,15 +114,17 @@ The diff shows what changed, the commit message says why, and the pull request h
 
 **Redundant comment** — says what the line below already says.
 
+**Bad:**
+
 ```ruby
-# BAD
 # What state an order is in decides what it may become next, and lets a refund
 # close a payment while it is still pending.
 enum :state, {pending: 0, paid: 1, refunded: 2}, prefix: :state
 ```
 
+**Good:**
+
 ```ruby
-# GOOD
 enum :state, {pending: 0, paid: 1, refunded: 2}, prefix: :state
 ```
 
@@ -128,15 +132,17 @@ The enum already lists every state an order can hold, and which transitions are 
 
 **Journal comment** — the change history kept in the file, which version control already holds.
 
+**Bad:**
+
 ```ruby
-# BAD
 # Phase 2 of PROJ-412. Originally this used a JSON column on the order, but
 # that made settled? a document dig, so we moved to rows instead.
 class LineItem < ApplicationRecord
 ```
 
+**Good:**
+
 ```ruby
-# GOOD
 # One line of an order.
 #
 # Amounts the system writes itself — a currency conversion, later a retried
@@ -160,19 +166,26 @@ The second version is an interface comment followed by one invariant. It reads t
 
 **Shortening when the answer is deletion.** Three versions of one comment, over the same line. Only the third is right.
 
+**Bad** — as written:
+
 ```ruby
-# BAD - as written
 # The whole account is loaded at once because every order travels in the
 # response; the line items ride along preloaded, so pairing a charge to its
 # refund costs no further query.
 account.orders.includes(:line_items)
+```
 
-# BAD - told it was noise, made it shorter: the same comment, fewer words
+**Bad** — told it was noise, made shorter: the same comment, fewer words:
+
+```ruby
 # Loaded whole because every order travels in the response, with line items
 # preloaded so pairing a charge to its refund costs no further query.
 account.orders.includes(:line_items)
+```
 
-# GOOD - what `includes` does is Rails knowledge, and the call says the rest
+**Good** — what `includes` does is Rails knowledge, and the call says the rest:
+
+```ruby
 account.orders.includes(:line_items)
 ```
 
