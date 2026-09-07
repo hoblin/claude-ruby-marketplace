@@ -1,6 +1,34 @@
 ---
-description: "The canon for comments and docstrings — which mode the code is in, which of the four types a comment is, and the failure modes that recur. Use before writing any comment, in any language or file type, including one you are about to add mid-implementation; when finished code carries no docs; when asked to document something or add YARD; when auditing comments already in a file; and when a review says a comment restates the code, narrates your reasoning, or should be deleted rather than shortened."
+description: "The canon for comments and docstrings, in six modes (application by default, library, tests-config-migrations, teaching, assessed, throwaway) and four types (contract, identity, constraint, declaration). Use before writing any comment, in any language or file type, including one you are about to add mid-implementation; when finished code carries no docs; when asked to document something or add YARD; when auditing comments already in a file; and when a review says a comment restates the code, narrates your reasoning, or should be deleted rather than shortened."
 ---
+
+## Modes
+
+Name the mode **before the first line of code**, not at the documentation pass. A person carries the answer without ever stating it — nobody comments a script they threw into `~/bin` the way they comment a gem — and that tacit step is the one you have to make explicit. Skip it and you default to whichever register the surrounding text suggests.
+
+The question is not whether the repository is public. It is who reads this, and whether they are expected to read the source.
+
+| Mode | Its reader | What a comment is for |
+| --- | --- | --- |
+| **application** (default) — `app/`, a service's `lib/` | a teammate or an agent, who opens the file | only what reading cannot give: constraint |
+| **library** — a gem, an engine, a package another team consumes | someone in generated docs, an IDE hover, `ri` | the comment *is* the interface: contract |
+| **tests, config, migrations** | whoever edits them, with the code beside | nothing in prose; markers stay |
+| **teaching** — a tutorial, a README sample, a demo | someone learning the language | narrate the next line — here that is correct |
+| **assessed** — a take-home, coursework | a grader | show the reasoning — here that is the deliverable |
+| **throwaway** — a script that runs once | nobody, including you next month | nothing |
+
+No register is wrong in itself; each is right in its own row. Every anti-pattern below is one of them transplanted into a row it does not belong to — most often a teaching or an assessed register carried into an application.
+
+Two boundaries, because they are guessed wrong:
+
+- An internal package with another team as its consumer is in **library** mode, private repository or not. The boundary is "reading the implementation is not expected", not publication.
+- A service wrapping a vendor's API is a library *with respect to that vendor* — it documents what leaks through from below — and an application everywhere else.
+
+Rails settles the line inside one file. `ActiveRecord::Transactions` carries some 190 lines above `module ClassMethods`, its public entry point — and `def destroy # :nodoc:` carries none, while `restore_transaction_record_state`, thirty lines of branching over composite primary keys, carries one. `:nodoc:` marks "no contract here". **An application lives entirely in the `:nodoc:` half.**
+
+Everything below is written for **application** and **library**, and mostly for the first.
+
+## The premise
 
 In a high-level language a comment does not describe what the code does. Ruby reads as English; anything a comment says about behaviour, the lines below it say better and stay true longer. What is left for a comment is what the code cannot say about itself — a short list, worth knowing by name.
 
@@ -9,32 +37,6 @@ You are writing the contract the next reader needs — a comment, a docstring, a
 ## Documenting is its own pass
 
 It starts when the code works, and not before. A comment written while the code is being written is written by someone still deciding, so what it captures is the deciding. The cheapest way to keep that out of the file is to write no comments during the work at all — then there is nothing to judge afterwards, only something to add.
-
-## Which mode you are in
-
-Decide this **before the first line of code**, not at the documentation pass. A person carries the answer without ever stating it — nobody comments a script they threw into `~/bin` the way they comment a gem — and that tacit step is the one you have to make explicit. Skip it and you default to whichever register the surrounding text suggests.
-
-The question is not whether the repository is public. It is who reads this, and whether they are expected to read the source.
-
-| Mode | Its reader | What a comment is for |
-| --- | --- | --- |
-| **Library** — a gem, an engine, a package another team consumes | someone in generated docs, an IDE hover, `ri` | the comment *is* the interface: contract |
-| **Application** — `app/`, a service's `lib/` | a teammate or an agent, who opens the file | only what reading cannot give: constraint |
-| **Tests, config, migrations** | whoever edits them, with the code beside | nothing in prose; markers stay |
-| **Teaching artifact** — a tutorial, a README sample, a demo | someone learning the language | narrate the next line — here that is correct |
-| **Assessed work** — a take-home, coursework | a grader | show the reasoning — here that is the deliverable |
-| **Throwaway** — a script that runs once | nobody, including you next month | nothing |
-
-No register is wrong in itself; each is right in its own row. Every anti-pattern below is one of them transplanted into a row it does not belong to — most often a teaching or an assessed register carried into an application.
-
-The rest of this skill is written for the first two rows, and mostly for the second.
-
-Rails settles the library/application line inside one file. `ActiveRecord::Transactions` carries some 190 lines above `module ClassMethods`, its public entry point — and `def destroy # :nodoc:` carries none, while `restore_transaction_record_state`, thirty lines of branching over composite primary keys, carries one. `:nodoc:` marks "no contract here". **An application lives entirely in the `:nodoc:` half.**
-
-Two boundaries worth naming, because they are guessed wrong:
-
-- An internal package with another team as its consumer is in library mode, private repository or not. The boundary is "reading the implementation is not expected", not publication.
-- A service wrapping a vendor's API is a library *with respect to that vendor* — it documents what leaks through from below — and an application everywhere else.
 
 ## The four types
 
@@ -97,14 +99,14 @@ Types and markers, not prose. `@param` and `@return` **declare**; they are never
 
 ## Where each type applies
 
-| Type | Library | Application | Tests, config, migrations |
+| Type | application | library | tests, config, migrations |
 | --- | --- | --- | --- |
-| **Contract** | required at every public entry point | rare — only where a consumer really is kept from the source | — |
-| **Identity** | on the public classes | on the class, when the name does not carry the domain role | — |
-| **Constraint** | as the occasion arises | the main type; in an application it is most of what remains | — |
+| **Contract** | rare — only where a consumer really is kept from the source | required at every public entry point | — |
+| **Identity** | on the class, when the name does not carry the domain role | on the public classes | — |
+| **Constraint** | the main type; most of what remains | as the occasion arises | — |
 | **Declaration** | yes | yes | markers only |
 
-The inversion is the point of the distinction: in a library Contract is the default and Constraint the occasion; in an application it is the other way round.
+The inversion is the point of the distinction: in an application Constraint is the default and Contract the exception; in a library it is the other way round. The three remaining modes — teaching, assessed, throwaway — do not use this table: their registers are set by their own readers.
 
 Before any type at all, **try the name first.** If a better method name, a better parameter name, or an extracted named helper removes the question, that is the fix. A comment is what remains when naming cannot carry it.
 
