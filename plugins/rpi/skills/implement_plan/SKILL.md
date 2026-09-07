@@ -10,6 +10,7 @@ You are tasked with implementing an approved technical plan from `./thoughts/sha
 ## Getting Started
 
 When given a plan path:
+- Activate the `rpi:document-code` skill
 - Read the plan completely and check for any existing checkmarks (- [x])
 - Read the original ticket and all files mentioned in the plan
 - **Read files fully** - never use limit/offset parameters, you need complete context
@@ -24,7 +25,6 @@ If no plan path provided, ask for one.
 Plans are carefully designed, but reality can be messy. Your job is to:
 - Follow the plan's intent while adapting to what you find
 - Implement each phase fully before moving to the next
-- Document each phase with the `rpi:document-code` skill once its code works
 - Verify your work makes sense in the broader codebase context
 - Update checkboxes in the plan as you complete sections
 
