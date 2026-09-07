@@ -91,7 +91,7 @@ The single most common defect is **rationale in place of documentation**: the co
 # caught up, the summary would omit the very order it exists to report, and
 # would still be persisted.
 #
-# @return [ActiveRecord::Relation<Order>]
+# @return [ActiveRecord::Relation<Order>] oldest first
 def call
   Order.transaction { account.orders.order(:created_at).load }
 end
