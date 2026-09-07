@@ -1,8 +1,8 @@
 ---
-description: "The canon for comments and docstrings — when one is warranted, what shape it takes, and the failure modes that recur. Use before writing any comment, in any language or file type, including one you are about to add mid-implementation; when finished code carries no docs; when asked to document something or add YARD; when auditing comments already in a file; and when a review says a comment restates the code, narrates your reasoning, or should be deleted rather than shortened."
+description: "The canon for comments and docstrings — which mode the code is in, which of the four types a comment is, and the failure modes that recur. Use before writing any comment, in any language or file type, including one you are about to add mid-implementation; when finished code carries no docs; when asked to document something or add YARD; when auditing comments already in a file; and when a review says a comment restates the code, narrates your reasoning, or should be deleted rather than shortened."
 ---
 
-In a high-level language a comment does not describe what the code does. Ruby reads as English; anything a comment says about behaviour, the lines below it say better and stay true longer. What is left for a comment is what the code cannot say about itself — and that is a short list, worth knowing by name.
+In a high-level language a comment does not describe what the code does. Ruby reads as English; anything a comment says about behaviour, the lines below it say better and stay true longer. What is left for a comment is what the code cannot say about itself — a short list, worth knowing by name.
 
 You are writing the contract the next reader needs — a comment, a docstring, a YARD block. The rule is the same in Ruby, in YAML, in a Dockerfile, in a shell script, and those are where it gets forgotten. You are not recording the work you just did: the diff, the commit message and the PR already hold that.
 
@@ -10,54 +10,30 @@ You are writing the contract the next reader needs — a comment, a docstring, a
 
 It starts when the code works, and not before. A comment written while the code is being written is written by someone still deciding, so what it captures is the deciding. The cheapest way to keep that out of the file is to write no comments during the work at all — then there is nothing to judge afterwards, only something to add.
 
-## When a comment is warranted
+## Which mode you are in
 
-Before any of the eight: **try the name first.** If a better method name, a better parameter name, or an extracted named helper removes the question, that is the fix. A comment is what remains when naming cannot carry it.
+Decide this once for the unit, before any of what follows. The question is not whether the repository is public. It is whether there is a consumer who is expected **not** to read the source.
 
-Case 1 applies by default, to everything public. The other seven apply on occasion — when the occasion actually arises, not in case it might.
+**Library.** A gem, an npm package, an extracted engine — and equally an internal package another team consumes. The reader is in generated docs, in an IDE hover, in `ri`: the source is hidden by choice. Here the comment *is* the interface.
 
-### The contract — facing the caller
+**Application.** `app/`, `lib/` of a service, anything a teammate or an agent reads by opening it. The source is the interface. Nobody generates docs over it, and whoever wants to know what a service does opens the service. A comment restating behaviour has no reader in this mode.
 
-**1. A public method, class or module.** Without it there is no abstraction: to use the thing, a caller has to read its body. What it is, in the present tense, with examples carrying input and output.
-*Test: can a caller use this without opening the implementation?*
+**Neither.** Tests, config, migrations carry no prose at all. Machine-facing markers stay.
 
-**2. Behaviour that contradicts a reasonable expectation.** Not complex — surprising. A nested transaction commits both records; `after_save` runs before the commit lands. Shown with a runnable example.
-*Test: would a competent reader, reasoning by analogy, get this wrong?*
+Rails settles this inside one file. `ActiveRecord::Transactions` carries some 190 lines above `module ClassMethods`, its public entry point — and `def destroy # :nodoc:` carries none, while `restore_transaction_record_state`, thirty lines of branching over composite primary keys, carries one. `:nodoc:` marks "no contract here". **An application lives entirely in the `:nodoc:` half.**
 
-**3. A warning: what must not be done.** `ActiveRecord::Transactions` spends a section on rescuing `StatementInvalid` inside a transaction block, and another on DDL inside an emulated savepoint. Case 2 says you will be surprised; case 3 says you will break it.
-*Test: is there an action that looks legitimate and is not?*
+Two boundaries worth naming, because they are guessed wrong:
 
-**4. The boundary of what this will never do.** "Fully distributed transactions are beyond the scope of Active Record" — so the reader stops looking here for it.
-*Test: will a reader search this thing for something it does not have?*
+- An internal package with another team as its consumer is in library mode, private repository or not. The boundary is "reading the implementation is not expected", not publication.
+- A service wrapping a vendor's API is a library *with respect to that vendor* — it documents what leaks through from below — and an application everywhere else.
 
-**5. A leak of the layer you hide.** Rails documents MySQL and PostgreSQL, because it is the abstraction over them and their behaviour shows through its own interface. It never documents Ruby. In your application Rails is that lower layer and has documented itself.
-*Test: is this the layer you hide, or one that documents itself?*
+## The four types
 
-### The constraint — facing the editor
+Every comment that survives is one of these. **If you cannot name the type, do not write it** — that is the whole of the anti-pattern list below, stated once.
 
-**6. A measured property of one line.** It sits at the line it constrains, inside the method, and only where the obvious simplification would silently lose it:
+### Contract — for a caller who will not read the source
 
-```ruby
-def blank?
-  # The regexp that matches blank strings is expensive. For the case of empty
-  # strings we can speed up this method (~3.5x) with an empty? call. The
-  # penalty for the rest of strings is marginal.
-  empty? || ...
-```
-
-*Test: is there a number, and would a tidy-up throw it away?*
-
-**7. An invariant whose violation is silent.** A rule binding future edits: amounts the system writes never merge into a customer's line; ids go to the log, never the raw parameter. The criterion is the silence — **if breaking the rule fails a test, the test is the documentation** and no comment is needed. A comment earns its place where nothing fails: a leaked log line, a cross-tenant read, two renders sharing one cache key.
-*Test: would breaking this be caught by anything? If yes, write nothing.*
-
-**8. A fact that lives outside this file.** A provider's hard limit, a schema quirk, a coupling invisible at the call site — with a pointer to where it is written down (`see doc/read-after-write.md`).
-*Test: would you have to open another file, or someone else's documentation, to learn this?*
-
-## The form a warranted comment takes
-
-Rails is the reference — read it, do not reconstruct it from memory.
-
-`ActiveSupport`'s `blank?`:
+How to use it, what will surprise you, what you must not do, what it will never do. `ActiveSupport`'s `blank?`:
 
 ```ruby
 # An object is blank if it's false, empty, or a whitespace string.
@@ -77,17 +53,61 @@ def blank?
 end
 ```
 
+The surprises belong here too, not in a section of their own: a nested transaction commits both records; a rescued `StatementInvalid` poisons a PostgreSQL transaction; MySQL releases savepoints on DDL. So does the limit — "fully distributed transactions are beyond the scope of Active Record" — so a reader stops looking here for it.
+
+### Identity — what this is in the domain
+
+One or two lines, on the class or module, and only when the name does not carry it. The code shows mechanism; the concept's place in the business is not recoverable by reading.
+
+```ruby
+# A price as the customer sees it, in the currency they were quoted in.
+class DisplayPrice
+```
+
+### Constraint — for whoever edits this line next
+
+What breaks if it changes, and where that is written down. Three shapes:
+
+*A measured property*, at the line it constrains, where the obvious simplification would silently lose it:
+
+```ruby
+def blank?
+  # The regexp that matches blank strings is expensive. For the case of empty
+  # strings we can speed up this method (~3.5x) with an empty? call. The
+  # penalty for the rest of strings is marginal.
+  empty? || ...
+```
+
+*An invariant whose violation is silent* — amounts the system writes never merge into a customer's line; ids go to the log, never the raw parameter. The silence is the criterion: **if breaking the rule fails a test, the test is the documentation** and no comment is needed. What earns one is the breakage nothing catches — a leaked log line, a cross-tenant read, two renders sharing a cache key.
+
+*A fact that lives outside this file* — a provider's hard limit, a schema quirk, a coupling invisible at the call site — carrying a pointer to where it is recorded: `see doc/read-after-write.md`.
+
+### Declaration — for tooling and the reader's eye
+
+Types and markers, not prose. `@param` and `@return` **declare**; they are never described beside. A duck type says more than a class name — `[String, #read]` states what the method actually needs. `# :nodoc:`, `# frozen_string_literal: true` and linter directives are the rest of this type.
+
+## Where each type applies
+
+| Type | Library | Application | Tests, config, migrations |
+| --- | --- | --- | --- |
+| **Contract** | required at every public entry point | rare — only where a consumer really is kept from the source | — |
+| **Identity** | on the public classes | on the class, when the name does not carry the domain role | — |
+| **Constraint** | as the occasion arises | the main type; in an application it is most of what remains | — |
+| **Declaration** | yes | yes | markers only |
+
+The inversion is the point of the distinction: in a library Contract is the default and Constraint the occasion; in an application it is the other way round.
+
+Before any type at all, **try the name first.** If a better method name, a better parameter name, or an extracted named helper removes the question, that is the fix. A comment is what remains when naming cannot carry it.
+
+## The shape it takes
+
+Rails is the reference — read it, do not reconstruct it from memory.
+
 A statement of what the thing **is**, in the present tense, facing the caller. Then examples carrying input and output. Then the type tag — Rails writes `@return` even on a method whose name already answers it, because the tag is the signature and the sentence is not.
 
 `String#squish` runs nine lines of comment over two lines of code, and each is either the statement or an example with its result beside it: `" foo   bar    \n   \t   boo".squish # => "foo bar boo"`. `String#truncate` scales the same shape — one statement, then an example per branch, down to the edge case where the omission is longer than the limit. `String#squish!` gets one line and a pointer to its sibling. `ActionController::Parameters#require` takes it under load: an example per branch, each way it raises included, with warnings riding inline (`# CAREFUL`, `# SAFER`).
 
 Show input and output. Prose describing what an example would have shown is the thing to delete.
-
-Types are **declared** in `@param` and `@return`, never described beside them. A duck type says more than a class name — `[String, #read]` states what the method actually needs.
-
-### Where volume belongs
-
-`ActiveRecord::Transactions` carries some 190 lines of prose, and all of it sits above `module ClassMethods` — the public entry point. In that same file `restore_transaction_record_state` — thirty lines of branching over composite primary keys — carries one line, and `def destroy # :nodoc:` carries none: internal, no contract, nothing to say. The hardest method in the file has the shortest comment.
 
 Long is allowed at the public boundary, about the caller's surprises, with examples. A long comment over a private method is that canon upside down.
 
@@ -100,6 +120,8 @@ Then ask whether the fact can be shown: as input and output, or as an outcome so
 ---
 
 ## Anti-patterns
+
+Each one below is the same failure: a comment whose type cannot be named. Narration is not a type. History is not a type. Justification is not a type.
 
 ### The tell
 
@@ -232,9 +254,9 @@ class LineItem < ApplicationRecord
 class LineItem < ApplicationRecord
 ```
 
-The good one states an invariant a reader would otherwise break, and reads the same in a year to someone who never knew a JSON column was considered. Where a real decision exists, Rails states it as a present-tense fact and links the vendor's own manual — never "we chose savepoints because".
+Identity, then one constraint. It reads the same in a year to someone who never knew a JSON column was considered. Where a real decision exists, Rails states it as a present-tense fact and links the vendor's own manual — never "we chose savepoints because".
 
-### Where no comment belongs at all
+### In tests, config and migrations
 
 **Tests.** Not a header block, not a note above a case, not a preamble explaining why the case exists. The test name states the behaviour, helper names state the mechanism, and the assertion message carries what a fixer needs. If the behaviour is not legible from the name, the name is wrong — rename it. A test that seems to need a comment is asking for a named helper.
 
@@ -252,7 +274,9 @@ A comments-only change runs nothing. Do not re-run the suite to verify it.
 
 | Anti-Pattern | Solution |
 |--------------|----------|
+| A comment whose type you cannot name | Delete it |
 | Narrating what the next line does | Delete it — the language reads |
+| A contract in application code | Delete it — the reader opens the file |
 | Reasoning narrated in a docstring | State the constraint a reader must not break; the reasoning goes in the PR |
 | Prose repeating the tag it sits on | Delete the sentence, keep the tag |
 | Shortening a comment a reviewer called noise | Delete it — a tighter version comes back next review |
