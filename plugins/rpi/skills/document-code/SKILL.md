@@ -6,6 +6,8 @@ description: "The canon for comments and docstrings, in six modes (application b
 
 Name the mode **before the first line of code**, not at the documentation pass. A person carries the answer without ever stating it — nobody comments a script they threw into `~/bin` the way they comment a gem — and that tacit step is the one you have to make explicit. Skip it and you default to whichever register the surrounding text suggests.
 
+State it out loud before your first edit — one line naming the mode — so it can be checked rather than reconstructed from the diff afterwards.
+
 The question is not whether the repository is public. It is who reads this, and whether they are expected to read the source.
 
 | Mode | Its reader | What a comment is for |
@@ -127,6 +129,10 @@ Long is allowed at the public boundary, about the caller's surprises, with examp
 Delete the comment and read the code without it. If nothing is lost, it was restating — leave it deleted.
 
 Then ask whether the fact can be shown: as input and output, or as an outcome someone could observe. `# => "foo bar boo"` can be run. "Without this guard, a second worker would charge the account twice" cannot — it describes a world that does not exist, which makes it an argument, and arguments belong in the pull request.
+
+## Precedent is not a licence
+
+A neighbour that breaks these rules is not permission to write a third one — it is the next thing to clean. Leave what you touch cleaner than you found it, and where older blocks are the reason a new one took its shape, say so: that is where the pattern keeps regenerating.
 
 ---
 
