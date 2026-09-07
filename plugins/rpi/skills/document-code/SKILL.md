@@ -85,13 +85,17 @@ The single most common defect is **rationale in place of documentation**: the co
 
 ```ruby
 # BAD - rationale, and implementation leaking into an interface comment
-# Read in a transaction so it reaches the writer. A caller writes the row it is
-# about to summarise and summarises immediately afterwards; served by a replica
-# that has not caught up, the summary would omit the very row it exists to
-# report, and would still be persisted.
+# Read in a transaction so it reaches the writer. A caller writes an order and
+# asks for the summary immediately afterwards; served by a replica that has not
+# caught up, the summary would omit the very order it exists to report, and
+# would still be persisted.
 #
 # @return [Array<Hash>] rows, oldest first
 def call
+  Order.transaction do
+    account.orders.order(:created_at).map { |order| row_for(order) }
+  end
+end
 ```
 
 ```ruby
@@ -101,6 +105,10 @@ def call
 #
 # @return [Array<Hash>] rows, oldest first
 def call
+  Order.transaction do
+    account.orders.order(:created_at).map { |order| row_for(order) }
+  end
+end
 ```
 
 The diff shows what changed, the commit message says why, and the pull request holds the argument. All three outlive the branch and none of them rots against the code.
