@@ -12,14 +12,17 @@ People make this choice without noticing they have made it. A script written to 
 
 The question to answer is not whether the repository is public. It is who reads this code, and whether they are expected to read the source at all.
 
-| Mode | Its reader | What a comment is for |
-| --- | --- | --- |
-| **application** (default) — `app/`, a service's `lib/` | a teammate or an agent, who opens the file | only what reading the code cannot give |
-| **library** — a gem, an engine, a package another team consumes | someone in generated docs, an IDE hover, `ri` | standing in for source the reader will not open |
-| **tests, config, migrations** | whoever edits them, with the code beside | nothing in prose; machine-readable markers stay |
-| **teaching** — a tutorial, a README sample, a demo | someone learning the language | narrating each line, which is the point here |
-| **assessed** — a take-home, coursework | a grader | showing the author's reasoning, which is the deliverable |
-| **throwaway** — a script that runs once | nobody, including its author next month | nothing |
+**application** (the default) — `app/`, a service's `lib/`. Read by a teammate or an agent who opens the file, so a comment carries only what reading the code cannot give.
+
+**library** — a gem, an engine, a package another team consumes. Read in generated documentation, an IDE hover or `ri`, so a comment stands in for source the reader will not open.
+
+**tests, config, migrations** — read by whoever edits them, with the code beside. No prose; machine-readable markers stay.
+
+**teaching** — a tutorial, a README sample, a demo. Read by someone learning the language, so narrating each line is the point.
+
+**assessed** — a take-home, coursework. Read by a grader, so showing the author's reasoning is the deliverable.
+
+**throwaway** — a script that runs once. Read by nobody, including its author next month. Nothing.
 
 Each of those registers is correct in its own mode. A tutorial that narrates every line is doing its job, and so is a take-home exercise that shows the candidate thinking. Every anti-pattern in this skill is one of those registers written into a mode it does not belong to — most often a teaching or an assessed register written into an application.
 
@@ -103,12 +106,15 @@ Types and markers, never prose. `@param` and `@return` **declare** a type; they 
 
 ## Where each type applies
 
-| Type | application | library | tests, config, migrations |
-| --- | --- | --- | --- |
-| **Contract** | rare — only where a consumer really is kept from the source | required at every public entry point | — |
-| **Identity** | on a class whose name does not carry its domain role | on the public classes | — |
-| **Constraint** | the routine case; most of what an application needs | as the occasion arises | — |
-| **Declaration** | yes | yes | markers only |
+**Contract** — required at every public entry point in library mode; rare in application code, where it belongs only if some consumer really is kept from the source.
+
+**Identity** — on the public classes in library mode; in application code, on a class whose name does not carry its domain role.
+
+**Constraint** — the routine case in application code, and most of what it needs; in library mode, as the occasion arises.
+
+**Declaration** — in both modes.
+
+In tests, config and migrations none of the four applies, markers aside.
 
 Which type is routine and which is exceptional swaps between the two modes: application code writes Constraint by default and Contract rarely, a library the other way round. The three remaining modes — teaching, assessed and throwaway — do not use this table, because their readers set a register of their own.
 
@@ -285,21 +291,19 @@ A change that touches only comments changes no behaviour, so it is verified by r
 
 ## Anti-Patterns Quick List
 
-| Anti-Pattern | Solution |
-|--------------|----------|
-| A comment whose type you cannot name | Delete it |
-| Narrating what the next line does | Delete it — the language reads |
-| A contract in application code | Delete it — the reader opens the file |
-| Reasoning narrated in a docstring | State the constraint a reader must not break; the reasoning goes in the PR |
-| Prose repeating the tag it sits on | Delete the sentence, keep the tag |
-| Shortening a comment a reviewer called noise | Delete it — a shortened version comes back next review |
-| Ticket ids, phases, alternatives, provenance | Commit message |
-| A long comment above a private method | Length belongs at a public entry point |
-| Explaining what Rails or a gem does | Delete it — that layer documents itself |
-| A counterfactual: "without this, X would…" | It is an argument; arguments go in the PR body |
-| A rule a test already enforces | Delete it — the test is the documentation |
-| A comment in a test | Rename the test, or extract a named helper |
-| A comment in config or a migration | Delete it — the setting name is the contract |
-| A comment that contradicts its code | Delete first; reword only if the fact still binds |
-| A question a better name would answer | Rename, then see whether anything is left to say |
-| Auditing by grepping comment lines | Read the diff, each comment beside its code |
+A comment whose type you cannot name → delete it.
+Narrating what the next line does → delete it; the language reads.
+A contract in application code → delete it; the reader opens the file.
+Reasoning narrated in a docstring → state the constraint a reader must not break, and put the reasoning in the pull request.
+Prose repeating the tag it sits on → delete the sentence, keep the tag.
+Shortening a comment a reviewer called noise → delete it; a shortened version comes back next review.
+Ticket ids, phases, alternatives, provenance → commit message.
+A long comment above a private method → length belongs at a public entry point.
+Explaining what Rails or a gem does → delete it; that layer documents itself.
+A counterfactual, "without this, X would…" → it is an argument, and arguments go in the pull request.
+A rule a test already enforces → delete it; the test is the documentation.
+A comment in a test → rename the test, or extract a named helper.
+A comment in config or a migration → delete it; the setting name is the contract.
+A comment that contradicts its code → delete first; reword only if the fact still binds.
+A question a better name would answer → rename, then see whether anything is left to say.
+Auditing by grepping comment lines → read the diff, each comment beside its code.
