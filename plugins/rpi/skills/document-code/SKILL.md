@@ -129,7 +129,7 @@ A comments-only change runs nothing. Do not re-run the suite to verify it.
 The comment explains why the author reached for something, instead of what a reader must not break.
 
 ```ruby
-# ✗
+# BAD
 # Read in a transaction so it reaches the writer. A caller writes the row it is
 # about to summarise and summarises immediately afterwards; served by a replica
 # that has not caught up, the summary would omit the very row it exists to
@@ -140,7 +140,7 @@ def call
 ```
 
 ```ruby
-# ✓ the constraint, and where it is written down
+# GOOD - the constraint, and where it is written down
 # Read in a transaction so it reaches the writer rather than a replica that
 # has not caught up — see doc/read-after-write.md.
 #
@@ -151,14 +151,14 @@ def call
 ### Restating the line below it
 
 ```ruby
-# ✗
+# BAD
 # What state an order is in decides what it may become next, and lets a refund
 # close a payment while it is still pending.
 enum :state, {pending: 0, paid: 1, refunded: 2}, prefix: :state
 ```
 
 ```ruby
-# ✓
+# GOOD
 enum :state, {pending: 0, paid: 1, refunded: 2}, prefix: :state
 ```
 
@@ -167,13 +167,13 @@ The enum says which states exist. Nothing else was known.
 ### Prose repeating the tag it sits on
 
 ```ruby
-# ✗
+# BAD
 # @return [String] the text shown to the customer
 def display_name
 ```
 
 ```ruby
-# ✓
+# GOOD
 # @return [String]
 def display_name
 ```
@@ -185,16 +185,16 @@ Delete the sentence, keep the tag. The sentence was the method name again.
 The failure has three steps, and the third is the only correct one.
 
 ```ruby
-# ✗ as written
+# BAD - as written
 # The whole account is read at once because every order of it travels in the
 # response; the line items ride along preloaded, so pairing a charge to its
 # refund costs no further query.
 
-# ✗ told it was noise, made it shorter — same comment, fewer words
+# BAD - told it was noise, made it shorter: same comment, fewer words
 # Read whole because every order travels in the response, with the line items
 # preloaded so pairing a charge to its refund costs no further query.
 
-# ✓ what `includes` buys is Rails knowledge; the rest the code says
+# GOOD - what `includes` buys is Rails knowledge; the rest the code says
 ```
 
 A reviewer saying a comment should not exist is asking for `delete`. A tighter version comes back in the next review.
@@ -202,14 +202,14 @@ A reviewer saying a comment should not exist is asking for `delete`. A tighter v
 ### History, phases and roads not taken
 
 ```ruby
-# ✗
+# BAD
 # Phase 2 of PROJ-412. Originally this used a JSON column on the order, but
 # that made settled? a document dig, so we moved to rows instead.
 class LineItem < ApplicationRecord
 ```
 
 ```ruby
-# ✓
+# GOOD
 # One line of an order.
 #
 # Amounts the system writes itself — a currency conversion, later a retried
@@ -220,6 +220,23 @@ class LineItem < ApplicationRecord
 ```
 
 The good one states an invariant a reader would otherwise break, and reads the same in a year to someone who never knew a JSON column was considered. Ticket ids, phases and rejected alternatives go in the commit message.
+
+## Anti-Patterns Quick List
+
+| Anti-Pattern | Solution |
+|--------------|----------|
+| Reasoning narrated in a docstring | State the constraint a reader must not break; the reasoning goes in the PR |
+| Restating the line below it | Delete it |
+| Prose repeating the tag it sits on | Delete the sentence, keep the tag |
+| Shortening a comment a reviewer called noise | Delete it — a tighter version comes back next review |
+| Ticket ids, phases, alternatives, provenance | Commit message |
+| A long comment over a private method | Volume belongs at the public boundary |
+| Explaining what Rails or a gem does | Delete it — that layer documents itself |
+| A counterfactual: "would otherwise…" | It is an argument; arguments go in the PR body |
+| A comment in a test | Rename the test, or extract a named helper |
+| A comment in config or a migration | Delete it — the setting name is the contract |
+| A comment that contradicts its code | Delete first; reword only if the fact still binds |
+| Auditing by grepping comment lines | Read the diff, each comment beside its code |
 
 ---
 
