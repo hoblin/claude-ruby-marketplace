@@ -16,37 +16,49 @@ Two more situations exist and are not covered by this skill's rules, because the
 
 A comment that is none of these four has no reason to exist.
 
-**Interface comment** — sits at the declaration of a class, module or method, and describes the abstraction: behaviour, arguments, return value, side effects, exceptions, and what the caller must guarantee. `ActiveSupport`'s `blank?`:
+**Interface comment** — sits at the declaration of a class, module or method, and describes the abstraction: behaviour, arguments, return value, side effects, exceptions, what the caller must guarantee, and what the thing does not do. `Object#blank?`, from `active_support/core_ext/object/blank.rb`:
 
 ```ruby
-# An object is blank if it's false, empty, or a whitespace string.
-# For example, +nil+, '', '   ', [], {}, and +false+ are all blank.
-#
-# This simplifies
-#
-#   !address || address.empty?
-#
-# to
-#
-#   address.blank?
-#
-# @return [true, false]
-def blank?
-  respond_to?(:empty?) ? !!empty? : !self
+class Object
+  # An object is blank if it's false, empty, or a whitespace string.
+  # For example, +nil+, '', '   ', [], {}, and +false+ are all blank.
+  #
+  # This simplifies
+  #
+  #   !address || address.empty?
+  #
+  # to
+  #
+  #   address.blank?
+  #
+  # @return [true, false]
+  def blank?
+    respond_to?(:empty?) ? !!empty? : false
+  end
 end
 ```
 
-Two things belong here and nowhere else: behaviour a caller would otherwise guess wrong, and what the thing will never do, so nobody hunts for it.
-
-**Implementation comment** — describes how a piece of code works, or what constrains it. Almost always the wrong thing to write, because the code says how it works; the exception is a property of the implementation that the code cannot show and that an obvious simplification would silently destroy. `blank?` again, inside the method:
+**Implementation comment** — describes how a piece of code works, or what constrains it. Almost always the wrong thing to write, because the code says how it works; the exception is a property of the implementation that the code cannot show and that an obvious simplification would silently destroy. `String#blank?`, from the same file:
 
 ```ruby
-def blank?
-  # The regexp that matches blank strings is expensive. For the case of empty
-  # strings we can speed up this method (~3.5x) with an empty? call. The
-  # penalty for the rest of strings is marginal.
-  empty? || ...
+BLANK_RE = /\A[[:space:]]*\z/
+
+class String
+  def blank?
+    # The regexp that matches blank strings is expensive. For the case of empty
+    # strings we can speed up this method (~3.5x) with an empty? call. The
+    # penalty for the rest of strings is marginal.
+    empty? ||
+      begin
+        BLANK_RE.match?(self)
+      rescue Encoding::CompatibilityError
+        ENCODED_BLANKS[self.encoding].match?(self)
+      end
+  end
+end
 ```
+
+`BLANK_RE` matches an empty string as well, so `empty? ||` changes no result and reads as dead weight. Deleting it leaves every test green and makes the common case roughly three times slower — which is what the comment is there to prevent.
 
 **Cross-module comment** — records a dependency that crosses a boundary and is therefore invisible at both ends: a provider's hard limit, a quirk of the schema, a coupling to a class in another file. It carries a pointer to where the fact is written in full, such as `see doc/read-after-write.md`. Ousterhout notes these are the hardest comments to place, because neither side is their natural home.
 
