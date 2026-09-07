@@ -4,19 +4,23 @@ description: "Decide whether a comment belongs, and write the ones that do — i
 
 A comment is judged only together with the block of code it comments, never on its own. Whether it is needed, what it should say, and whether it should be deleted are decided by reading the two side by side.
 
+## Documenting is its own pass
+
+Documentation starts once the code works, and not before. A comment written mid-implementation is written by someone still deciding, so what it captures is the deciding rather than the decision. Write no comments during implementation at all, and the pass that follows has nothing to judge and only something to add.
+
 ## What you are documenting
 
 **Step one: your first output names what you are about to document — `Published interface` or `Implementation`.** Say it again whenever you move to code of the other kind.
 
-A **published interface** is code that other people call without reading it: a gem, an engine, a package another team consumes. Its comments are rendered by YARD, RDoc, an IDE hover or `ri`, away from the source, so they have to stand alone. Application code — `app/`, a service's `lib/` — has almost no published interface: whoever wants to know what a service does opens the service. Naming which one you are in decides everything that follows, and the answer is not "is the repository public": an internal package that another team consumes without reading it is a published interface, and a public repository nobody imports is not.
+A **published interface** is code that other people call without reading it: a gem, an engine, a package another team consumes. Its comments are rendered by YARD, RDoc, an IDE hover or `ri`, away from the source, so they have to stand alone. Application code — `app/`, a service's `lib/` — has almost no published interface: whoever wants to know what a service does opens the service. The answer is not "is the repository public": an internal package another team consumes without reading it is a published interface, and a public repository nobody imports is not.
 
-Two more situations exist and are not covered by this skill's rules, because their comments serve a different reader entirely. Code written to teach — a tutorial, a README sample — narrates each line on purpose; Knuth's literate programming is the extreme of it. Code written to be assessed, such as a take-home exercise, shows the author's reasoning because the reasoning is the deliverable. Neither register belongs in code that ships.
+Two other situations fall outside these rules, because their comments serve a different reader. Code written to teach — a tutorial, a README sample — narrates each line on purpose, and Knuth's literate programming is the extreme of it. Code written to be assessed, such as a take-home exercise, shows the author's reasoning because the reasoning is the deliverable. Neither register belongs in code that ships.
 
 ## The four kinds of comment
 
 A comment that is none of these four has no reason to exist.
 
-**Interface comment** — sits at the declaration of a class, module or method, and describes the abstraction: behaviour, arguments, return value, side effects, exceptions, what the caller must guarantee, and what the thing does not do. `Object#blank?`, from `active_support/core_ext/object/blank.rb`:
+**Interface comment** — sits at the declaration of a class, module or public method, and describes the abstraction: behaviour, arguments, return value, side effects, exceptions, what the caller must guarantee, and what the thing does not do. Its tags are part of it: `@param` and `@return` **declare** a type, are read by a documentation generator and an IDE hover, and are never accompanied by a sentence restating them. A duck type says more than a class name — `[String, #read]` states what the method actually requires. `Object#blank?`, from `active_support/core_ext/object/blank.rb`:
 
 ```ruby
 class Object
@@ -38,7 +42,7 @@ class Object
 end
 ```
 
-**Implementation comment** — describes how a piece of code works, or what constrains it. Almost always the wrong thing to write, because the code says how it works; the exception is a property of the implementation that the code cannot show and that an obvious simplification would silently destroy. `String#blank?`, from the same file:
+**Implementation comment** — describes what constrains a piece of code. Almost always the wrong thing to write, because the code says how it works; the exception is a property of the implementation that the code cannot show and that an obvious simplification would silently destroy. It sits inside the method body, at the line it constrains, and it carries no tags: a private method has no interface and nothing to declare. `String#blank?`, from the same file:
 
 ```ruby
 BLANK_RE = /\A[[:space:]]*\z/
@@ -60,11 +64,11 @@ end
 
 `BLANK_RE` matches an empty string as well, so `empty? ||` changes no result and reads as dead weight. Deleting it leaves every test green and makes the common case roughly three times slower — which is what the comment is there to prevent.
 
-**Cross-module comment** — records a dependency that crosses a boundary and is therefore invisible at both ends: a provider's hard limit, a quirk of the schema, a coupling to a class in another file. It carries a pointer to where the fact is written in full, such as `see doc/read-after-write.md`. Ousterhout notes these are the hardest comments to place, because neither side is their natural home.
+**Cross-module comment** — records a dependency that crosses a boundary and is therefore invisible at both ends: a provider's hard limit, a quirk of the schema, a coupling to a class in another file. It carries a pointer to where the fact is written in full, such as `see doc/read-after-write.md`. Ousterhout notes these are the hardest to place, because neither side is their natural home.
 
-**Data structure member** — sits at a field or attribute and says what it represents. In Ruby this is the comment on a column, a constant, or an `attr_reader` whose name cannot carry the meaning on its own.
+**Data structure member** — sits at a field, column or constant and says what it represents, when the name cannot carry it alone.
 
-Tags are not prose and are not one of the four: `@param` and `@return` **declare** a type and are never accompanied by a sentence restating it. A duck type says more than a class name — `[String, #read]` states what the method actually requires. `# :nodoc:`, `# frozen_string_literal: true` and linter directives are directives to a tool, and stay wherever a tool needs them, tests and config included.
+Directives are not comments in this sense at all. `# :nodoc:`, `# frozen_string_literal: true` and linter pragmas are addressed to a tool rather than a reader, and they stay wherever the tool needs them — tests, config and migrations included.
 
 ## What earns a comment
 
@@ -75,13 +79,13 @@ So, in order:
 1. **Try the name first.** A better method name, a better parameter name, or a helper extracted and named after what it does removes the question outright. Kernighan and Plauger's rule — don't comment bad code, rewrite it.
 2. **Delete test.** Remove the comment and read the code without it. If nothing was lost, it was a repeat of the code. Leave it deleted.
 3. **Show test.** Ask whether what it says can be shown: as an input and an output, or as an outcome someone could observe. `# => "foo bar boo"` can be run and checked. "Without this guard, a second worker would charge the account twice" cannot — it describes a world that does not exist, which makes it rationale, and rationale belongs in the commit message and the pull request.
-4. **Invariant test.** Where the comment states a rule, ask what happens when the rule is broken. If a test fails, that test is the documentation and the comment is a second copy that nothing keeps true. A comment earns its place where the breakage is silent: a leaked log line, one tenant reading another's data, two different renders sharing a cache key. Design by Contract has the vocabulary for these — precondition, postcondition, invariant — and an invariant is what most such comments are.
+4. **Invariant test.** Where the comment states a rule, ask what happens when the rule is broken. If a test fails, that test is the documentation and the comment is a second copy that nothing keeps true. A comment earns its place where the breakage is silent: a leaked log line, one tenant reading another's data, two different renders sharing a cache key. Design by Contract has the vocabulary — precondition, postcondition, invariant — and an invariant is what most such comments are.
 
-Published interfaces need interface comments as a matter of course; implementation code needs a comment only when one of these tests admits it, which is rarely.
+A published interface carries an interface comment as a matter of course. Implementation code carries a comment only when one of these tests admits it, which is rarely.
 
 ## Rationale does not live in the file
 
-The single most common defect is **rationale in place of documentation**: the comment explains why its author reached for something, in place of stating what the code guarantees or what a reader must not break. Ousterhout calls the interface-comment version of this **information leakage** — implementation detail in a comment whose job is to hide it.
+The most common defect is **rationale in place of documentation**: the comment explains why its author reached for something, in place of stating what the code guarantees or what a reader must not break. Ousterhout calls the interface-comment version of this **information leakage** — implementation detail in a comment whose job is to hide it.
 
 **Bad** — rationale, and implementation leaking into an interface comment:
 
@@ -128,7 +132,7 @@ enum :state, {pending: 0, paid: 1, refunded: 2}, prefix: :state
 enum :state, {pending: 0, paid: 1, refunded: 2}, prefix: :state
 ```
 
-The enum already lists every state an order can hold, and which transitions are legal is enforced elsewhere in the model; repeating it here creates a second copy that nothing keeps true. The same defect appears as prose beside a tag — `# @return [String] the text shown to the customer` over `def display_name` is the method's own name written twice. Delete the sentence, keep the tag.
+The enum already lists every state an order can hold, and which transitions are legal is enforced elsewhere in the model; repeating it here creates a second copy that nothing keeps true. The same defect appears as prose beside a tag — `# @return [String] the text shown to the customer` is the method's own name written twice. Delete the sentence, keep the tag.
 
 **Journal comment** — the change history kept in the file, which version control already holds.
 
@@ -158,11 +162,13 @@ The second version is an interface comment followed by one invariant. It reads t
 
 **Banner, or position marker** — `# --- Stage 9b: the usergroup gate ---` dividing a file or a test suite into labelled regions. If a region needs a name it wants to be a class, a context block, or a separate file.
 
-**Mandated comment** — a doc comment written because a rule says every public method has one. On implementation code it produces a wall of restatement; the rule belongs to published interfaces only.
+**Mandated comment** — a doc comment written because a rule says every method has one. On implementation code it produces a wall of restatement.
 
 **Commented-out code** — delete it. Version control remembers it and nobody else will dare to.
 
 **Explaining the framework** — what `includes` does, how a gem retries. Rails documents Rails; a copy in your file dates it to the version you wrote it against.
+
+**A counterfactual** — any sentence of the form "without this, X would…". It describes a world that does not exist and cannot be checked against anything. It is rationale, and it goes in the pull request.
 
 **Shortening when the answer is deletion.** Three versions of one comment, over the same line. Only the third is right.
 
@@ -191,15 +197,19 @@ account.orders.includes(:line_items)
 
 A reviewer who says a comment should not exist is asking for it to be deleted. A shortened version comes back at the next review.
 
-**A counterfactual** — any sentence of the form "without this, X would…". It describes a world that does not exist and cannot be checked against anything. It is rationale, and it goes in the pull request.
-
 ## Tests, config and migrations
 
 Tests carry no prose at all. The test's name states the behaviour, helper names state the mechanism, and the assertion message carries what someone fixing a failure needs to know. If the behaviour is not legible from the name, the name is wrong and renaming it is the fix; a test that seems to need a comment is asking for a helper with a name. Banners dividing a suite into labelled regions are the most common offender.
 
 In YAML workflows, JSON config and `.env` templates the setting's name and its value are the contract. Whoever needs to know why a value is what it is reads `git blame` and then the commit message. Migrations run once.
 
-Directives a tool reads — `# frozen_string_literal: true`, `# rubocop:disable` — are not prose and stay.
+## Auditing what a file already carries
+
+Read the diff with each comment beside its code. Grepping for comment lines produces a list with no code in it, and the delete test cannot be run against such a list: what comes out is rewriting by feel — polishing comments that should have been deleted, and keeping one that was plainly wrong about the line beneath it.
+
+When a comment contradicts its code, the first question is whether to delete it, not how to reword it. A change that touches only comments changes no behaviour, so it is verified by reading rather than by running the suite.
+
+A neighbouring comment that breaks these rules is not permission to write another like it — it is the next thing to clean, by the Boy Scout Rule. Where an older block is the reason a new one took its shape, say so, because that older block is what keeps regenerating the pattern.
 
 ## Why agent-written code drifts
 
@@ -211,25 +221,18 @@ The instinct also relocates rather than dying. Removed from one place, it reappe
 
 There is a reason the wrong register is the default. Public code is dominated by teaching artefacts and assessed work — tutorials, Stack Overflow answers, coursework, notebooks — all written for a reader who lacks the context. Code written for a colleague who will maintain it is mostly private. And public code contains only the comments that were written: one a reviewer deleted leaves no trace anywhere, so writing has millions of examples behind it and deleting has almost none.
 
-## Documenting is its own pass
-
-Documentation starts once the code works, and not before. A comment written mid-implementation is written by someone still deciding, so what it captures is the deciding rather than the decision. Write no comments during implementation at all, and the pass that follows has nothing to judge and only something to add.
-
-**Auditing a file or a diff.** Read the diff with each comment beside its code. Grepping for comment lines produces a list with no code in it, and the delete test cannot be run against such a list: what comes out is rewriting by feel — polishing comments that should have been deleted, and keeping one that was plainly wrong about the line beneath it. When a comment contradicts its code, the first question is whether to delete it, not how to reword it. A change that touches only comments changes no behaviour, so it is verified by reading rather than by running the suite.
-
-**Precedent is not a licence.** A neighbouring comment that breaks these rules is not permission to write another like it — it is the next thing to clean, by the Boy Scout Rule. Where an older block is the reason a new one took its shape, say so, because that older block is what keeps regenerating the pattern.
-
 ## Quick list
 
 A comment that is none of the four kinds → delete it.
 Repeat of the code → delete it; the language reads.
 Prose beside a tag → delete the sentence, keep the tag.
+A tag on a private method → delete it; there is no interface to declare.
 Rationale in a docstring → state the guarantee; the reasoning goes in the commit and the pull request.
 Implementation detail in an interface comment → information leakage; move it inside or drop it.
 Journal comment, ticket ids, phases, alternatives → commit message.
 Attribution — where it came from, who caught it → nowhere.
 Banner or position marker → a class, a context block, or a file.
-Mandated doc comment on implementation code → delete it; the rule is for published interfaces.
+Mandated doc comment on implementation code → delete it.
 Commented-out code → delete it; version control remembers.
 Explaining Rails or a gem → delete it; that layer documents itself.
 A counterfactual, "without this, X would…" → pull request.
