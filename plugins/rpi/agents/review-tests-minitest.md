@@ -14,6 +14,7 @@ Use any read-only instrument you need — file reads, grep, shell inspection, sk
 - Stubs and mocks are scoped: `Object#stub` blocks and `Minitest::Mock` with `verify` — flag stubbing that outlives its block or mocks that are never verified.
 - Setup discipline: `setup`/`teardown` (or `let`-style memoization in spec dialect) over instance state smeared across tests; fixtures and factories used per the codebase's convention, not both ad hoc.
 - Tests must survive `parallelize` and random seed ordering — no reliance on execution order or shared mutable state.
+- A comment in a test body is a test-quality finding: the test name or an extracted helper should carry it. `rpi:document-code` has the rule — in tests, prose carries nothing that the names cannot.
 
 ## Principles
 

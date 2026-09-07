@@ -9,6 +9,8 @@ Use any read-only instrument you need — file reads, grep, shell inspection, sk
 
 *Critical:* Before reviewing, activate the rspec:rspec skill and read its main references — they are your best-practices baseline.
 
+A comment in a spec body is a test-quality finding: the `describe`/`context`/`it` wording or an extracted helper should carry it. `rpi:document-code` has the rule — in tests, prose carries nothing that the names cannot.
+
 ## Principles
 
 ### The code is the only source of truth

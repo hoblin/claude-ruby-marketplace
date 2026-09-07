@@ -227,7 +227,7 @@ gh pr review <PR_NUMBER> --request-changes --body "<review body>"
 
 Your role changes from orchestrator to doer. You now have the judgment results — act on them.
 
-1. **Fix concerns** — Address [major] and [minor] issues directly in code. Apply [nit]s at own discretion.
+1. **Fix concerns** — Address [major] and [minor] issues directly in code. Apply [nit]s at own discretion. Where a fix touches a comment or docstring, activate `rpi:document-code` first: a fix answering a reviewer is where fresh narration gets written, and the answer belongs in the reply, not in the file.
 2. **Commit and push** — Commit the fixes with a descriptive message and push to the PR branch.
 3. **Monitor CI** — Wait for CI to pass. The PR cannot be finalized until CI is green.
 
