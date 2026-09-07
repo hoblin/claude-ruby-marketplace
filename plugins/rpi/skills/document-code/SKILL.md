@@ -8,7 +8,7 @@ What a comment is for depends on who reads the code it sits in. Settle that firs
 
 **Step one: `Mode: <name>` is your first output, ahead of any tool call.** Print it again for each part of the codebase that falls in a different mode.
 
-People make this choice without noticing they have made it. Nobody comments a script they dropped into `~/bin` the way they comment a published gem, because the audience is obvious to them and the right register follows on its own. An agent has no such instinct: left to itself it copies whatever register the surrounding text happens to use. Naming the mode out loud replaces the instinct.
+People make this choice without noticing they have made it. A script written to run once and be forgotten gets no comments at all; a library other teams depend on gets a full contract. Same author, same language — what differs is how long the code will live and who will have to read it. An agent has no such instinct: left to itself it copies whatever register the surrounding text happens to use. Naming the mode out loud replaces the instinct.
 
 The question to answer is not whether the repository is public. It is who reads this code, and whether they are expected to read the source at all.
 
