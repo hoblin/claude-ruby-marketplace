@@ -18,7 +18,7 @@ The question to answer is not whether the repository is public. It is who reads 
 
 **library** — a gem, an engine, a package another team consumes. Read in generated documentation, an IDE hover or `ri`, so a comment stands in for source the reader will not open.
 
-**tests, config, migrations** — read by whoever edits them, with the code beside. No prose; machine-readable markers stay.
+**tests, config, migrations** — read by whoever edits them, with the code beside. No prose at all. Directives written for a tool rather than a person stay, such as `# frozen_string_literal: true` or a linter's `# rubocop:disable`.
 
 **teaching** — a tutorial, a README sample, a demo. Read by someone learning the language, so narrating each line is the point.
 
