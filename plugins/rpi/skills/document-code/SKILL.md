@@ -1,5 +1,5 @@
 ---
-description: "This skill should be used when the user asks to \"document this\", \"add YARD\", \"write docs\", \"add a comment\", \"clean up the comments\", or \"review the comments\", and whenever writing, editing, or deleting any comment, docstring or YARD block — in Ruby, YAML, a Dockerfile, a shell script, config, tests, or a migration. Should also be used before adding a comment while implementing, when finished code carries no documentation, when deciding whether a comment belongs at all, when auditing the comments already in a file or a diff, and when a review says a comment restates the code, narrates reasoning, is outdated, or should be deleted rather than shortened."
+description: "Decide whether a comment belongs, and write the ones that do — in Ruby, YAML, a Dockerfile, a shell script, tests or config. Use it before adding any comment, docstring or YARD block, including one you are about to write mid-implementation, and before deleting or rewording one already there. Use it when finished code carries no documentation, when asked to document code or add YARD, and when auditing what a file or a diff already carries. Use it unprompted when a review says a comment restates the code, narrates reasoning, is outdated, or should be deleted rather than shortened. Not for prose documents — a README, a wiki page, a plan or a ticket."
 ---
 
 ## Modes
