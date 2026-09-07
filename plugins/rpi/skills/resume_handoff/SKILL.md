@@ -1,5 +1,6 @@
 ---
 description: Resume work from handoff document with context analysis and validation
+argument-hint: "[handoff-path | ticket-id]"
 ---
 
 # Resume work from a handoff document

@@ -1,5 +1,6 @@
 ---
 description: Implement technical plans from ./thoughts/shared/plans with verification
+argument-hint: "[plan-path]"
 ---
 
 # Implement Plan

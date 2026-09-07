@@ -1,5 +1,6 @@
 ---
 description: Create detailed implementation plans through interactive research and iteration
+argument-hint: "[ticket-or-file] [additional context]"
 model: opus
 ---
 
