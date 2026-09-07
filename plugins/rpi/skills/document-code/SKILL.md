@@ -90,11 +90,9 @@ The single most common defect is **rationale in place of documentation**: the co
 # caught up, the summary would omit the very order it exists to report, and
 # would still be persisted.
 #
-# @return [Array<Hash>] rows, oldest first
+# @return [ActiveRecord::Relation<Order>] oldest first
 def call
-  Order.transaction do
-    account.orders.order(:created_at).map { |order| row_for(order) }
-  end
+  Order.transaction { account.orders.order(:created_at).load }
 end
 ```
 
@@ -103,11 +101,9 @@ end
 # Read in a transaction so it reaches the writer rather than a replica that
 # has not caught up — see doc/read-after-write.md.
 #
-# @return [Array<Hash>] rows, oldest first
+# @return [ActiveRecord::Relation<Order>] oldest first
 def call
-  Order.transaction do
-    account.orders.order(:created_at).map { |order| row_for(order) }
-  end
+  Order.transaction { account.orders.order(:created_at).load }
 end
 ```
 
