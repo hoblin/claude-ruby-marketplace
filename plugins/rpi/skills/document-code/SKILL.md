@@ -97,9 +97,8 @@ end
 ```
 
 ```ruby
-# GOOD - the guarantee, and a pointer to where the rationale is written down
-# Read in a transaction so it reaches the writer rather than a replica that
-# has not caught up — see doc/read-after-write.md.
+# GOOD - what the code cannot show, and where the rest is written down
+# The transaction pins this read to the writer — see doc/read-after-write.md.
 #
 # @return [ActiveRecord::Relation<Order>] oldest first
 def call
