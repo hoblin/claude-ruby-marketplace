@@ -36,7 +36,7 @@ def blank?
 end
 ```
 
-Surprises and limits belong in the interface comment, not somewhere separate. `ActiveRecord::Transactions` documents three surprises of its own — a rollback raised inside a nested transaction still commits both records, a `StatementInvalid` rescued inside a transaction block leaves a PostgreSQL transaction unusable, MySQL releases savepoints when a DDL statement runs — and states the limit plainly, that fully distributed transactions are outside Active Record's scope, so a caller stops hunting for them.
+Two things belong here and nowhere else: behaviour a caller would otherwise guess wrong, and what the thing will never do, so nobody hunts for it.
 
 **Implementation comment** — describes how a piece of code works, or what constrains it. Almost always the wrong thing to write, because the code says how it works; the exception is a property of the implementation that the code cannot show and that an obvious simplification would silently destroy. `blank?` again, inside the method:
 
