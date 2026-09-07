@@ -4,7 +4,7 @@ description: "The canon for comments and docstrings, in six modes (application b
 
 ## Modes
 
-**Step one, before you read a diff or open a file: print one line — `Mode: <name>`.** Print it again whenever it changes for a different part of the tree. Naming it in the closing summary is not doing this: by then every decision it governs has already been made.
+**Step one: `Mode: <name>` is your first output, ahead of any tool call.** Print it again for each part of the tree that sits in a different row.
 
 A person carries the answer without ever stating it — nobody comments a script they threw into `~/bin` the way they comment a gem — and that tacit step is the one you have to make explicit. Skip it and you default to whichever register the surrounding text suggests.
 
