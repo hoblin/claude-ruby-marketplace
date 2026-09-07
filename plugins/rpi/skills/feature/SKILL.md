@@ -52,6 +52,7 @@ Wait for both subagents to complete before proceeding.
 
 ### Step 4: Implementation
 
+Activate the `rpi:document-code` skill before modifying any file.
 Follow Rails best practices, CLAUDE.md, and any additional instructions from user input.
 Keep code clean and DRY.
 When modifying code: fix lurking bugs, refactor, add missing tests and regression tests.
@@ -65,7 +66,6 @@ Run specs for changed/affected files only (never full suite locally): `bundle ex
 `bundle exec standardrb --fix`
 `npx @herb-tools/linter --fix app/views/**/*.erb` (if views changed)
 Fix all issues, even flaky tests.
-Documentation pass: activate the `rpi:document-code` skill.
 
 ### Step 6: Translations (i18n)
 
