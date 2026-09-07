@@ -2,7 +2,7 @@
 description: "Decide whether a comment belongs, and write the ones that do — in Ruby, YAML, a Dockerfile, a shell script, tests or config. Use it before adding any comment, docstring or YARD block, including one you are about to write mid-implementation, and before deleting or rewording one already there. Use it when finished code carries no documentation, when asked to document code or add YARD, and when auditing what a file or a diff already carries. Use it unprompted when a review says a comment restates the code, narrates reasoning, is outdated, or should be deleted rather than shortened. Not for prose documents — a README, a wiki page, a plan or a ticket."
 ---
 
-A comment is never read on its own. It reaches its reader attached to the lines beneath it, and those lines are already in front of that reader. So every judgement in this skill — whether a comment is needed, what it should say, whether it should go — is a judgement about the pair, and a comment read apart from its code cannot be judged at all.
+A comment is judged only together with the block of code it comments, never on its own. Whether it is needed, what it should say, and whether it should be deleted are decided by reading the two side by side.
 
 ## Modes
 
