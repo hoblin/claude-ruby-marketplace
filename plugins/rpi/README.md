@@ -120,6 +120,7 @@ rpi/
 │   ├── commit/SKILL.md
 │   ├── feature/SKILL.md
 │   ├── review-pr/SKILL.md
+│   ├── document-code/SKILL.md
 │   └── thoughts_init/SKILL.md
 └── templates/                 # Setup templates
     └── thoughts-bin/          # Scripts for ~/thoughts/bin/
@@ -267,6 +268,12 @@ These agents are spawned in parallel by `/rpi:review-pr`, which picks the roster
 ### Utilities
 
 **`/rpi:commit`** - Create git commits with user approval (no Claude attribution)
+
+**`/rpi:document-code`** - The canon for comments and docstrings
+
+- Loads before a comment gets written, not only when documentation is the task
+- Rails as the reference: the shape of a contract, where volume belongs, which layer you document
+- The delete test, plus the anti-patterns that recur — reasoning narrated in a docstring, restating the line below, shortening when the answer is deletion
 
 **`/rpi:thoughts-init`** - Initialize thoughts system for current repository
 
