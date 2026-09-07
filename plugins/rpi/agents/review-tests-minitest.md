@@ -15,6 +15,8 @@ Use any read-only instrument you need — file reads, grep, shell inspection, sk
 - Setup discipline: `setup`/`teardown` (or `let`-style memoization in spec dialect) over instance state smeared across tests; fixtures and factories used per the codebase's convention, not both ad hoc.
 - Tests must survive `parallelize` and random seed ordering — no reliance on execution order or shared mutable state.
 
+*Critical:* Before reviewing, activate the `rpi:document-code` skill — it is the standard for comments in tests.
+
 ## Principles
 
 ### The code is the only source of truth

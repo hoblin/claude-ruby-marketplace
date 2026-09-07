@@ -52,8 +52,9 @@ Wait for both subagents to complete before proceeding.
 
 ### Step 4: Implementation
 
+Activate the `rpi:document-code` skill before modifying any file.
 Follow Rails best practices, CLAUDE.md, and any additional instructions from user input.
-Keep code clean, DRY, well-documented.
+Keep code clean and DRY.
 When modifying code: fix lurking bugs, refactor, add missing tests and regression tests.
 Ensure solid RSpec coverage with well-documented business logic (viewable with `--format documentation`).
 Review changes for completeness.
@@ -105,7 +106,7 @@ Boy Scout Rule: Leave the code cleaner than you found it.
 Favor Plain Old Ruby Objects (POROs) and service objects; keep controllers and models thin.
 Avoid N+1 queries by using includes (and consider Bullet for detection).
 Use clear, explicit naming; avoid magic values.
-Document all public APIs.
+Documentation follows the `rpi:document-code` skill.
 Use squash merges to keep commit history clean.
 Write small, focused commits using Conventional Commits (feat:, chore:, fix:)
 
