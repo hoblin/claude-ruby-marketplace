@@ -4,9 +4,9 @@ description: "The canon for comments and docstrings, in six modes (application b
 
 ## Modes
 
-Name the mode **before the first line of code**, not at the documentation pass. A person carries the answer without ever stating it — nobody comments a script they threw into `~/bin` the way they comment a gem — and that tacit step is the one you have to make explicit. Skip it and you default to whichever register the surrounding text suggests.
+**Step one, before you read a diff or open a file: print one line — `Mode: <name>`.** Print it again whenever it changes for a different part of the tree. Naming it in the closing summary is not doing this: by then every decision it governs has already been made.
 
-State it out loud before your first edit — one line naming the mode — so it can be checked rather than reconstructed from the diff afterwards.
+A person carries the answer without ever stating it — nobody comments a script they threw into `~/bin` the way they comment a gem — and that tacit step is the one you have to make explicit. Skip it and you default to whichever register the surrounding text suggests.
 
 The question is not whether the repository is public. It is who reads this, and whether they are expected to read the source.
 
