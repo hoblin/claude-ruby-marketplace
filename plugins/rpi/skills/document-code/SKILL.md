@@ -1,5 +1,5 @@
 ---
-description: "The canon for comments and docstrings, in six modes (application by default, library, tests-config-migrations, teaching, assessed, throwaway) and four types (contract, identity, constraint, declaration). Use before writing any comment, in any language or file type, including one you are about to add mid-implementation; when finished code carries no docs; when asked to document something or add YARD; when auditing comments already in a file; and when a review says a comment restates the code, narrates your reasoning, or should be deleted rather than shortened."
+description: "This skill should be used when the user asks to \"document this\", \"add YARD\", \"write docs\", \"add a comment\", \"clean up the comments\", or \"review the comments\", and whenever writing, editing, or deleting any comment, docstring or YARD block — in Ruby, YAML, a Dockerfile, a shell script, config, tests, or a migration. Should also be used before adding a comment while implementing, when finished code carries no documentation, when deciding whether a comment belongs at all, when auditing the comments already in a file or a diff, and when a review says a comment restates the code, narrates reasoning, is outdated, or should be deleted rather than shortened."
 ---
 
 ## Modes
