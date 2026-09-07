@@ -1,7 +1,12 @@
+---
+description: Deliver a feature or chore end to end, from branch creation to PR readiness, starting from an issue URL or a plain description
+argument-hint: "<issue-url | description> [additional instructions]"
+---
+
 ## Input Format
 
 ```
-/feature <FEATURE_DESCRIPTION> [additional instructions]
+/rpi:feature <FEATURE_DESCRIPTION> [additional instructions]
 ```
 
 - **FEATURE_DESCRIPTION**: issue URL or plain description (required)
@@ -9,8 +14,8 @@
 
 Examples:
 ```
-/feature https://linear.app/team/ENG-1234
-/feature ENG-1234 the SpaceshipLauncher class must inherit from BaseVehicle
+/rpi:feature https://linear.app/team/ENG-1234
+/rpi:feature ENG-1234 the SpaceshipLauncher class must inherit from BaseVehicle
 ```
 
 ## Context

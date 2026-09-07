@@ -1,5 +1,6 @@
 ---
 description: Multi-agent PR review with four modes (review, re-review, self-review, address-feedback) - spawns parallel subagents, saves diff to /tmp for context efficiency, supports file exclusion patterns
+argument-hint: "[review|re-review|self-review|address-feedback] <pr> [additional instructions]"
 ---
 
 ## Input Format

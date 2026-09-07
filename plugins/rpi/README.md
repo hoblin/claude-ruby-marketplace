@@ -108,19 +108,19 @@ rpi/
 │   ├── review-ticket-delivery.md
 │   ├── thoughts-analyzer.md
 │   └── web-search-researcher.md
-├── commands/                  # Workflow commands
-│   ├── create_plan.md
-│   ├── iterate_plan.md
-│   ├── implement_plan.md
-│   ├── validate_plan.md
-│   ├── research_codebase.md
-│   ├── create_note.md
-│   ├── create_handoff.md
-│   ├── resume_handoff.md
-│   ├── commit.md
-│   ├── feature.md
-│   ├── review-pr.md
-│   └── thoughts_init.md
+├── skills/                    # Workflow skills
+│   ├── create_plan/SKILL.md
+│   ├── iterate_plan/SKILL.md
+│   ├── implement_plan/SKILL.md
+│   ├── validate_plan/SKILL.md
+│   ├── research_codebase/SKILL.md
+│   ├── create_note/SKILL.md
+│   ├── create_handoff/SKILL.md
+│   ├── resume_handoff/SKILL.md
+│   ├── commit/SKILL.md
+│   ├── feature/SKILL.md
+│   ├── review-pr/SKILL.md
+│   └── thoughts_init/SKILL.md
 └── templates/                 # Setup templates
     └── thoughts-bin/          # Scripts for ~/thoughts/bin/
 ```
