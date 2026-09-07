@@ -91,7 +91,7 @@ The single most common defect is **rationale in place of documentation**: the co
 # caught up, the summary would omit the very order it exists to report, and
 # would still be persisted.
 #
-# @return [ActiveRecord::Relation<Order>] oldest first
+# @return [ActiveRecord::Relation<Order>]
 def call
   Order.transaction { account.orders.order(:created_at).load }
 end
@@ -102,7 +102,7 @@ end
 ```ruby
 # The transaction pins this read to the writer — see doc/read-after-write.md.
 #
-# @return [ActiveRecord::Relation<Order>] oldest first
+# @return [ActiveRecord::Relation<Order>]
 def call
   Order.transaction { account.orders.order(:created_at).load }
 end
