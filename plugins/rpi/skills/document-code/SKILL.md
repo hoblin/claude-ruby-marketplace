@@ -4,8 +4,6 @@ description: "Decide whether a comment belongs, and write the ones that do — i
 
 A comment is judged only together with the block of code it comments, never on its own. Whether it is needed, what it should say, and whether it should be deleted are decided by reading the two side by side.
 
-The vocabulary below is the standard one. Every term has a book behind it, listed at the end.
-
 ## What you are documenting
 
 **Step one: your first output names what you are about to document — `Published interface` or `Implementation`.** Say it again whenever you move to code of the other kind.
@@ -16,7 +14,7 @@ Two more situations exist and are not covered by this skill's rules, because the
 
 ## The four kinds of comment
 
-Ousterhout's categories. A comment that is none of them has no reason to exist.
+A comment that is none of these four has no reason to exist.
 
 **Interface comment** — sits at the declaration of a class, module or method, and describes the abstraction: behaviour, arguments, return value, side effects, exceptions, and what the caller must guarantee. `ActiveSupport`'s `blank?`:
 
@@ -97,8 +95,6 @@ The diff shows what changed, the commit message says why, and the pull request h
 
 ## Named anti-patterns
 
-These have standard names, mostly from Clean Code's chapter on comments. A reviewer will recognise every one of them without explanation.
-
 **Redundant comment** — says what the line below already says.
 
 ```ruby
@@ -146,8 +142,6 @@ The second version is an interface comment followed by one invariant. It reads t
 **Commented-out code** — delete it. Version control remembers it and nobody else will dare to.
 
 **Explaining the framework** — what `includes` does, how a gem retries. Rails documents Rails; a copy in your file dates it to the version you wrote it against.
-
-Two more that carry no textbook name but recur constantly in agent-written code:
 
 **Shortening when the answer is deletion.** Three versions of one comment, over the same line. Only the third is right.
 
