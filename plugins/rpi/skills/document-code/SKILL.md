@@ -147,16 +147,10 @@ class LineItem < ApplicationRecord
 **Good:**
 
 ```ruby
-# One line of an order.
-#
-# Amounts the system writes itself — a currency conversion, later a retried
-# gateway fee — enter as their own line marked `system_origin`, never merged
-# into a customer line: a charge the customer did not agree to must not come
-# back to them as one they made.
-class LineItem < ApplicationRecord
+class Shoe < ApplicationRecord
 ```
 
-The second version is an interface comment followed by one invariant. It reads the same in a year to someone who never knew a JSON column had been considered. Ticket ids, phases and rejected alternatives go in the commit message.
+Nothing replaces the comment. The history goes in the commit message, and the shop sells shoes, so the class is a `Shoe` — a name in the language the business already speaks says what the thing is, and leaves nothing for an identity comment to add. `LineItem` needed one because it names a row rather than the thing the row is.
 
 **Attribution** — where a pattern came from, which review caught it, what its author verified before committing. It belongs nowhere in the file.
 
