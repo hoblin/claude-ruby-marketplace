@@ -10,7 +10,7 @@ You are tasked with capturing content as a persistent note in the thoughts syste
 
 ### 1. Gather Metadata
 
-Run `spec-metadata` (in the PATH) to get date, time, git commit, branch, and repository name.
+Run `spec-metadata` to get date, time, git commit, branch, and repository name.
 
 ### 2. Filepath & Naming
 

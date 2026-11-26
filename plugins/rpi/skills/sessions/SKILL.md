@@ -5,7 +5,7 @@ argument-hint: "[topic or decision to find]"
 
 # Reading past sessions
 
-A session `.jsonl` is mostly tool output and bookkeeping. `session2md` renders it as the conversation; start from its index and read the turns it points to. It is on your PATH:
+A session `.jsonl` is mostly tool output and bookkeeping. `session2md` renders it as the conversation; start from its index and read the turns it points to. Its help:
 
 ```
 Usage: session2md <session.jsonl> [options]
