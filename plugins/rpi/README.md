@@ -109,15 +109,10 @@ rpi/
 │   ├── thoughts-analyzer.md
 │   └── web-search-researcher.md
 ├── skills/                    # Workflow skills
-│   ├── create_plan/SKILL.md
-│   ├── iterate_plan/SKILL.md
-│   ├── implement_plan/SKILL.md
-│   ├── validate_plan/SKILL.md
 │   ├── research_codebase/SKILL.md
 │   ├── create_note/SKILL.md
 │   ├── create_handoff/SKILL.md
 │   ├── resume_handoff/SKILL.md
-│   ├── commit/SKILL.md
 │   ├── feature/SKILL.md
 │   ├── review-pr/SKILL.md
 │   ├── document-code/SKILL.md
@@ -158,7 +153,7 @@ The plugin expects a thoughts repository at `~/thoughts/` with this structure:
 
 ## Research Subagents
 
-These agents are spawned by `/rpi:create_plan` and `/rpi:research_codebase` to gather context:
+These agents are spawned by `/rpi:feature` and `/rpi:research_codebase` to gather context:
 
 ### Codebase Agents
 
@@ -196,36 +191,7 @@ These agents are spawned in parallel by `/rpi:review-pr`, which picks the roster
 
 ## Commands
 
-### Planning
-
-**`/rpi:create_plan`** - Create detailed implementation plans through interactive research
-
-- Spawns research subagents to gather codebase and external context
-- Interactive planning process with user feedback
-- Creates plans with phases, success criteria, and detailed steps
-- Each phase = one atomic commit
-- Output: `thoughts/shared/plans/YYYY-MM-DD/{ticket}-description.md`
-
-**`/rpi:iterate_plan`** - Update existing plans based on feedback
-
-- Focused, precise updates to existing plans
-- Confirms understanding before making changes
-- Only researches what's necessary for specific changes
-
 ### Implementation
-
-**`/rpi:implement_plan`** - Execute approved plan from `thoughts/shared/plans/`
-
-- Follows plan's intent while adapting to reality
-- Implements each phase fully before moving to next
-- Updates checkboxes in plan files as work progresses
-- Pauses for manual verification after each phase
-
-**`/rpi:validate_plan`** - Verify implementation matches plan (for unsupervised runs)
-
-- Runs automated verification commands
-- Documents pass/fail status
-- Identifies deviations from plan
 
 **`/rpi:feature`** - One-shot feature implementation from branch to PR
 
@@ -277,8 +243,6 @@ These agents are spawned in parallel by `/rpi:review-pr`, which picks the roster
 - Handles: clean continuation, diverged codebase, incomplete work, stale handoff
 
 ### Utilities
-
-**`/rpi:commit`** - Create git commits with user approval (no Claude attribution)
 
 **`/rpi:document-code`** - The canon for comments and docstrings
 
