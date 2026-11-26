@@ -122,7 +122,12 @@ rpi/
 │   ├── review-pr/SKILL.md
 │   ├── document-code/SKILL.md
 │   ├── sessions/SKILL.md
-│   └── thoughts_init/SKILL.md
+│   ├── thoughts_init/SKILL.md
+│   ├── brainstorm/SKILL.md    # Roles in the software factory
+│   ├── manager/SKILL.md
+│   ├── worker/SKILL.md
+│   ├── copilot-assisted-feature-delivery/SKILL.md
+│   └── self-reviewed-feature-delivery/SKILL.md
 ├── bin/                       # Executables, on the agent's PATH
 │   ├── session-start … session-close
 │   └── session2md
@@ -287,6 +292,18 @@ These agents are spawned in parallel by `/rpi:review-pr`, which picks the roster
 - Presents fixes needed and executes after authorization
 
 **`/rpi:sessions`** - Read an earlier Claude Code session through `session2md`
+
+### Roles
+
+The skills a software factory runs on: a manager session leads worker sessions, each delivering one feature, with the human deciding what the system should do.
+
+| Skill | For |
+|-------|-----|
+| **`/rpi:brainstorm`** | Thinking a decision through with the human, and keeping the brainstorm note |
+| **`/rpi:manager`** | Turning decisions into tickets, handing them to workers, relaying between workers and the human |
+| **`/rpi:worker`** | Delivering one feature as a senior engineer |
+| **`/rpi:copilot-assisted-feature-delivery`** | Finishing a pull request with Copilot as its reviewer |
+| **`/rpi:self-reviewed-feature-delivery`** | Finishing a pull request through blind self-review by reviewer subagents |
 
 ## Executables
 
