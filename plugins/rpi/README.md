@@ -298,12 +298,12 @@ The rest let a manager session lead worker sessions in tmux: a tmux session per 
 
 | Executable | Does |
 |------------|------|
-| `session-start <project>:<clone> <dir> [claude flags…]` | Finds or creates the window, the agent and a fresh session; refuses an agent that is working or asking. Starts `claude --permission-mode=bypassPermissions --remote-control <name> --model opus -n <name>`; extra flags pass through, e.g. `--resume <session-id>` |
+| `session-start <project>:<clone> <dir> [claude flags…]` | Finds or creates the window, the agent and a fresh session in `<dir>`; refuses an agent that is working or asking. Starts `claude --permission-mode=bypassPermissions --remote-control <name> --model opus -n <name>`; extra flags pass through, e.g. `--resume <session-id>` |
 | `session-send <project>:<clone> <text>` | Types into the input box and presses Enter, as the worker's human would; text on stdin works too |
 | `session-list [project]` | Each session: working or idle and for how long, model, context size, last ask, latest step |
 | `session-peek <project>:<clone>` | The screen now (current action, input box, dialog, status line) and the conversation since the last ask |
-| `session-stop <project>:<clone>` | Stops the current turn with Esc; the session keeps its context |
-| `session-close <project>:<clone>` | Closes the session with `/exit`; the window stays for `session-start` |
+| `session-stop <project>:<clone>` | Presses Esc: stops the current turn or closes a dialog; the session keeps its context |
+| `session-close <project>:<clone>` | Closes an idle session with `/exit`; the window stays for `session-start` |
 
 ## Document Conventions
 

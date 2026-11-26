@@ -13,16 +13,17 @@ USAGE = <<~TEXT
     claude --permission-mode=bypassPermissions --remote-control <name> --model opus -n <name> [claude flags…]
 
   Finds or creates each part: a missing window is created, an empty one gets an
-  agent, an idle agent in an old session is closed and a fresh one started. Safe to
-  run again. Refuses an agent that is working or asking. Sends nothing.
+  agent, and an idle agent is closed and a fresh one started, unless its session
+  is fresh, runs in <dir> and no claude flags are given. Safe to run again.
+  Refuses an agent that is working or asking. Sends nothing.
 
   Examples:
     session-start vibemetrics-api:two ~/Work/vibemetrics-api-two
     session-start vibemetrics-api:two ~/Work/vibemetrics-api-two --resume <session-id>
 TEXT
 
+Sessions.usage!(USAGE, ARGV.size >= 2)
 target, dir, *flags = ARGV
-abort USAGE if target.nil? || dir.nil? || %w[-h --help].include?(target)
 
 target = Sessions::Target.parse(target)
 dir = File.expand_path(dir)
@@ -30,11 +31,11 @@ Sessions.fail!("no such directory: #{dir}. Nothing was done.") unless Dir.exist?
 window = Sessions::Window.new(target)
 done = []
 
-unless window.pane
+if window.panes.empty?
   if system("tmux", "has-session", "-t", "=#{target.project}", err: File::NULL)
-    Sessions.tmux("new-window", "-d", "-t", "=#{target.project}:", "-n", target.clone, "-c", dir)
+    Sessions.tmux("new-window", "-d", "-t", "=#{target.project}:", "-n", target.window, "-c", dir)
   else
-    Sessions.tmux("new-session", "-d", "-s", target.project, "-n", target.clone, "-c", dir)
+    Sessions.tmux("new-session", "-d", "-s", target.project, "-n", target.window, "-c", dir)
   end
   done << "Created tmux window #{target}."
 end
@@ -45,28 +46,26 @@ if (agent = window.agent)
       "Nothing was done. Read it with session-peek #{target}; if its work may be dropped, stop it with session-stop #{target} first.")
   end
 
-  if flags.empty? && Sessions::Transcript.new(agent).ask.nil?
-    puts "#{target}: Claude Code already runs there as #{target.name}, in fresh session #{agent.session_id}, idle."
+  if flags.empty? && agent.cwd == dir && Sessions::Transcript.new(agent).ask.nil?
+    puts "#{target}: Claude Code already runs there as #{target.name}, in fresh session #{agent.session_id}, in #{dir}, idle."
     puts "Next: send it its first message with session-send #{target} \"<text>\"."
     puts "No need to start it again."
     exit
   end
 
-  window.submit("/exit")
-  Sessions.wait_until(15) { window.closed? } or
-    Sessions.fail!("#{target}: /exit was sent, but session #{agent.session_id} is still running. Read it with session-peek #{target}.")
-  done << "Closed old session #{agent.session_id} (resume it with: session-start #{target} #{dir} --resume #{agent.session_id})."
+  window.exit!(agent)
+  done << "Closed old session #{agent.session_id} (resume it with: session-start #{target} #{agent.cwd} --resume #{agent.session_id})."
 end
 
 pane = window.pane!
-Sessions.fail!("#{target}: the window runs #{pane.command}, not a shell, so Claude Code was not started. Nothing else was done.") unless pane.shell?
+Sessions.fail!("#{target}: the window runs #{pane.command}, not a shell, so Claude Code was not started. #{done.join(" ")}") unless pane.shell?
 
 command = ["claude", "--permission-mode=bypassPermissions", "--remote-control", target.name, "--model", "opus", "-n", target.name, *flags]
 window.keys("-l", "cd #{Shellwords.escape(dir)} && #{Shellwords.join(command)}")
 window.keys("Enter")
 
-agent = Sessions.wait_until(30) { window.agent&.then { |found| (found.asking? || window.screen.recognised?) && found } } or
-  Sessions.fail!("#{target}: Claude Code was launched but did not come up within 30s. #{done.join(" ")} Read the window with session-peek #{target}.")
+agent = Sessions.wait_until(Sessions::STARTUP_SECONDS) { window.agent&.then { |found| (found.asking? || window.screen.recognised?) && found } } or
+  Sessions.fail!("#{target}: Claude Code was launched but did not come up within #{Sessions::STARTUP_SECONDS}s. #{done.join(" ")} Read the window with session-peek #{target}.")
 
 done << "Started Claude Code as #{target.name}, session #{agent.session_id}, in #{dir}."
 puts "#{target}: #{done.join(" ")}"

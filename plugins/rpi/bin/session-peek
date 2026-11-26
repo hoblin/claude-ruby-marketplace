@@ -12,7 +12,9 @@ USAGE = <<~TEXT
   Changes nothing.
 TEXT
 
-abort USAGE if ARGV.size != 1 || %w[-h --help].include?(ARGV.first)
+DIALOG_LINES = 20
+
+Sessions.usage!(USAGE, ARGV.size == 1)
 
 target = Sessions::Target.parse(ARGV.first)
 window = Sessions::Window.new(target)
@@ -24,19 +26,19 @@ puts "#{target} — #{agent.state}, session #{agent.session_id}, Claude Code #{a
 puts
 if agent.asking?
   puts "A dialog is open over the input box. The screen:"
-  screen.text.last(20).each { puts "  #{it}" }
+  screen.text.last(DIALOG_LINES).each { |line| puts "  #{line}" }
 elsif screen.recognised?
   puts "Screen now:"
-  screen.activity.each { puts "  #{it}" }
-  puts case screen.box
+  screen.activity.each { |line| puts "  #{line}" }
+  puts case screen.input_state
   when :empty then "  input box: empty"
   when :suggestion then "  input box: a dim suggestion, not typed: #{screen.input.inspect}"
   else "  input box: typed, not sent: #{screen.input.inspect}"
   end
-  screen.status.each { puts "  #{it}" }
+  screen.status.each { |line| puts "  #{line}" }
 else
   puts "The screen's layout isn't recognised (Claude Code #{agent.version}), so it is not read. Its plain text:"
-  screen.text.each { puts "  #{it}" }
+  screen.text.each { |line| puts "  #{line}" }
 end
 
 puts
@@ -49,3 +51,4 @@ else
 end
 puts
 puts "Nothing was changed. Earlier history: session2md #{transcript.path}"
+puts "No need to ask it how it goes: this is its state now."

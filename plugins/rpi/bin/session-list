@@ -11,28 +11,30 @@ USAGE = <<~TEXT
   what it was last asked and its latest step. Changes nothing.
 TEXT
 
-abort USAGE if ARGV.size > 1 || %w[-h --help].include?(ARGV.first)
+Sessions.usage!(USAGE, ARGV.size <= 1)
+project = ARGV.first
 
-agents = Sessions::Agent.all.to_h { [it.pane, it] }
-seats = Sessions.panes.filter_map { |pane| [pane, agents[pane.address]] if agents[pane.address] && (ARGV.empty? || pane.target.project == ARGV.first) }
+agents = Sessions::Agent.all.to_h { |agent| [agent.address, agent] }
+running = Sessions.panes.filter_map { |pane| [pane, agents[pane.address]] if agents[pane.address] && (project.nil? || pane.target.project == project) }
 
-if seats.empty?
-  puts "No Claude Code session runs in #{ARGV.empty? ? "any tmux window" : "tmux session #{ARGV.first}"}."
+if running.empty?
+  puts "No Claude Code session runs in #{project ? "tmux session #{project}" : "any tmux window"}."
   puts "Start one with session-start <project>:<clone> <dir>."
   exit
 end
 
 now = Time.now
-seats.each do |pane, agent|
+running.each do |pane, agent|
   transcript = Sessions::Transcript.new(agent)
-  since = (agent.idle? || agent.asking?) ? transcript.last_at : transcript.run_started_at
+  since = (agent.idle? || agent.asking?) ? transcript.last_at : transcript.asked_at
   state = since ? "#{agent.state} for #{Sessions.duration(now - since)}" : agent.state
-  context = transcript.context&.then { "#{(it / 1000.0).round}k tokens" }
+  context = transcript.context&.then { |tokens| "#{(tokens / 1000.0).round}k tokens" }
 
   puts "#{pane.target} — #{state}, session #{agent.session_id}"
   puts "  model #{transcript.model || "unknown"}, context #{context || "unknown"}"
-  puts "  last asked: #{Sessions.preview(transcript.last_ask || "nothing yet")}"
+  puts "  last asked: #{Sessions.preview(transcript.ask_text || "nothing yet")}"
   puts "  latest step: #{Sessions.preview(transcript.latest_step || "none yet")}"
 end
 puts
 puts "Nothing was changed. Read one in full with session-peek <project>:<clone>."
+puts "No need to ask them how it goes: this is their state now."

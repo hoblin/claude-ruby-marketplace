@@ -7,10 +7,10 @@ USAGE = <<~TEXT
   Usage: session-close <project>:<clone>
 
   Closes the session with /exit. The tmux window stays, for session-start to reuse.
-  Refuses a session that is working or asking.
+  Refuses a session that is working, asking, or running a background shell.
 TEXT
 
-abort USAGE if ARGV.size != 1 || %w[-h --help].include?(ARGV.first)
+Sessions.usage!(USAGE, ARGV.size == 1)
 
 target = Sessions::Target.parse(ARGV.first)
 window = Sessions::Window.new(target)
@@ -22,15 +22,8 @@ unless (agent = window.agent)
   exit
 end
 
-unless agent.idle?
-  Sessions.fail!("#{target}: the session is #{agent.state}, so it was not closed. " \
-    "Stop its turn first with session-stop #{target}, or wait for it to go idle.")
-end
-
-window.submit("/exit")
-Sessions.wait_until(15) { window.closed? } or
-  Sessions.fail!("#{target}: /exit was sent, but session #{agent.session_id} is still running. Read it with session-peek #{target}.")
+window.exit!(agent)
 
 puts "#{target}: closed session #{agent.session_id}. The tmux window stays, at its shell."
-puts "Next, if it is wanted again: session-start #{target} <dir> starts a fresh session there; add --resume #{agent.session_id} to continue this one."
+puts "Next, if it is wanted again: session-start #{target} #{agent.cwd} starts a fresh session there; add --resume #{agent.session_id} to continue this one."
 puts "No need to close the tmux window."

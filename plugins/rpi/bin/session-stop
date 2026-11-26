@@ -6,11 +6,11 @@ require_relative "../lib/sessions"
 USAGE = <<~TEXT
   Usage: session-stop <project>:<clone>
 
-  Stops the session's current turn by pressing Esc. The session lives on with its
-  context.
+  Presses Esc: stops the session's current turn, or closes the dialog it is asking
+  in. The session lives on with its context.
 TEXT
 
-abort USAGE if ARGV.size != 1 || %w[-h --help].include?(ARGV.first)
+Sessions.usage!(USAGE, ARGV.size == 1)
 
 target = Sessions::Target.parse(ARGV.first)
 window = Sessions::Window.new(target)
@@ -23,13 +23,13 @@ if agent.idle?
 end
 
 window.keys("Escape")
-stopped = Sessions.wait_until(5) { window.agent&.idle? }
+stopped = Sessions.wait_until(Sessions::STOP_SECONDS) { window.agent&.idle? }
 
 if stopped
   puts "#{target}: pressed Esc; the #{agent.asking? ? "dialog closed" : "turn stopped"} and the session is idle, its context kept."
   puts "Next: give it new instructions with session-send #{target} \"<text>\"."
   puts "No need to restart it."
 else
-  puts "#{target}: pressed Esc, but after 5s the session is still #{window.agent&.state || "gone"}. Read it with session-peek #{target}."
+  puts "#{target}: pressed Esc, but after #{Sessions::STOP_SECONDS}s the session is still #{window.agent&.state || "gone"}. Read it with session-peek #{target}."
   exit 1
 end
