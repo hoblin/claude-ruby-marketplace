@@ -59,6 +59,7 @@ Any agent discussing ideas with the human runs the brainstorm; any agent given a
 
 ## Skills
 
+- **`rpi:workflow`** — how rpi's skills and tools work together, for an agent finding its place in the process or leading someone new to it.
 - **`rpi:brainstorm`** — exploring an idea with the human from every side until it closes in decisions, and keeping the brainstorm note.
 - **`rpi:gh-issue`** — writing a ticket that hands the decisions to the worker.
 - **`rpi:manager`** — leading worker sessions.
