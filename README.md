@@ -9,6 +9,8 @@ Claude Code plugins for building software with agents, from Ruby developers. The
 
 [`rpi`](./plugins/rpi/README.md) — **R**esearch, **P**lan, **I**mplement: takes a raw idea to production, with the human making the decisions and every decision kept for the work that follows.
 
+Traditional software factories are designed to let agents work without a human. rpi is a human-first software factory: it puts the human and their decisions first.
+
 Agents can now write most of a project's code. rpi keeps the ownership of it with the human: what the system should do is the human's to decide; every decision is kept with its reason in a thoughts repository the whole team shares; agents work from those records, bring back what nobody decided, and take everything else. An idea is explored in a brainstorm, the decisions become tickets, and worker agents deliver them to the merge, while a manager agent leads them and brings the human only what needs them.
 
 Read [the rpi README](./plugins/rpi/README.md) for the process, the roles, the skills and the tools.
