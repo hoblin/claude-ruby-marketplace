@@ -1,5 +1,5 @@
 ---
-description: Multi-agent PR review with four modes (review, re-review, self-review, address-feedback) - spawns parallel subagents, saves diff to /tmp for context efficiency, supports file exclusion patterns
+description: Review a pull request with independent reviewer subagents and judge their findings, whether it's someone else's PR, a re-review, a self-review of your own, or the feedback your PR received.
 argument-hint: "[review|re-review|self-review|address-feedback] <pr> [additional instructions]"
 ---
 
@@ -207,7 +207,7 @@ Present the merged review to the user, including:
 
 ### Step 8: Confirm and Post (review / re-review)
 
-Use the AskUserQuestion tool to confirm: "Shall I post this review to the PR? [Yes/Edit/Cancel]"
+Ask in plain text whether to post the review to the PR: yes, edit, or cancel.
 - **Yes** — post the review
 - **Edit** — let the user modify the review, then ask again
 - **Cancel** — discard
@@ -229,24 +229,9 @@ Your role changes from orchestrator to doer. You now have the judgment results �
 
 1. **Fix concerns** — Address [major] and [minor] issues directly in code. Apply [nit]s at own discretion. Where a fix touches a comment or docstring, activate the `rpi:document-code` skill.
 2. **Commit and push** — Commit the fixes with a descriptive message and push to the PR branch.
-3. **Monitor CI** — Wait for CI to pass. The PR cannot be finalized until CI is green.
+3. **Monitor CI** — Arm a Monitor on the checks and go on; a CI failure reaches you through it.
 
-```bash
-gh pr checks <PR_NUMBER> --watch
-```
-
-Fixes are pushed and CI is green. Now finalize the PR — proceed to the section matching your mode below.
-
-#### Self-Review Finalization
-
-Assign the user and request review from anyone mentioned in additional instructions. Then mark the PR as ready for human review.
-
-```bash
-gh pr edit <PR_NUMBER> --add-assignee <user> --add-reviewer <reviewer>
-gh pr ready <PR_NUMBER>
-```
-
-Done when the PR is marked ready and appears in the reviewer's queue.
+Fixes are pushed. A self-review is done here; in address-feedback mode, proceed to "Address-Feedback Finalization" below.
 
 #### Address-Feedback Finalization
 
@@ -274,6 +259,8 @@ Done when all comments are answered and re-review is requested.
 ## Posted Review Format
 
 ```markdown
+[<model>] on behalf of <their username>
+
 ## PR Review Summary
 
 **Verdict: REQUEST_CHANGES**
@@ -292,9 +279,6 @@ Done when all comments are answered and re-review is requested.
 
 ### Suggestions
 - `app/services/user_service.rb:8` - Consider more descriptive method name
-
----
-*Review generated with multi-agent analysis*
 ```
 
 ## Guidelines
