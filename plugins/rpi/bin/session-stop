@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../lib/sessions"
+
+USAGE = <<~TEXT
+  Usage: session-stop <project>:<clone>
+
+  Stops the session's current turn by pressing Esc. The session lives on with its
+  context.
+TEXT
+
+abort USAGE if ARGV.size != 1 || %w[-h --help].include?(ARGV.first)
+
+target = Sessions::Target.parse(ARGV.first)
+window = Sessions::Window.new(target)
+agent = window.agent!
+
+if agent.idle?
+  puts "#{target}: the session is #{agent.state}; there was no turn to stop, so nothing was done."
+  puts "No need to stop it. Give it work with session-send #{target} \"<text>\"."
+  exit
+end
+
+window.keys("Escape")
+stopped = Sessions.wait_until(5) { window.agent&.idle? }
+
+if stopped
+  puts "#{target}: pressed Esc; the #{agent.asking? ? "dialog closed" : "turn stopped"} and the session is idle, its context kept."
+  puts "Next: give it new instructions with session-send #{target} \"<text>\"."
+  puts "No need to restart it."
+else
+  puts "#{target}: pressed Esc, but after 5s the session is still #{window.agent&.state || "gone"}. Read it with session-peek #{target}."
+  exit 1
+end

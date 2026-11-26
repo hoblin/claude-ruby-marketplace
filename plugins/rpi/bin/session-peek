@@ -1,0 +1,51 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../lib/sessions"
+
+USAGE = <<~TEXT
+  Usage: session-peek <project>:<clone>
+
+  Shows a session now and since it was last asked. Now comes from the screen: the
+  current action, the input box (empty, a dim suggestion, or typed text), a dialog
+  over it, the status line. History comes from the session file, through session2md.
+  Changes nothing.
+TEXT
+
+abort USAGE if ARGV.size != 1 || %w[-h --help].include?(ARGV.first)
+
+target = Sessions::Target.parse(ARGV.first)
+window = Sessions::Window.new(target)
+agent = window.agent!
+screen = window.screen
+transcript = Sessions::Transcript.new(agent)
+
+puts "#{target} — #{agent.state}, session #{agent.session_id}, Claude Code #{agent.version}"
+puts
+if agent.asking?
+  puts "A dialog is open over the input box. The screen:"
+  screen.text.last(20).each { puts "  #{it}" }
+elsif screen.recognised?
+  puts "Screen now:"
+  screen.activity.each { puts "  #{it}" }
+  puts case screen.box
+  when :empty then "  input box: empty"
+  when :suggestion then "  input box: a dim suggestion, not typed: #{screen.input.inspect}"
+  else "  input box: typed, not sent: #{screen.input.inspect}"
+  end
+  screen.status.each { puts "  #{it}" }
+else
+  puts "The screen's layout isn't recognised (Claude Code #{agent.version}), so it is not read. Its plain text:"
+  screen.text.each { puts "  #{it}" }
+end
+
+puts
+if (ask = transcript.ask)
+  puts "History since it was last asked (session2md #{transcript.path} --from #{ask["line"]} --full):"
+  puts
+  system(Sessions::SESSION2MD, transcript.path, "--from", ask["line"].to_s, "--full")
+else
+  puts "No history: it has not been asked anything yet."
+end
+puts
+puts "Nothing was changed. Earlier history: session2md #{transcript.path}"
