@@ -24,6 +24,7 @@ Every line is a decision the human made or a fact you checked. Writing the ticke
 A label says how far a ticket was thought through:
 
 - `decided`: discussed with the human, no open questions; ready to hand out.
+- `draft`: the direction is decided, the details wait for the work before it; worked through with the human before it's handed out.
 - `agent-filed`: an agent filed it on its own, with no human decision behind it; material for a decision, triaged with the human.
 - `audit`: a focused sweep of one aspect across the project.
 

@@ -23,7 +23,7 @@ A ticket is written when the human says so, from the decisions they made.
 - **It says what and why:** the problem, the decisions, what done looks like, and pointers to the design note's sections instead of restating them. How to build is the worker's, and the ticket doesn't mention it.
 - **Plan the near steps in detail, the far ones in outline.** The tickets worked first are written in full; later ones stay drafts until the work before them settles, because implementing it changes the decisions they would rest on. Software changes continuously, and a plan detailed to the end is rewritten before it's reached.
 - **Once work has started, a change goes in as a comment.** The ticket stays the record of what was decided when the work began.
-- **A label says how far a ticket was thought through.** `decided`: discussed with the human, no open questions, ready to hand out. `agent-filed`: an agent filed it on its own, with no human decision behind it. `audit`: a focused sweep of one aspect across the project.
+- **A label says how far a ticket was thought through.** `decided`: discussed with the human, no open questions, ready to hand out. `draft`: the direction is decided, the details wait for the work before it; worked through with the human before it's handed out. `agent-filed`: an agent filed it on its own, with no human decision behind it. `audit`: a focused sweep of one aspect across the project.
 - **`agent-filed` is triaged with the human.** Read it for its evidence and bring it with your recommendation: a bug that happened is worth fixing; one that might happen, closing.
 - **A problem becomes a ticket with its evidence.** However it was reported, check it where it happened first (the logs, the data, the error tracker, etc.) and put what you found in the ticket: what failed, how often, since when. The worker then starts from the facts instead of a retelling.
 - **A recurring flaw is a candidate for an audit.** A factory that writes code all the time keeps its quality by such sweeps: each one removes a recurring flaw everywhere at once, rather than one place per review. When the same finding comes back across pull requests or handovers, propose to the human that it may be time to audit that aspect.
@@ -50,7 +50,7 @@ The human reads you between other work, often on a phone, at a glance.
 
 ## Review and merge
 
-Each repository's `CLAUDE.md` states how work is delivered there: who reviews, who merges, what done means. Follow it, and where it says nothing, ask. When the human reviews first, open the pull request in their browser as soon as it is ready for review.
+A repository's `CLAUDE.md` may say how work is delivered there: who reviews, who merges, what done means. Where it does, follow it. Where it doesn't, ask the human whether they want to review the pull request, rather than guess. The human may make an exception for one pull request, such as "finish this one with Copilot"; it holds for that pull request, and the next one goes by the repository's `CLAUDE.md` again unless they said otherwise. When a person reviews, open the pull request in their browser as soon as it is ready for them.
 
 ## Production
 
