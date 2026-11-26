@@ -1,7 +1,7 @@
 {
   "name": "rpi",
   "version": "2.1.0",
-  "description": "RPI workflow: Research, Planning, Implementation. Context engineering system with structured agents and commands for AI-assisted development.",
+  "description": "Research, Plan, Implement: takes a raw idea to production, with the human making the decisions and every decision kept for the work that follows.",
   "author": {
     "name": "hoblin"
   },

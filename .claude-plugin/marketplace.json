@@ -1,7 +1,7 @@
 {
   "name": "claude-ruby-marketplace",
   "metadata": {
-    "description": "Ruby and Rails plugins: LSP integration, RSpec testing patterns, ActiveRecord queries, Draper decorators, MCP server development, DragonRuby game development, and RatatuiRuby TUI development"
+    "description": "rpi, a process for building software with agents that keeps its ownership with the human, plus Ruby and Rails skills: RSpec, ActiveRecord, Draper, MCP, DragonRuby, RatatuiRuby, ruby-lsp"
   },
   "owner": {
     "name": "hoblin"
@@ -58,7 +58,7 @@
     },
     {
       "name": "rpi",
-      "description": "RPI workflow: Research, Planning, Implementation with context engineering",
+      "description": "Research, Plan, Implement: takes a raw idea to production, with the human making the decisions and every decision kept for the work that follows",
       "version": "2.1.0",
       "source": "./plugins/rpi",
       "category": "workflow"

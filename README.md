@@ -3,72 +3,38 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin%20Marketplace-blueviolet)](https://github.com/anthropics/claude-code)
 
-A Claude Code plugin marketplace for Ruby development: Rails applications, testing, game development with DragonRuby, and terminal UI development with RatatuiRuby.
+Claude Code plugins for building software with agents, from Ruby developers. The main one is **rpi**.
 
-## Installation
+## rpi
+
+[`rpi`](./plugins/rpi/README.md) — **R**esearch, **P**lan, **I**mplement: takes a raw idea to production, with the human making the decisions and every decision kept for the work that follows.
+
+Agents can now write most of a project's code. rpi keeps the ownership of it with the human: what the system should do is the human's to decide; every decision is kept with its reason in a thoughts repository the whole team shares; agents work from those records, bring back what nobody decided, and take everything else. An idea is explored in a brainstorm, the decisions become tickets, and worker agents deliver them to the merge, while a manager agent leads them and brings the human only what needs them.
+
+Read [the rpi README](./plugins/rpi/README.md) for the process, the roles, the skills and the tools.
 
 ```bash
 /plugin marketplace add hoblin/claude-ruby-marketplace
-```
-
-## Available Plugins
-
-- [Rails Development](#rails-development) - rspec, activerecord, draper, mcp, ruby-lsp
-- [Game Development](#game-development) - dragonruby
-- [TUI Development](#tui-development) - ratatui-ruby
-- [Development Tools](#development-tools) - rpi
-
-### Rails Development
-
-- [`ruby-lsp`](./plugins/ruby-lsp/README.md) (LSP) - Ruby language server (Shopify's ruby-lsp) *
-- [`rspec`](./plugins/rspec/README.md) (Skill) - RSpec and FactoryBot testing patterns
-- [`draper`](./plugins/draper/README.md) (Skill) - Draper decorator patterns for view logic
-- [`activerecord`](./plugins/activerecord/README.md) (Skill) - ActiveRecord patterns for models and queries
-- [`mcp`](./plugins/mcp/README.md) (Skill) - MCP server development with Ruby SDK
-
-\* LSP plugins broken since v2.0.69 ([#13952](https://github.com/anthropics/claude-code/issues/13952)) - use v2.0.67 or wait for fix
-
-### Game Development
-
-- [`dragonruby`](./plugins/dragonruby/README.md) (Skill) - DragonRuby Game Toolkit for 2D games
-
-Covers game loop, input handling, entities, collision detection, audio, rendering, animation, scenes, and cross-platform distribution.
-
-### TUI Development
-
-- [`ratatui-ruby`](./plugins/ratatui-ruby/README.md) (Skill) - RatatuiRuby for terminal user interfaces
-
-Covers managed loop, 20+ widgets, constraint-based layouts, event handling, styling, testing infrastructure, and Rooibos/Kit frameworks.
-
-### Development Tools
-
-- [`rpi`](./plugins/rpi/README.md) (Workflow) - Research, Planning, Implementation - context engineering for AI-assisted development
-
-## Installing Plugins
-
-```bash
-# Rails plugins
-/plugin install rspec@claude-ruby-marketplace
-/plugin install activerecord@claude-ruby-marketplace
-/plugin install draper@claude-ruby-marketplace
-
-# Game development
-/plugin install dragonruby@claude-ruby-marketplace
-
-# TUI development
-/plugin install ratatui-ruby@claude-ruby-marketplace
-
-# Development tools
 /plugin install rpi@claude-ruby-marketplace
 ```
 
-## For Contributors
+## Ruby and Rails skills
 
-See [CLAUDE.md](./CLAUDE.md) for development guidelines.
+Smaller plugins with reference knowledge for particular libraries:
+
+- [`rspec`](./plugins/rspec/README.md) — RSpec and FactoryBot testing patterns.
+- [`activerecord`](./plugins/activerecord/README.md) — ActiveRecord patterns for models and queries.
+- [`draper`](./plugins/draper/README.md) — Draper decorator patterns for view logic.
+- [`mcp`](./plugins/mcp/README.md) — MCP server development with the Ruby SDK.
+- [`dragonruby`](./plugins/dragonruby/README.md) — DragonRuby Game Toolkit for 2D games.
+- [`ratatui-ruby`](./plugins/ratatui-ruby/README.md) — RatatuiRuby for terminal user interfaces.
+- [`ruby-lsp`](./plugins/ruby-lsp/README.md) — the Ruby language server (Shopify's ruby-lsp). LSP plugins are broken since Claude Code v2.0.69 ([#13952](https://github.com/anthropics/claude-code/issues/13952)).
+
+Each installs the same way, e.g. `/plugin install rspec@claude-ruby-marketplace`.
 
 ## Contributing
 
-See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for guidelines.
+See [CONTRIBUTING.md](.github/CONTRIBUTING.md), and [CLAUDE.md](./CLAUDE.md) for how the repository is laid out.
 
 ## License
 
