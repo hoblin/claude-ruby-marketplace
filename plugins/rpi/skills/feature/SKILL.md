@@ -96,7 +96,7 @@ Fix flaky tests – don't just retry; stabilize the test.
 
 ### Step 10: Delivery
 
-Follow the delivery skill the repository's `CLAUDE.md` or the human names: `rpi:copilot-assisted-feature-delivery` or `rpi:self-reviewed-feature-delivery`.
+Follow the delivery skill the repository's `CLAUDE.md` or the human names: `rpi:copilot-assisted-feature-delivery` or `rpi:self-reviewed-feature-delivery`. Whether a person reviews before the merge is theirs to say too. When nothing says, ask rather than guess; what was said for one pull request holds for that one, not for the next.
 
 ### Step 11: Handover
 
