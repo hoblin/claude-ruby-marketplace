@@ -4,6 +4,8 @@
 require_relative "../lib/sessions"
 
 USAGE = <<~TEXT
+  session-list — list the Claude Code sessions in tmux: working or idle, model, context, last ask
+
   Usage: session-list [project]
 
   Lists the Claude Code sessions running in tmux windows, or only in tmux session

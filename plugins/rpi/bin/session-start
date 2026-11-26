@@ -5,6 +5,8 @@ require "shellwords"
 require_relative "../lib/sessions"
 
 USAGE = <<~TEXT
+  session-start — start a worker's Claude Code session in its tmux window
+
   Usage: session-start <project>:<clone> <dir> [claude flags…]
 
   Starts a Claude Code session in tmux window <clone> of tmux session <project>,
