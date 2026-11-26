@@ -1,5 +1,7 @@
 # RPI
 
+> Traditional software factories are designed to let agents work without a human. rpi is a human-first software factory: it puts the human and their decisions first.
+
 **R**esearch, **P**lan, **I**mplement: takes a raw idea to production, with the human making the decisions and every decision kept for the work that follows.
 
 ## The problem
