@@ -18,12 +18,7 @@ You are tasked with conducting comprehensive research across the codebase to ans
 
 ## Initial Setup:
 
-When this command is invoked, respond with:
-```
-I'm ready to research the codebase. Please provide your research question or area of interest, and I'll analyze it thoroughly by exploring relevant components and connections.
-```
-
-Then wait for the user's research query.
+When the research question comes with the request, start on it. Otherwise ask for the question or the area to research, and wait for it.
 
 ## Steps to follow after receiving the research query:
 
@@ -57,10 +52,6 @@ Then wait for the user's research query.
    - Use the **rpi:web-search-researcher** agent for external documentation and resources
    - IF you use web-research agents, instruct them to return LINKS with their findings, and please INCLUDE those links in your final report
 
-   **For Linear tickets (if relevant):**
-   - Use the **linear-ticket-reader** agent to get full details of a specific ticket
-   - Use the **linear-searcher** agent to find related tickets or historical context
-
    The key is to use these agents intelligently:
    - Use analyzer agents to find relevant files and document how they work
    - Run multiple agents in parallel when they're searching for different things
@@ -91,7 +82,7 @@ Then wait for the user's research query.
        - Without ticket: `2025-01-08/authentication-flow.md`
 
 6. **Generate research document:**
-   - Use the metadata gathered in step 4
+   - Use the metadata gathered in step 5
    - Structure the document with YAML frontmatter followed by content:
      ```markdown
      ---
@@ -109,10 +100,10 @@ Then wait for the user's research query.
 
      # Research: [User's Question/Topic]
 
-     **Date**: [Current date and time with timezone from step 4]
+     **Date**: [Current date and time with timezone from step 5]
      **Researcher**: [Researcher name from thoughts status]
-     **Git Commit**: [Current commit hash from step 4]
-     **Branch**: [Current branch name from step 4]
+     **Git Commit**: [Current commit hash from step 5]
+     **Branch**: [Current branch name from step 5]
      **Repository**: [Repository name]
 
      ## Research Question
@@ -142,7 +133,6 @@ Then wait for the user's research query.
      [Relevant insights from thoughts/ directory with references]
      - `./thoughts/shared/something.md` - Historical decision about X
      - `./thoughts/local/notes.md` - Past exploration of Y
-     Note: Paths exclude "searchable/" even if found there
 
      ## Related Research
      [Links to other research documents in ./thoughts/shared/research/]
@@ -194,14 +184,6 @@ Then wait for the user's research query.
   - ALWAYS wait for all sub-agents to complete before synthesizing (step 4)
   - ALWAYS gather metadata before writing the document (step 5 before step 6)
   - NEVER write the research document with placeholder values
-- **Path handling**: The ./thoughts/searchable/ directory contains hard links for searching
-  - Always document paths by removing ONLY "searchable/" - preserve all other subdirectories
-  - Examples of correct transformations:
-    - `./thoughts/searchable/username/old_stuff/notes.md` → `./thoughts/username/old_stuff/notes.md`
-    - `./thoughts/searchable/shared/prs/123.md` → `./thoughts/shared/prs/123.md`
-    - `./thoughts/searchable/global/shared/templates.md` → `./thoughts/global/shared/templates.md`
-  - NEVER change username/ to shared/ or vice versa - preserve the exact directory structure
-  - This ensures paths are correct for editing and navigation
 - **Frontmatter consistency**:
   - Always include frontmatter at the beginning of research documents
   - Keep frontmatter fields consistent across all research documents
