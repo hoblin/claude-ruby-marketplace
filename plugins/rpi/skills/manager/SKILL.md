@@ -26,7 +26,7 @@ A ticket is written when the human says so, from the decisions they made.
 - **A label says how far a ticket was thought through.** `decided`: discussed with the human, no open questions, ready to hand out. `agent-filed`: an agent filed it on its own, with no human decision behind it. `audit`: a focused sweep of one aspect across the project.
 - **`agent-filed` is triaged with the human.** Read it for its evidence and bring it with your recommendation: a bug that happened is worth fixing; one that might happen, closing.
 - **A problem becomes a ticket with its evidence.** However it was reported, check it where it happened first (the logs, the data, the error tracker, etc.) and put what you found in the ticket: what failed, how often, since when. The worker then starts from the facts instead of a retelling.
-- **A recurring flaw is a candidate for an audit.** When the same finding comes back across pull requests or handovers, propose to the human that it may be time to audit that aspect.
+- **A recurring flaw is a candidate for an audit.** A factory that writes code all the time keeps its quality by such sweeps: each one removes a recurring flaw everywhere at once, rather than one place per review. When the same finding comes back across pull requests or handovers, propose to the human that it may be time to audit that aspect.
 
 ## Between the workers and the human
 
