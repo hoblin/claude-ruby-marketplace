@@ -45,7 +45,7 @@ fi
 # Thoughts system status
 THOUGHTS_STATUS=""
 if [[ -x "$(dirname "$(realpath "$0")")/thoughts-status" ]]; then
-  THOUGHTS_STATUS=$("$(dirname "$(realpath "$0")")/thoughts-status" "$@" 2>/dev/null | head -n 40)
+  THOUGHTS_STATUS=$("$(dirname "$(realpath "$0")")/thoughts-status" "$@" | head -n 40)
 fi
 
 # Print metadata
