@@ -1,12 +1,27 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# thoughts-init-repo: Initialize thoughts system in a repository
-# Usage: thoughts-init-repo [repo-name]
-#   repo-name: Optional. Defaults to current directory name.
+source "$(dirname "$(realpath "$0")")/../lib/thoughts.sh"
 
-THOUGHTS_HOME="${HOME}/thoughts"
+case "${1:-}" in
+  -h|--help)
+    cat <<'TEXT'
+thoughts-init-repo — link the current git repository's thoughts/ to a thoughts repository
+
+Usage: thoughts-init-repo [directory]
+
+  directory: any path inside the thoughts repository to link to (default: ~/thoughts)
+
+Run it in the code repository's root. Its notes go to <thoughts>/repos/<this directory's name>/.
+TEXT
+    exit 0
+    ;;
+esac
+
+THOUGHTS_HOME="$(thoughts_repo "$@")"
 USERNAME="$(whoami)"
+TOOL_ARGS=""
+[[ "${THOUGHTS_HOME}" == "${HOME}/thoughts" ]] || TOOL_ARGS=" ${THOUGHTS_HOME}"
 
 # Colors for output
 RED='\033[0;31m'
@@ -38,12 +53,7 @@ migrate_md_files() {
   [[ ${count} -gt 0 ]] && info "Migrated ${count} file(s) from ${label}/" || true
 }
 
-# Detect repo name from argument or current directory
-if [[ $# -gt 0 ]]; then
-  REPO_NAME="$1"
-else
-  REPO_NAME="$(basename "$(pwd)")"
-fi
+REPO_NAME="$(basename "$(pwd)")"
 
 TARGET_DIR="$(pwd)"
 THOUGHTS_REPO_DIR="${THOUGHTS_HOME}/repos/${REPO_NAME}"
@@ -130,9 +140,9 @@ It is managed by the thoughts sync scripts and should not be committed to the co
 
 ## Structure
 
-- \`${USERNAME}/\` - Your personal notes for this repository (symlink to ~/thoughts/repos/${REPO_NAME}/${USERNAME})
-- \`shared/\` - Team-shared notes for this repository (symlink to ~/thoughts/repos/${REPO_NAME}/shared)
-- \`global/\` - Cross-repository thoughts (symlink to ~/thoughts/global)
+- \`${USERNAME}/\` - Your personal notes for this repository (symlink to ${THOUGHTS_REPO_DIR}/${USERNAME})
+- \`shared/\` - Team-shared notes for this repository (symlink to ${THOUGHTS_REPO_DIR}/shared)
+- \`global/\` - Cross-repository thoughts (symlink to ${THOUGHTS_HOME}/global)
   - \`${USERNAME}/\` - Personal notes that apply across all repositories
   - \`shared/\` - Team-shared notes that apply across all repositories
 
@@ -152,14 +162,14 @@ Quick access:
 
 ## Commands
 
-- \`thoughts-sync\` - Commit and push thoughts changes
-- \`thoughts-status\` - Show thoughts repository status
+- \`thoughts-sync${TOOL_ARGS}\` - Commit and push thoughts changes
+- \`thoughts-status${TOOL_ARGS}\` - Show thoughts repository status
 
 ## Important
 
 - Never commit the thoughts/ directory to your code repository
-- Use \`thoughts-sync\` to manually sync changes
-- Use \`thoughts-status\` to see sync status
+- Use \`thoughts-sync${TOOL_ARGS}\` to manually sync changes
+- Use \`thoughts-status${TOOL_ARGS}\` to see sync status
 EOF
 info "Created thoughts/CLAUDE.md"
 
@@ -208,5 +218,5 @@ echo ""
 info "Thoughts initialized for ${REPO_NAME}!"
 echo ""
 echo "Next steps:"
-echo "  1. Run 'thoughts-sync' to sync any migrated content"
+echo "  1. Run 'thoughts-sync${TOOL_ARGS}' to sync any migrated content"
 echo "  2. Commit the .gitignore change if modified"

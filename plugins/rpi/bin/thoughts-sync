@@ -1,22 +1,40 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# thoughts-sync: Sync thoughts repository with git
-# Usage: thoughts-sync [-m "message"]
+source "$(dirname "$(realpath "$0")")/../lib/thoughts.sh"
 
-THOUGHTS_DIR="${HOME}/thoughts"
+usage() {
+  cat <<'TEXT'
+thoughts-sync — commit, pull and push a thoughts repository
+
+Usage: thoughts-sync [directory] [-m "message"]
+
+  directory: any path inside the thoughts repository to sync, a note included
+             (default: ~/thoughts)
+TEXT
+}
+
+THOUGHTS_DIR="$(thoughts_repo)"
 MESSAGE=""
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
+    -h|--help)
+      usage
+      exit 0
+      ;;
     -m|--message)
       MESSAGE="$2"
       shift 2
       ;;
-    *)
+    -*)
       echo "Unknown option: $1" >&2
       exit 1
+      ;;
+    *)
+      THOUGHTS_DIR="$(thoughts_repo "$1")"
+      shift
       ;;
   esac
 done

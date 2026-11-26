@@ -1,6 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+case "${1:-}" in
+  -h|--help)
+    cat <<'TEXT'
+spec-metadata — print the date, git and thoughts details a thoughts document's frontmatter records
+
+Usage: spec-metadata [directory]
+
+  directory: any path inside the thoughts repository whose status to include
+             (default: ~/thoughts)
+TEXT
+    exit 0
+    ;;
+esac
+
 # Collect metadata
 DATETIME_TZ=$(date '+%Y-%m-%d %H:%M:%S %Z')
 FILENAME_TS=$(date '+%Y-%m-%d_%H-%M-%S')
@@ -30,8 +44,8 @@ fi
 
 # Thoughts system status
 THOUGHTS_STATUS=""
-if command -v thoughts-status >/dev/null 2>&1; then
-  THOUGHTS_STATUS=$(thoughts-status 2>/dev/null | head -n 40)
+if [[ -x "$(dirname "$(realpath "$0")")/thoughts-status" ]]; then
+  THOUGHTS_STATUS=$("$(dirname "$(realpath "$0")")/thoughts-status" "$@" 2>/dev/null | head -n 40)
 fi
 
 # Print metadata

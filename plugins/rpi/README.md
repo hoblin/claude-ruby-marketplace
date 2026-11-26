@@ -22,9 +22,9 @@ claude plugin install rpi@claude-ruby-marketplace
 
 Then run `/rpi:thoughts-init` to set up the thoughts system. The command will:
 1. Check if `~/thoughts/` exists and create it if needed
-2. Install helper scripts to `~/thoughts/bin/`
-3. Configure PATH (may require terminal restart)
-4. Initialize the current repository's thoughts symlinks
+2. Initialize the current repository's thoughts symlinks
+
+The thoughts tools (`thoughts-sync`, `thoughts-status`, `thoughts-init-repo`, `spec-metadata`) are rpi executables, on the agent's PATH while rpi is enabled.
 
 ## The Workflow
 
@@ -125,11 +125,10 @@ rpi/
 │   └── self-reviewed-feature-delivery/SKILL.md
 ├── bin/                       # Executables, on the agent's PATH
 │   ├── session-start … session-close
-│   └── session2md
+│   ├── session2md
+│   └── thoughts-sync, thoughts-status, thoughts-init-repo, spec-metadata
 ├── hooks/                     # SessionStart: lists the executables
-├── lib/                       # Code the executables share
-└── templates/                 # Setup templates
-    └── thoughts-bin/          # Scripts for ~/thoughts/bin/
+└── lib/                       # Code the executables share
 ```
 
 ## Thoughts Directory Structure
@@ -252,7 +251,7 @@ These agents are spawned in parallel by `/rpi:review-pr`, which picks the roster
 
 **`/rpi:thoughts-init`** - Initialize thoughts system for current repository
 
-- Diagnoses thoughts system state (~/thoughts, scripts, PATH, repo setup)
+- Diagnoses thoughts system state (~/thoughts, repo setup)
 - Reports "ready" if everything configured
 - Presents fixes needed and executes after authorization
 

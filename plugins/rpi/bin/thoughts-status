@@ -1,9 +1,22 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# thoughts-status: Show status of thoughts repository
+source "$(dirname "$(realpath "$0")")/../lib/thoughts.sh"
 
-THOUGHTS_DIR="${HOME}/thoughts"
+case "${1:-}" in
+  -h|--help)
+    cat <<'TEXT'
+thoughts-status — show a thoughts repository's git state and its uncommitted notes
+
+Usage: thoughts-status [directory]
+
+  directory: any path inside the thoughts repository (default: ~/thoughts)
+TEXT
+    exit 0
+    ;;
+esac
+
+THOUGHTS_DIR="$(thoughts_repo "$@")"
 
 if [[ ! -d "$THOUGHTS_DIR/.git" ]]; then
   echo "Error: $THOUGHTS_DIR is not a git repository" >&2
