@@ -24,7 +24,7 @@ Then run `/rpi:thoughts-init` to set up the thoughts system. The command will:
 1. Check if `~/thoughts/` exists and create it if needed
 2. Initialize the current repository's thoughts symlinks
 
-The thoughts tools (`thoughts-sync`, `thoughts-status`, `thoughts-init-repo`, `spec-metadata`) are rpi executables, on the agent's PATH while rpi is enabled.
+The thoughts tools (`thoughts-sync`, `thoughts-status`, `thoughts-init-repo`, `spec-metadata`) are rpi executables (see Executables below).
 
 ## The Workflow
 
@@ -271,7 +271,7 @@ The skills a software factory runs on: a manager session leads worker sessions, 
 
 ## Executables
 
-On the agent's PATH while rpi is enabled, and runnable by hand. Each prints `--help`, whose first line says what the tool does: a SessionStart hook puts those lines into every session, and back after a compaction, so a new executable is listed on its own.
+In `plugins/rpi/bin/`, and runnable by hand. Each prints `--help`, whose first line says what the tool does: a SessionStart hook puts those lines into every session, and back after a compaction, under the absolute path of the folder they live in, so an agent finds them whether or not plugin `bin/` reaches its PATH, and a new executable is listed on its own.
 
 `session2md` renders a session `.jsonl` as the conversation it was.
 

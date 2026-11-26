@@ -4,7 +4,7 @@ description: Initialize thoughts system for current repository
 
 # Initialize Thoughts System
 
-Initialize the thoughts system for the current repository. The thoughts tools (`thoughts-sync`, `thoughts-status`, `thoughts-init-repo`, `spec-metadata`) come with rpi, on your PATH; nothing needs installing.
+Initialize the thoughts system for the current repository. The thoughts tools (`thoughts-sync`, `thoughts-status`, `thoughts-init-repo`, `spec-metadata`) come with rpi as executables; nothing needs installing.
 
 ## Process
 
