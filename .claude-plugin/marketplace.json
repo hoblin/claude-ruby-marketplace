@@ -59,7 +59,7 @@
     {
       "name": "rpi",
       "description": "Research, Plan, Implement: takes a raw idea to production, with the human making the decisions and every decision kept for the work that follows",
-      "version": "2.1.0",
+      "version": "3.0.0",
       "source": "./plugins/rpi",
       "category": "workflow"
     }
