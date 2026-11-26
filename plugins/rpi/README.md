@@ -100,7 +100,7 @@ Review, run by `rpi:review-pr`:
 
 ## Tools
 
-rpi puts a few command-line tools on the agent's PATH for what it does often: leading other sessions and reading past ones. As rpi lets the human focus on what matters, the tools do the same for an agent: instead of scripting the same commands again, it spends its attention on the work and on communication. Each tool's `--help` opens with a line saying what it does, and a hook puts those lines into every session, and back after a compaction, so an agent knows the tools exist before it needs one. A person can run them by hand too.
+rpi brings a few command-line tools for what an agent does often: leading other sessions, reading past ones, keeping the thoughts repository in sync. As rpi lets the human focus on what matters, the tools do the same for an agent: instead of scripting the same commands again, it spends its attention on the work and on communication. Each tool's `--help` opens with a line saying what it does, and a hook puts those lines into every session, and back after a compaction, under the folder the tools live in, so an agent knows the tools exist before it needs one and finds them whether or not that folder is on its PATH. A person can run them by hand too.
 
 The session tools let the manager lead worker sessions in tmux: a tmux session per project, named after it, and a window per clone, named after the clone (`one`, `two`). A worker is addressed as `<project>:<clone>` and runs as `<project>-<clone>`.
 
@@ -111,6 +111,13 @@ The session tools let the manager lead worker sessions in tmux: a tmux session p
 - **`session-stop <project>:<clone>`** — stops the current turn; the session keeps its context.
 - **`session-close <project>:<clone>`** — closes an idle session; the window stays for `session-start`.
 - **`session2md <session.jsonl>`** — renders a session as the conversation it was.
+
+The thoughts tools take an optional path inside the thoughts repository to act on, `~/thoughts` by default.
+
+- **`thoughts-sync [directory] [-m message]`** — commits, pulls and pushes the thoughts repository.
+- **`thoughts-status [directory]`** — its git state and the notes not yet synced.
+- **`thoughts-init-repo [directory]`** — links the current repository's `thoughts/` folder to it.
+- **`spec-metadata [directory]`** — the date, git and thoughts details a document's frontmatter records.
 
 ## Installation
 
