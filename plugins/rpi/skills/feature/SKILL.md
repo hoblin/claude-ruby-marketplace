@@ -84,7 +84,7 @@ Add missing translations (manually or via OpenAI)
 ### Step 8: Pull Request
 
 Push branch.
-`gh pr create --draft`
+`gh pr create --draft --assignee @me`
 Title: `<issue-id> feat: <description>` or `<issue-id> chore: <description>` or `<issue-id> fix: <description>`
 Description: summary, test plan, breaking changes. Link to the issue.
 
