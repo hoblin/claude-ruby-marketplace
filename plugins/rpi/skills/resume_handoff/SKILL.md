@@ -14,7 +14,7 @@ When this command is invoked:
 1. **If the path to a handoff document was provided**:
    - If a handoff document path was provided as a parameter, skip the default message
    - Immediately read the handoff document FULLY
-   - Immediately read any research or plan documents that it links to under `./thoughts/shared/plans` or `./thoughts/shared/research`. do NOT use a sub-agent to read these critical files.
+   - Immediately read the documents it links to. do NOT use a sub-agent to read these critical files.
    - Begin the analysis process by ingesting relevant context from the handoff document, reading additional files it mentions
    - Then propose a course of action to the user and confirm, or ask for clarification on direction.
 
@@ -26,22 +26,11 @@ When this command is invoked:
    - **If there is only one file**: proceed with that handoff
    - **If there are multiple files**: using the date from the subdirectory name (`YYYY-MM-DD`) and time from the filename (`HH-MM-SS`), proceed with the _most recent_ handoff document.
    - Immediately read the handoff document FULLY
-   - Immediately read any research or plan documents that it links to under `./thoughts/shared/plans` or `./thoughts/shared/research`; do NOT use a sub-agent to read these critical files.
+   - Immediately read the documents it links to; do NOT use a sub-agent to read these critical files.
    - Begin the analysis process by ingesting relevant context from the handoff document, reading additional files it mentions
    - Then propose a course of action to the user and confirm, or ask for clarification on direction.
 
-3. **If no parameters provided**, respond with:
-```
-I'll help you resume work from a handoff document. Let me find the available handoffs.
-
-Which handoff would you like to resume from?
-
-Tip: You can invoke this command directly with a handoff path: `/rpi:resume_handoff `./thoughts/shared/handoffs/ENG-XXXX/YYYY-MM-DD/HH-MM-SS_ENG-XXXX_description.md`
-
-or using a ticket number to resume from the most recent handoff for that ticket: `/rpi:resume_handoff ENG-XXXX`
-```
-
-Then wait for the user's input.
+3. **If no parameters provided**: list the most recent handoffs and ask which one to resume.
 
 ## Process Steps
 
@@ -64,9 +53,8 @@ Then wait for the user's input.
    Task 1 - Gather artifact context:
    Read all artifacts mentioned in the handoff.
    1. Read feature documents listed in "Artifacts"
-   2. Read implementation plans referenced
-   3. Read any research documents mentioned
-   4. Extract key requirements and decisions
+   2. Read any research documents mentioned
+   3. Extract key requirements and decisions
    Use tools: Read
    Return: Summary of artifact contents and key decisions
    ```
