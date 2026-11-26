@@ -60,17 +60,9 @@ last_updated_by: [Author name]
 [Links to related notes, research, or plans in thoughts/ - if applicable, omit section if none]
 ```
 
-### 4. Sync and Present
+### 4. Sync
 
 Run `thoughts-sync` to save the document.
-
-Once complete, respond with:
-
-```
-Note captured at: ./thoughts/shared/notes/YYYY-MM-DD/description.md
-
-You can reference this in future sessions or as input to other RPI commands.
-```
 
 ## Additional Notes & Instructions
 
