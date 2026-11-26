@@ -254,6 +254,8 @@ module Sessions
     end
 
     def pane
+      return Sessions.panes.find { |pane| pane.id == @pinned } if @pinned
+
       found = panes
       running = agent
       found.find { |pane| pane.address == running&.address } || found.first
@@ -294,9 +296,9 @@ module Sessions
         Sessions.fail!("#{target}: the session is #{agent.state}, so it was not closed. #{wait}; session-list shows when it is idle.")
       end
 
-      driven = pane!
+      @pinned = pane!.id
       submit("/exit")
-      Sessions.wait_until(EXIT_SECONDS) { self.agent.nil? && Sessions.panes.find { |pane| pane.id == driven.id }&.shell? } or
+      Sessions.wait_until(EXIT_SECONDS) { self.agent.nil? && pane&.shell? } or
         Sessions.fail!("#{target}: /exit was sent, but session #{agent.session_id} is still running after #{EXIT_SECONDS}s. Read it with session-peek #{target}.")
     end
 
