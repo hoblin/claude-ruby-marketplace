@@ -121,7 +121,12 @@ rpi/
 │   ├── feature/SKILL.md
 │   ├── review-pr/SKILL.md
 │   ├── document-code/SKILL.md
+│   ├── sessions/SKILL.md
 │   └── thoughts_init/SKILL.md
+├── bin/                       # Executables, on the agent's PATH
+│   ├── session-start … session-close
+│   └── session2md
+├── lib/                       # Code the executables share
 └── templates/                 # Setup templates
     └── thoughts-bin/          # Scripts for ~/thoughts/bin/
 ```
@@ -280,6 +285,25 @@ These agents are spawned in parallel by `/rpi:review-pr`, which picks the roster
 - Diagnoses thoughts system state (~/thoughts, scripts, PATH, repo setup)
 - Reports "ready" if everything configured
 - Presents fixes needed and executes after authorization
+
+**`/rpi:sessions`** - Read an earlier Claude Code session through `session2md`
+
+## Executables
+
+On the agent's PATH while rpi is enabled, and runnable by hand. Each prints `--help`.
+
+`session2md` renders a session `.jsonl` as the conversation it was.
+
+The rest let a manager session lead worker sessions in tmux: a tmux session per project, named after it, and a window per clone, named after the clone (`one`, `two`). A worker is addressed as `<project>:<clone>`, and runs as `<project>-<clone>`. Every answer says what happened, what happens next and what need not be done.
+
+| Executable | Does |
+|------------|------|
+| `session-start <project>:<clone> <dir> [claude flags…]` | Finds or creates the window, the agent and a fresh session in `<dir>`; refuses an agent that is working or asking. Starts `claude --permission-mode=bypassPermissions --remote-control <name> --model opus -n <name>`; extra flags pass through, e.g. `--resume <session-id>` |
+| `session-send <project>:<clone> <text>` | Types into the input box and presses Enter, as the worker's human would; text on stdin works too |
+| `session-list [project]` | Each session: working or idle and for how long, model, context size, last ask, latest step |
+| `session-peek <project>:<clone>` | The screen now (current action, input box, dialog, status line) and the conversation since the last ask |
+| `session-stop <project>:<clone>` | Presses Esc: stops the current turn or closes a dialog; the session keeps its context |
+| `session-close <project>:<clone>` | Closes an idle session with `/exit`; the window stays for `session-start` |
 
 ## Document Conventions
 

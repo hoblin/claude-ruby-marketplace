@@ -1,0 +1,45 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../lib/sessions"
+
+USAGE = <<~TEXT
+  Usage: session-send <project>:<clone> <text>
+         session-send <project>:<clone> < message.md
+
+  Types <text> into the session's input box and presses Enter, as its human would:
+  the first message, a slash command. Text and Enter go separately, and a dim
+  suggestion in the box is not taken for typed text. Refuses a box that already
+  holds typed text, a session that is asking, and a slash command to a working
+  session. Later conversation can go through SendMessage.
+TEXT
+
+Sessions.usage!(USAGE, ARGV.size >= 1)
+target, *words = ARGV
+
+text = words.join(" ")
+text = $stdin.read.chomp if text.empty? && !$stdin.tty?
+abort USAGE if text.strip.empty?
+
+target = Sessions::Target.parse(target)
+window = Sessions::Window.new(target)
+agent = window.agent!
+
+Sessions.fail!("#{target}: the session is #{agent.state}, so nothing was sent. Read it with session-peek #{target}.") if agent.asking?
+if text.start_with?("/") && !agent.idle?
+  Sessions.fail!("#{target}: the session is working, and #{text.split.first} would reach it as a chat message, so nothing was sent. " \
+    "Stop its turn with session-stop #{target}, or wait for it to go idle (session-list).")
+end
+
+submitted = window.submit(text)
+
+puts "#{target}: sent #{Sessions.preview(text).inspect} and pressed Enter."
+if !submitted
+  puts "The text still sits in the input box after Enter. Read the window with session-peek #{target} before sending more."
+  exit 1
+elsif agent.idle?
+  puts "It was idle and takes it now. It reports on its own; read its progress with session-peek #{target}."
+else
+  puts "It was working, so the message waits in its queue until the current turn ends."
+end
+puts "No need to press Enter again or resend."
