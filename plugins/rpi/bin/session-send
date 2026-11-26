@@ -4,6 +4,8 @@
 require_relative "../lib/sessions"
 
 USAGE = <<~TEXT
+  session-send — type a message or a slash command into a session's input box, as its human
+
   Usage: session-send <project>:<clone> <text>
          session-send <project>:<clone> < message.md
 

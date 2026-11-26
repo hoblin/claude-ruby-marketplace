@@ -1,0 +1,16 @@
+{
+  "description": "Lists rpi's executables in every session's context, and again after a compaction, from the first line of each tool's --help.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/executables\""
+          }
+        ]
+      }
+    ]
+  }
+}

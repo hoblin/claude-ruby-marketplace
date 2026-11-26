@@ -4,6 +4,8 @@
 require_relative "../lib/sessions"
 
 USAGE = <<~TEXT
+  session-stop — stop a session's current turn, or close its dialog, with Esc
+
   Usage: session-stop <project>:<clone>
 
   Presses Esc: stops the session's current turn, or closes the dialog it is asking

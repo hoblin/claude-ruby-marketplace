@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "json"
+require "open3"
+
+tools = Dir[File.expand_path("../bin/*", __dir__)].select { |path| File.file?(path) && File.executable?(path) }.sort
+
+lines = tools.map { |path| Thread.new { Open3.capture3(path, "--help").first } }.zip(tools).map do |thread, path|
+  thread.value.lines.first&.strip || "#{File.basename(path)} — its --help printed nothing"
+end
+
+puts JSON.generate(
+  hookSpecificOutput: {
+    hookEventName: "SessionStart",
+    additionalContext: <<~TEXT
+      The rpi plugin puts these executables on your PATH:
+
+      #{lines.map { |line| "- #{line}" }.join("\n")}
+
+      `<tool> --help` prints each one's usage.
+    TEXT
+  }
+)

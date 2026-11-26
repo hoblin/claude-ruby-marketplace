@@ -4,6 +4,8 @@
 require_relative "../lib/sessions"
 
 USAGE = <<~TEXT
+  session-peek — show a session's screen now and its conversation since the last ask
+
   Usage: session-peek <project>:<clone>
 
   Shows a session now and since it was last asked. Now comes from the screen: the

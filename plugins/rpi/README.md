@@ -131,6 +131,7 @@ rpi/
 ├── bin/                       # Executables, on the agent's PATH
 │   ├── session-start … session-close
 │   └── session2md
+├── hooks/                     # SessionStart: lists the executables
 ├── lib/                       # Code the executables share
 └── templates/                 # Setup templates
     └── thoughts-bin/          # Scripts for ~/thoughts/bin/
@@ -307,7 +308,7 @@ The skills a software factory runs on: a manager session leads worker sessions, 
 
 ## Executables
 
-On the agent's PATH while rpi is enabled, and runnable by hand. Each prints `--help`.
+On the agent's PATH while rpi is enabled, and runnable by hand. Each prints `--help`, whose first line says what the tool does: a SessionStart hook puts those lines into every session, and back after a compaction, so a new executable is listed on its own.
 
 `session2md` renders a session `.jsonl` as the conversation it was.
 

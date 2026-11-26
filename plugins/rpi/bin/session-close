@@ -4,6 +4,8 @@
 require_relative "../lib/sessions"
 
 USAGE = <<~TEXT
+  session-close — close an idle session with /exit, keeping its tmux window
+
   Usage: session-close <project>:<clone>
 
   Closes the session with /exit. The tmux window stays, for session-start to reuse.
