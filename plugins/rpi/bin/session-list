@@ -1,0 +1,41 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../lib/sessions"
+
+USAGE = <<~TEXT
+  session-list — list the Claude Code sessions in tmux: working or idle, model, context, last ask
+
+  Usage: session-list [project]
+
+  Lists the Claude Code sessions running in tmux windows, or only in tmux session
+  <project>: how long each has been working or idle, its model, its context size,
+  what it was last asked and its latest step. Changes nothing.
+TEXT
+
+Sessions.usage!(USAGE, ARGV.size <= 1)
+project = ARGV.first
+
+agents = Sessions::Agent.all.to_h { |agent| [agent.address, agent] }
+running = Sessions.panes.filter_map { |pane| [pane, agents[pane.address]] if agents[pane.address] && (project.nil? || pane.target.project == project) }
+
+if running.empty?
+  puts "No Claude Code session runs in #{project ? "tmux session #{project}" : "any tmux window"}."
+  puts "Start one with session-start <project>:<clone> <dir>."
+  exit
+end
+
+now = Time.now
+running.each do |pane, agent|
+  transcript = Sessions::Transcript.new(agent)
+  since = (agent.idle? || agent.asking?) ? transcript.last_at : transcript.asked_at
+  state = since ? "#{agent.state} for #{Sessions.duration(now - since)}" : agent.state
+  context = transcript.context&.then { |tokens| "#{(tokens / 1000.0).round}k tokens" }
+
+  puts "#{pane.target} — #{state}, session #{agent.session_id}"
+  puts "  model #{transcript.model || "unknown"}, context #{context || "unknown"}"
+  puts "  last asked: #{Sessions.preview(transcript.ask_text || "nothing yet")}"
+  puts "  latest step: #{Sessions.preview(transcript.latest_step || "none yet")}"
+end
+puts
+puts "No need to ask them how it goes: this is their state now."

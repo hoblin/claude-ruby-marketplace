@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+source "$(dirname "$(realpath "$0")")/../lib/thoughts.sh"
+
+case "${1:-}" in
+  -h|--help)
+    cat <<'TEXT'
+thoughts-status — show a thoughts repository's git state and its uncommitted notes
+
+Usage: thoughts-status [directory]
+
+  directory: any path inside the thoughts repository (default: ~/thoughts)
+TEXT
+    exit 0
+    ;;
+esac
+
+THOUGHTS_DIR="$(thoughts_repo "$@")"
+
+if [[ ! -d "$THOUGHTS_DIR/.git" ]]; then
+  echo "Error: $THOUGHTS_DIR is not a git repository" >&2
+  exit 1
+fi
+
+cd "$THOUGHTS_DIR"
+
+echo "Thoughts repository $THOUGHTS_DIR:"
+
+if git remote get-url origin &>/dev/null; then
+  git fetch --quiet 2>/dev/null || true
+
+  BRANCH=$(git status -sb | sed -n 1p)
+  if [[ "$BRANCH" == *behind* && "$BRANCH" != *ahead* ]] && git pull --rebase --quiet 2>/dev/null; then
+    echo "  Pulled the remote's new commits."
+    BRANCH=$(git status -sb | sed -n 1p)
+  fi
+  echo "  $BRANCH"
+else
+  echo "  No remote configured"
+fi
+
+LAST_COMMIT=$(git log -1 --pretty=format:"%h %s (%cr)" 2>/dev/null || echo "No commits yet")
+echo "  Last commit: $LAST_COMMIT"
+echo ""
+
+CHANGES=$(git status --porcelain)
+if [[ -n "$CHANGES" ]]; then
+  echo "Uncommitted changes:"
+  echo "$CHANGES" | while read -r line; do
+    STATUS="${line:0:2}"
+    FILE="${line:3}"
+    case "$STATUS" in
+      "M "*|" M"|"MM") STATUS_TEXT="modified" ;;
+      "A "*) STATUS_TEXT="added" ;;
+      "D "*|" D") STATUS_TEXT="deleted" ;;
+      "??") STATUS_TEXT="untracked" ;;
+      "R "*) STATUS_TEXT="renamed" ;;
+      *) STATUS_TEXT="changed" ;;
+    esac
+    printf "  %-10s %s\n" "$STATUS_TEXT" "$FILE"
+  done
+  echo ""
+  SYNC="thoughts-sync"
+  [[ "$THOUGHTS_DIR" == "$HOME/thoughts" ]] || SYNC="thoughts-sync $(printf %q "$THOUGHTS_DIR")"
+  echo "Run \"$SYNC\" to commit these changes"
+else
+  echo "✓ No uncommitted changes"
+fi

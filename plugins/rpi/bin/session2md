@@ -1,0 +1,229 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Renders a Claude Code session transcript (.jsonl) as the conversation it was:
+# who spoke and what they said, with tool calls, tool results and harness
+# bookkeeping dropped.
+
+require "json"
+require "optparse"
+require "time"
+
+GAP_SECONDS = 3600
+PREVIEW_CHARS = 80
+
+options = {context: 2}
+parser = OptionParser.new do |opts|
+  opts.banner = <<~BANNER
+    session2md — render a Claude Code session transcript as the conversation it was
+
+    Usage: session2md <session.jsonl> [options]
+           grep -Rn <term> ~/.claude/projects | session2md [options]
+
+    Renders a Claude Code session as the conversation it was — who spoke and what
+    they said — dropping tool calls, tool results and harness bookkeeping. A day of
+    work measures ~4.7M tokens raw, 38k in full, 9k as an index.
+
+    Sessions live in ~/.claude/projects/<cwd, every character but a letter or digit
+    replaced by ->/<uuid>.jsonl, named by uuid, so list them by recency:
+
+      ls -t ~/.claude/projects/"${PWD//[^[:alnum:]]/-}"/*.jsonl
+
+    Examples:
+      # index one session: every turn, with its line number in the file
+      session2md ~/.claude/projects/-home-you-Work-repo/e16fa28d-....jsonl
+
+      # read around a line the index or a grep pointed at
+      session2md e16fa28d-....jsonl --from 1990 --to 2100 --full
+
+      # find where something was said, across every session and every clone
+      grep -Rn 'tool registry' ~/.claude/projects | session2md
+
+      # widen the conversation kept around each match
+      grep -Rn 'tool registry' ~/.claude/projects | session2md --context 5
+
+    grep must carry the file name, so pass -H (or -R, which does it for you). -R
+    rather than -r: it follows symlinks, and archives worth searching sit behind
+    them. The match itself usually lands in a tool result that is dropped, and what
+    reaches you is the surrounding turns.
+
+    A pause longer than an hour is marked, because a session spans days and a window
+    straddling a night otherwise reads as one conversation.
+
+    Options:
+  BANNER
+  opts.on("--from N", Integer, "First line of the transcript to read") { |v| options[:from] = v }
+  opts.on("--to N", Integer, "Last line of the transcript to read") { |v| options[:to] = v }
+  opts.on("--full", "Print each turn whole instead of a preview") { options[:full] = true }
+  opts.on("--context N", Integer, "Turns to print around a match (default 2)") { |v| options[:context] = v }
+  opts.on("--thinking", "Include the assistant's reasoning blocks") { options[:thinking] = true }
+  opts.on("-h", "--help", "Print this message") {
+    puts opts
+    exit
+  }
+end
+parser.parse!
+
+Turn = Struct.new(:line, :at, :who, :text)
+Session = Struct.new(:source, :branch, :turns)
+
+COMMAND_NAME = %r{<command-name>([^<]+)</command-name>}
+COMMAND_ARGS = %r{<command-args>([^<]*)</command-args>}
+GREP_PREFIX = /\A(.+?):(\d+):/
+
+def slash_command(content)
+  name = content[COMMAND_NAME, 1] or return nil
+  [name, content[COMMAND_ARGS, 1]].compact.map(&:strip).reject(&:empty?).join(" ")
+end
+
+def assistant_text(record, thinking:)
+  Array(record.dig("message", "content")).filter_map { |block|
+    case block["type"]
+    when "text" then block["text"]
+    when "thinking" then block["thinking"] if thinking
+    end
+  }.join("\n\n")
+end
+
+def human_text(content)
+  return content unless content.is_a?(Array)
+
+  content.filter_map { |block|
+    case block["type"]
+    when "text" then block["text"]
+    when "image" then "[image]"
+    end
+  }.join(" ")
+end
+
+def interruption(record)
+  content = record.dig("message", "content")
+  return unless content.is_a?(Array)
+
+  block = content.first
+  block["text"] if block.is_a?(Hash) && block["type"] == "text" && block["text"].to_s.start_with?("[Request interrupted")
+end
+
+def elapsed(seconds)
+  hours, minutes = seconds.divmod(3600).then { |h, rest| [h, rest / 60] }
+  hours.zero? ? "#{minutes}m" : "#{hours}h #{minutes}m"
+end
+
+def toon_field(value)
+  %("#{value.gsub(/[\\"]/) { |char| "\\#{char}" }}")
+end
+
+def speech(record, thinking:)
+  content = record.dig("message", "content")
+
+  if record.dig("origin", "kind") == "human"
+    ["user", human_text(content)]
+  elsif record.dig("attachment", "origin", "kind") == "human"
+    ["user", human_text(record.dig("attachment", "prompt"))]
+  elsif record["type"] == "assistant"
+    ["claude", assistant_text(record, thinking: thinking)]
+  elsif record["type"] == "user" && content.is_a?(String) && !record["isMeta"]
+    command = slash_command(content)
+    ["user", command] if command
+  elsif record["type"] == "user"
+    note = interruption(record)
+    ["user", note] if note
+  end
+end
+
+def read_session(source, from: nil, to: nil, thinking: false)
+  branch = nil
+  turns = []
+
+  File.foreach(source).with_index(1) do |line, number|
+    next if from && number < from
+    break if to && number > to
+
+    record = JSON.parse(line)
+    branch ||= record["gitBranch"]
+
+    who, text = speech(record, thinking: thinking)
+    next if text.nil? || text.empty?
+
+    turns << Turn.new(number, Time.iso8601(record["timestamp"]), who, text)
+  end
+
+  Session.new(source, branch, turns)
+end
+
+def header(session, shown)
+  name = File.basename(session.source, ".jsonl")
+  "#{name} · #{session.branch} · lines #{shown.first.line}–#{shown.last.line} · #{shown.size} turn#{"s" unless shown.size == 1}"
+end
+
+def render_index(session)
+  turns = session.turns
+  puts "# #{header(session, turns)}"
+  puts "turns[#{turns.size}]{line,who,preview}:"
+  turns.each do |turn|
+    preview = turn.text.gsub(/\s+/, " ").strip
+    preview = "#{preview[0, PREVIEW_CHARS]}…" if preview.length > PREVIEW_CHARS
+    puts "  #{turn.line},#{turn.who},#{toon_field(preview)}"
+  end
+end
+
+def render_full(session, indices)
+  turns = session.turns
+  shown = turns.values_at(*indices)
+
+  puts header(session, shown)
+  puts
+  puts shown.first.at.localtime.strftime("%Y-%m-%d %H:%M")
+
+  indices.each_with_index do |index, position|
+    previous = indices[position - 1] unless position.zero?
+    if previous && index - previous > 1
+      puts "\n⋯ #{index - previous - 1} turns ⋯"
+    elsif previous && (gap = (turns[index].at - turns[previous].at).to_i) >= GAP_SECONDS
+      puts "\n⋯ #{elapsed(gap)} later ⋯"
+    end
+    puts
+    puts "#{turns[index].who}: #{turns[index].text}"
+  end
+
+  puts
+  puts shown.last.at.localtime.strftime("%Y-%m-%d %H:%M")
+end
+
+def anchor(turns, line)
+  turns.rindex { |turn| turn.line <= line }
+end
+
+if (source = ARGV.first)
+  abort "session2md: no such file: #{source}" unless File.file?(source)
+
+  session = read_session(source, from: options[:from], to: options[:to], thinking: options[:thinking])
+  abort "session2md: no conversation in #{source}" if session.turns.empty?
+
+  options[:full] ? render_full(session, (0...session.turns.size).to_a) : render_index(session)
+  exit
+end
+
+abort parser.to_s unless $stdin.stat.pipe? || $stdin.stat.file?
+
+hits = Hash.new { |paths, path| paths[path] = [] }
+$stdin.each_line do |line|
+  path, number = line.match(GREP_PREFIX)&.captures
+  hits[path] << number.to_i if path&.end_with?(".jsonl")
+end
+
+abort "session2md: stdin carries no <session>.jsonl:line: prefixes — grep with -H, or -R over a directory" if hits.empty?
+
+hits.each_with_index do |(path, numbers), index|
+  session = read_session(path, thinking: options[:thinking])
+  next if session.turns.empty?
+
+  indices = numbers.filter_map { |number| anchor(session.turns, number) }
+    .flat_map { |found| ((found - options[:context])..(found + options[:context])).to_a }
+    .select { |found| found.between?(0, session.turns.size - 1) }
+    .uniq.sort
+  next if indices.empty?
+
+  puts if index.positive?
+  render_full(session, indices)
+end

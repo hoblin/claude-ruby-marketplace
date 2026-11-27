@@ -1,4 +1,5 @@
 ---
+name: create_note
 description: Capture findings or context as a persistent note in the thoughts system
 ---
 
@@ -10,7 +11,7 @@ You are tasked with capturing content as a persistent note in the thoughts syste
 
 ### 1. Gather Metadata
 
-Run `spec-metadata` (in the PATH) to get date, time, git commit, branch, and repository name.
+Run `spec-metadata` to get date, time, git commit, branch, and repository name.
 
 ### 2. Filepath & Naming
 
@@ -60,17 +61,9 @@ last_updated_by: [Author name]
 [Links to related notes, research, or plans in thoughts/ - if applicable, omit section if none]
 ```
 
-### 4. Sync and Present
+### 4. Sync
 
 Run `thoughts-sync` to save the document.
-
-Once complete, respond with:
-
-```
-Note captured at: ./thoughts/shared/notes/YYYY-MM-DD/description.md
-
-You can reference this in future sessions or as input to other RPI commands.
-```
 
 ## Additional Notes & Instructions
 

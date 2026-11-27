@@ -1,0 +1,91 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "shellwords"
+require_relative "../lib/sessions"
+
+USAGE = <<~TEXT
+  session-start — start a worker's Claude Code session in its tmux window
+
+  Usage: session-start <project>:<clone> <dir> [claude flags…]
+
+  Starts a Claude Code session in tmux window <clone> of tmux session <project>,
+  running in <dir>, named <project>-<clone>:
+
+    claude --permission-mode=bypassPermissions --remote-control <name> --model opus -n <name> [claude flags…]
+
+  Finds or creates each part: a missing window is created, an empty one gets an
+  agent, and an idle agent is closed and a fresh one started, unless its session
+  is fresh, runs in <dir> and no claude flags are given. Safe to run again.
+  Refuses an agent that is working or asking. Names any other Claude Code session
+  running in <dir>. Sends nothing.
+
+  Examples:
+    session-start vibemetrics-api:two ~/Work/vibemetrics-api-two
+    session-start vibemetrics-api:two ~/Work/vibemetrics-api-two --resume <session-id>
+TEXT
+
+Sessions.usage!(USAGE, ARGV.size >= 2)
+target, dir, *flags = ARGV
+
+target = Sessions::Target.parse(target)
+dir = File.expand_path(dir)
+Sessions.fail!("no such directory: #{dir}. Nothing was done.") unless Dir.exist?(dir)
+dir = File.realpath(dir)
+window = Sessions::Window.new(target)
+done = []
+
+report_neighbours = lambda do |agent|
+  targets = Sessions.panes.to_h { |pane| [pane.address, pane.target] }
+  others = Sessions::Agent.all.select { |other| other.cwd == dir && other.pid != agent.pid }
+  next if others.empty?
+
+  names = others.map { |other| "#{targets[other.address] || "pid #{other.pid} outside tmux"}, #{other.state}" }
+  puts "Claude Code also runs in the same folder: #{names.join("; ")}."
+end
+
+if window.panes.empty?
+  if system("tmux", "has-session", "-t", "=#{target.project}", err: File::NULL)
+    Sessions.tmux("new-window", "-d", "-t", "=#{target.project}:", "-n", target.window, "-c", dir)
+  else
+    Sessions.tmux("new-session", "-d", "-s", target.project, "-n", target.window, "-c", dir)
+  end
+  done << "Created its tmux window."
+end
+
+if (agent = window.agent)
+  unless agent.idle?
+    Sessions.fail!("#{target}: the agent there is #{agent.state}, in session #{agent.session_id}. " \
+      "Nothing was done. Read it with session-peek #{target}; if its work may be dropped, stop it with session-stop #{target} first.")
+  end
+
+  if flags.empty? && agent.cwd == dir && Sessions::Transcript.new(agent).ask.nil?
+    puts "#{target}: already running, idle, in fresh session #{agent.session_id}."
+    report_neighbours.call(agent)
+    puts "No need to start it again."
+    exit
+  end
+
+  window.exit!(agent)
+  done << "Closed old session #{agent.session_id} (resume it with: session-start #{target} #{agent.cwd} --resume #{agent.session_id})."
+end
+
+pane = window.pane!
+Sessions.fail!("#{target}: the window runs #{pane.command}, not a shell, so Claude Code was not started. #{done.join(" ")}") unless pane.shell?
+
+command = ["claude", "--permission-mode=bypassPermissions", "--remote-control", target.name, "--model", "opus", "-n", target.name, *flags]
+window.keys("-l", "cd #{Shellwords.escape(dir)} && #{Shellwords.join(command)}")
+window.keys("Enter")
+
+agent = Sessions.wait_until(Sessions::STARTUP_SECONDS) { window.agent&.then { |found| (found.asking? || window.screen.recognised?) && found } } or
+  Sessions.fail!("#{target}: Claude Code was launched but did not come up within #{Sessions::STARTUP_SECONDS}s. #{done.join(" ")} Read the window with session-peek #{target}.")
+
+done << "Started session #{agent.session_id}."
+puts "#{target}: #{done.join(" ")}"
+if agent.asking?
+  puts "It is #{agent.state}, before it can take work. Read the dialog with session-peek #{target}; it waits for an answer in the window."
+else
+  puts "It is idle at an empty input box."
+end
+report_neighbours.call(agent)
+puts "No need to switch its branch, pull or set up the project: the worker does that itself."

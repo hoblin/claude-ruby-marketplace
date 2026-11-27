@@ -1,29 +1,30 @@
 ---
-description: Deliver a feature or chore end to end, from branch creation to PR readiness, starting from an issue URL or a plain description
-argument-hint: "<issue-url | description> [additional instructions]"
+name: feature
+description: Deliver a feature or chore end to end, from branch creation to the merge, starting from its ticket
+argument-hint: "<ticket URL or ID> [additional instructions]"
 ---
 
 ## Input Format
 
 ```
-/rpi:feature <FEATURE_DESCRIPTION> [additional instructions]
+/rpi:feature <TICKET> [additional instructions]
 ```
 
-- **FEATURE_DESCRIPTION**: issue URL or plain description (required)
+- **TICKET**: the ticket's URL or ID (required)
 - **additional instructions** (optional): constraints, focus areas, or any custom guidance
 
 Examples:
 ```
 /rpi:feature https://linear.app/team/ENG-1234
+/rpi:feature #47
 /rpi:feature ENG-1234 the SpaceshipLauncher class must inherit from BaseVehicle
 ```
 
 ## Context
 
-Create and complete a new feature or chore for this project, from branch creation to PR readiness. Input can be an issue URL or a plain description.
+Create and complete a new feature or chore for this project, from branch creation to the merge.
 
-With issue URL: Extract ID, fetch ticket details.
-With description only: Create new issue in the appropriate project.
+Fetch the ticket.
 
 Pass any additional instructions from user input through to all subagents and apply them during implementation.
 
@@ -50,7 +51,15 @@ After Step 2 completes, spawn research subagents in parallel, passing ticket inf
 
 Wait for both subagents to complete before proceeding.
 
-### Step 4: Implementation
+### Step 4: Design
+
+The research reports point you to the code; Design reads it and decides how the feature fits what already exists, so it is built into the application rather than beside it.
+
+- **Read whole** the files you will change and the files your change touches.
+- **List what the feature needs:** the capabilities, not a code plan. For each, find what already exists: the application's own mechanics first, then the framework and the bundle's gems. Their documentation is extracted for the versions the bundle locks: `mdri <Constant>` lists a namespace's classes and a class's methods, `mdri <Constant>#method` one method's documentation. Read down to what you need.
+- **Decide where the new code lives** in the architecture. Write your own code only where nothing exists.
+
+### Step 5: Implementation
 
 Activate the `rpi:document-code` skill before modifying any file.
 Follow Rails best practices, CLAUDE.md, and any additional instructions from user input.
@@ -59,7 +68,7 @@ When modifying code: fix lurking bugs, refactor, add missing tests and regressio
 Ensure solid RSpec coverage with well-documented business logic (viewable with `--format documentation`).
 Review changes for completeness.
 
-### Step 5: Testing & Quality
+### Step 6: Testing & Quality
 
 Run specs for changed/affected files only (never full suite locally): `bundle exec rspec spec/path/to/changed_spec.rb`
 `bundle exec reek` – Code smell detection
@@ -67,38 +76,32 @@ Run specs for changed/affected files only (never full suite locally): `bundle ex
 `npx @herb-tools/linter --fix app/views/**/*.erb` (if views changed)
 Fix all issues, even flaky tests.
 
-### Step 6: Translations (i18n)
+### Step 7: Translations (i18n)
 
 `bundle exec i18n-tasks missing` – Check for missing translations
 `bundle exec i18n-tasks normalize` – Normalize locale files
 Add missing translations (manually or via OpenAI)
 
-### Step 7: Pull Request
+### Step 8: Pull Request
 
 Push branch.
-`gh pr create --draft`
+`gh pr create --draft --assignee @me`
 Title: `<issue-id> feat: <description>` or `<issue-id> chore: <description>` or `<issue-id> fix: <description>`
 Description: summary, test plan, breaking changes. Link to the issue.
 
-### Step 8: CI Monitoring
+### Step 9: CI Monitoring
 
-Monitor checks until all pass.
+Arm a Monitor on the checks; Step 10 can start while they run.
 If tests fail, investigate root cause vs flakiness.
 Fix flaky tests – don't just retry; stabilize the test.
-When all checks are green, proceed to "Step 9: Self-Review & Finalization". If the repo has no CI, proceed there directly after Step 7.
 
-### Step 9: Self-Review & Finalization
+### Step 10: Delivery
 
-Run the `/rpi:review-pr` command in `self-review` mode on the PR, passing through any additional instructions from user input — the pipeline isn't done at green, it's done at ready.
-Update PR title/description if needed.
+Follow the delivery skill the repository's `CLAUDE.md` or the human names: `rpi:copilot-assisted-feature-delivery` or `rpi:self-reviewed-feature-delivery`. Whether a person reviews before the merge is theirs to say too. When nothing says, ask rather than guess; what was said for one pull request holds for that one, not for the next.
 
-## Requirements
+### Step 11: Handover
 
-No direct pushes to `master`.
-Always branch per task.
-All tests must pass.
-All i18n translations must be present and normalized.
-Flaky tests must be fixed, not ignored.
+Record what the work decided, with `rpi:create_note`: the decisions made along the way, the ticket's scope widened or narrowed, and why. How it was built stays in the code; the note keeps what the code can't show, for the next agent who comes to this part of the project.
 
 ## Conventions (Beautiful Code)
 
@@ -109,7 +112,3 @@ Use clear, explicit naming; avoid magic values.
 Documentation follows the `rpi:document-code` skill.
 Use squash merges to keep commit history clean.
 Write small, focused commits using Conventional Commits (feat:, chore:, fix:)
-
-## Arguments
-
-`$ARGUMENTS`

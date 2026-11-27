@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../lib/sessions"
+
+USAGE = <<~TEXT
+  session-close — close an idle session with /exit, keeping its tmux window
+
+  Usage: session-close <project>:<clone>
+
+  Closes the session with /exit. The tmux window stays, for session-start to reuse.
+  Refuses a session that is working, asking, or running a background shell.
+TEXT
+
+Sessions.usage!(USAGE, ARGV.size == 1)
+
+target = Sessions::Target.parse(ARGV.first)
+window = Sessions::Window.new(target)
+window.pane!
+
+unless (agent = window.agent)
+  puts "#{target}: no Claude Code session runs there; nothing was done."
+  puts "No need to close it."
+  exit
+end
+
+window.exit!(agent)
+
+puts "#{target}: closed session #{agent.session_id}."
+puts "To continue it later: session-start #{target} #{agent.cwd} --resume #{agent.session_id}."
+puts "No need to close the tmux window."

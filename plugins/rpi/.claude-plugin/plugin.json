@@ -1,19 +1,19 @@
 {
   "name": "rpi",
-  "version": "2.1.0",
-  "description": "RPI workflow: Research, Planning, Implementation. Context engineering system with structured agents and commands for AI-assisted development.",
+  "version": "3.0.0",
+  "description": "Research, Plan, Implement: takes a raw idea to production, with the human making the decisions and every decision kept for the work that follows.",
   "author": {
     "name": "hoblin"
   },
   "repository": "https://github.com/hoblin/claude-ruby-marketplace",
   "license": "MIT",
   "keywords": [
-    "context-engineering",
-    "rpi-workflow",
-    "research",
-    "planning",
-    "implementation",
-    "handoffs",
-    "session-continuity"
+    "software-factory",
+    "human-in-the-loop",
+    "brainstorm",
+    "thoughts",
+    "tickets",
+    "code-review",
+    "handoffs"
   ]
 }

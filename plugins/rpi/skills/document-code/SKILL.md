@@ -1,4 +1,5 @@
 ---
+name: document-code
 description: "Decide whether a comment belongs, and write the ones that do — in Ruby, YAML, a Dockerfile, a shell script, tests or config. Use it before adding any comment, docstring or YARD block, including one you are about to write mid-implementation, and before deleting or rewording one already there. Use it when finished code carries no documentation, when asked to document code or add YARD, and when auditing what a file or a diff already carries. Use it unprompted when a review says a comment restates the code, narrates reasoning, is outdated, or should be deleted rather than shortened. Not for prose documents — a README, a wiki page, a plan or a ticket."
 ---
 
