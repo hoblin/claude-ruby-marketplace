@@ -4,6 +4,23 @@
 require "json"
 require "open3"
 
+Dependency = Struct.new(:commands, :mise_tool, :missing)
+
+YARD_MD = Dependency.new(%w[yard-md mdri], "gem:yard-md", "rpi reads gem documentation with the yard-md gem, which isn't installed: `mise use -g gem:yard-md` installs it for every project.")
+
+DEPENDENCIES = [
+  Dependency.new(%w[mise], nil, "rpi installs its dependencies with mise, which isn't installed: `curl https://mise.run | sh` installs it."),
+  Dependency.new(%w[git], nil, "rpi's thoughts tools and reviews run on git, which isn't installed: the system's package manager installs it."),
+  Dependency.new(%w[gh], "gh", "rpi opens pull requests, tickets and reviews with GitHub's gh, which isn't installed: `mise use -g gh` installs it."),
+  Dependency.new(%w[jq], "jq", "rpi's pull request review reads GitHub's answers with jq, which isn't installed: `mise use -g jq` installs it."),
+  Dependency.new(%w[tmux], "tmux", "rpi's session tools run Claude Code sessions in tmux, which isn't installed: `mise use -g tmux` installs it."),
+  YARD_MD
+].freeze
+
+on_path = lambda do |command|
+  ENV.fetch("PATH", "").split(File::PATH_SEPARATOR).any? { |dir| File.executable?(File.join(dir, command)) }
+end
+
 bin = File.expand_path("../bin", __dir__)
 tools = Dir[File.join(bin, "*")].select { |path| File.file?(path) && File.executable?(path) }.sort
 
@@ -11,34 +28,40 @@ first_lines = lambda do |commands|
   commands.map do |command|
     Thread.new do
       Open3.capture3(command, "--help").first.lines.first&.strip || "#{File.basename(command)} — its --help printed nothing"
-    rescue Errno::ENOENT
     end
-  end.map(&:value)
+  end
 end
 
 bullets = ->(lines) { lines.map { |line| "- #{line}" }.join("\n") }
 
-rpi = first_lines.call(tools)
-yard_md = first_lines.call(%w[yard-md mdri])
+installed, missing = DEPENDENCIES.partition { |dependency| dependency.commands.all?(&on_path) }
 
-gem_docs =
-  if yard_md.all?
-    "rpi reads gem documentation with the yard-md gem's executables, on the PATH:\n\n#{bullets.call(yard_md)}"
-  else
-    "rpi reads gem documentation with the yard-md gem, which isn't installed: `mise use -g gem:yard-md` installs it for every project."
+outdated = Thread.new do
+  mise_tools = installed.filter_map(&:mise_tool)
+  next {} unless on_path.call("mise") && mise_tools.any?
+
+  out, _err, status = Open3.capture3("mise", "outdated", "--global", "--bump", "--json", *mise_tools)
+  status.success? ? JSON.parse(out) : {}
+end
+
+rpi = first_lines.call(tools)
+gem_docs = first_lines.call(YARD_MD.commands) if installed.include?(YARD_MD)
+
+attention =
+  missing.map(&:missing) +
+  outdated.value.values.map do |tool|
+    "#{tool["name"]} #{tool["current"]} is installed and #{tool["latest"]} is out: `mise upgrade --global --bump #{tool["name"]}` updates it."
   end
+
+sections = [
+  "The rpi plugin's executables live in #{bin}:\n\n#{bullets.call(rpi.map(&:value))}\n\nEach one's --help prints its usage.",
+  ("rpi reads gem documentation with the yard-md gem's executables, on the PATH:\n\n#{bullets.call(gem_docs.map(&:value))}" if gem_docs),
+  ("rpi's dependencies:\n\n#{bullets.call(attention)}" if attention.any?)
+]
 
 puts JSON.generate(
   hookSpecificOutput: {
     hookEventName: "SessionStart",
-    additionalContext: <<~TEXT
-      The rpi plugin's executables live in #{bin}:
-
-      #{bullets.call(rpi)}
-
-      Each one's --help prints its usage.
-
-      #{gem_docs}
-    TEXT
+    additionalContext: sections.compact.join("\n\n")
   }
 )
