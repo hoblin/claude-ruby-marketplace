@@ -9,7 +9,8 @@ spec-metadata — print the date, git and thoughts details a thoughts document's
 Usage: spec-metadata [directory]
 
   directory: any path inside the thoughts repository whose status to include
-             (default: ~/thoughts)
+             (default: the one this git repository's thoughts/ links to,
+             else ~/thoughts)
 TEXT
     exit 0
     ;;

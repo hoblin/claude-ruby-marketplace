@@ -10,7 +10,8 @@ thoughts-sync — commit, pull and push a thoughts repository
 Usage: thoughts-sync [directory] [-m "message"]
 
   directory: any path inside the thoughts repository to sync, a note included
-             (default: ~/thoughts)
+             (default: the one this git repository's thoughts/ links to,
+             else ~/thoughts)
 TEXT
 }
 

@@ -10,7 +10,8 @@ thoughts-init-repo — link the current git repository's thoughts/ to a thoughts
 
 Usage: thoughts-init-repo [directory]
 
-  directory: any path inside the thoughts repository to link to (default: ~/thoughts)
+  directory: any path inside the thoughts repository to link to (default: the
+             one this repository's thoughts/ already links to, else ~/thoughts)
 
 Run it in the code repository's root. Its notes go to <thoughts>/repos/<this directory's name>/.
 TEXT
@@ -20,8 +21,6 @@ esac
 
 THOUGHTS_HOME="$(thoughts_repo "$@")"
 USERNAME="$(whoami)"
-TOOL_ARGS=""
-[[ "${THOUGHTS_HOME}" == "${HOME}/thoughts" ]] || TOOL_ARGS=" $(printf %q "${THOUGHTS_HOME}")"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -133,14 +132,14 @@ Quick access:
 
 ## Commands
 
-- \`thoughts-sync${TOOL_ARGS}\` - Commit and push thoughts changes
-- \`thoughts-status${TOOL_ARGS}\` - Show thoughts repository status
+- \`thoughts-sync\` - Commit and push thoughts changes
+- \`thoughts-status\` - Show thoughts repository status
 
 ## Important
 
 - Never commit the thoughts/ directory to your code repository
-- Use \`thoughts-sync${TOOL_ARGS}\` to manually sync changes
-- Use \`thoughts-status${TOOL_ARGS}\` to see sync status
+- Use \`thoughts-sync\` to manually sync changes
+- Use \`thoughts-status\` to see sync status
 EOF
 
 info "thoughts/ links to ${THOUGHTS_REPO_DIR}."
@@ -168,5 +167,5 @@ if [[ "${NEEDS_MIGRATION}" == "true" ]]; then
   done < <(find "${BACKUP_DIR}" -maxdepth 1 -type f -name "*.md" ! -name "CLAUDE.md" ! -name "README.md" -print0)
 
   warn "Delete the old thoughts/ backup once the migrated notes are checked."
-  echo "Run 'thoughts-sync${TOOL_ARGS}' to commit and push the migrated notes."
+  echo "Run 'thoughts-sync' to commit and push the migrated notes."
 fi
