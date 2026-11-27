@@ -25,19 +25,9 @@ fi
 
 cd "$THOUGHTS_DIR"
 
-echo "Thoughts Repository Status"
-echo "=================================================="
-echo ""
-echo "Configuration:"
-echo "  Repository: $THOUGHTS_DIR"
-echo "  User: $(whoami)"
-echo ""
-
-# Git status
-echo "Git Status:"
+echo "Thoughts repository $THOUGHTS_DIR:"
 echo "  $(git status -sb | head -1)"
 
-# Remote status with auto-fetch
 if git remote get-url origin &>/dev/null; then
   git fetch --quiet 2>/dev/null || true
 
@@ -47,7 +37,6 @@ if git remote get-url origin &>/dev/null; then
     echo "  Remote: $AHEAD commits ahead of remote"
   elif echo "$STATUS" | grep -q "behind"; then
     BEHIND=$(echo "$STATUS" | grep -oP 'behind \K\d+' || echo "?")
-    # Auto-pull if behind
     if git pull --rebase --quiet 2>/dev/null; then
       echo "  Remote: Up to date with remote (after pull)"
     else
@@ -60,12 +49,10 @@ else
   echo "  Remote: No remote configured"
 fi
 
-# Last commit
 LAST_COMMIT=$(git log -1 --pretty=format:"%h %s (%cr)" 2>/dev/null || echo "No commits yet")
 echo "  Last commit: $LAST_COMMIT"
 echo ""
 
-# Uncommitted changes
 CHANGES=$(git status --porcelain)
 if [[ -n "$CHANGES" ]]; then
   echo "Uncommitted changes:"

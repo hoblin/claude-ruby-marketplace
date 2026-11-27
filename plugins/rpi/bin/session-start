@@ -17,7 +17,8 @@ USAGE = <<~TEXT
   Finds or creates each part: a missing window is created, an empty one gets an
   agent, and an idle agent is closed and a fresh one started, unless its session
   is fresh, runs in <dir> and no claude flags are given. Safe to run again.
-  Refuses an agent that is working or asking. Sends nothing.
+  Refuses an agent that is working or asking. Names any other Claude Code session
+  running in <dir>. Sends nothing.
 
   Examples:
     session-start vibemetrics-api:two ~/Work/vibemetrics-api-two
@@ -33,13 +34,21 @@ Sessions.fail!("no such directory: #{dir}. Nothing was done.") unless Dir.exist?
 window = Sessions::Window.new(target)
 done = []
 
+report_neighbours = lambda do |agent|
+  targets = Sessions.panes.to_h { |pane| [pane.address, pane.target] }
+  others = Sessions::Agent.all.select { |other| other.cwd == dir && other.pid != agent.pid }
+  next if others.empty?
+
+  puts "Claude Code also runs in the same folder: #{others.map { |other| "#{targets[other.address] || other.address}, #{other.state}" }.join("; ")}."
+end
+
 if window.panes.empty?
   if system("tmux", "has-session", "-t", "=#{target.project}", err: File::NULL)
     Sessions.tmux("new-window", "-d", "-t", "=#{target.project}:", "-n", target.window, "-c", dir)
   else
     Sessions.tmux("new-session", "-d", "-s", target.project, "-n", target.window, "-c", dir)
   end
-  done << "Created tmux window #{target}."
+  done << "Created its tmux window."
 end
 
 if (agent = window.agent)
@@ -49,8 +58,8 @@ if (agent = window.agent)
   end
 
   if flags.empty? && agent.cwd == dir && Sessions::Transcript.new(agent).ask.nil?
-    puts "#{target}: Claude Code already runs there as #{target.name}, in fresh session #{agent.session_id}, in #{dir}, idle."
-    puts "Next: send it its first message with session-send #{target} \"<text>\"."
+    puts "#{target}: already running, idle, in fresh session #{agent.session_id}."
+    report_neighbours.call(agent)
     puts "No need to start it again."
     exit
   end
@@ -69,11 +78,12 @@ window.keys("Enter")
 agent = Sessions.wait_until(Sessions::STARTUP_SECONDS) { window.agent&.then { |found| (found.asking? || window.screen.recognised?) && found } } or
   Sessions.fail!("#{target}: Claude Code was launched but did not come up within #{Sessions::STARTUP_SECONDS}s. #{done.join(" ")} Read the window with session-peek #{target}.")
 
-done << "Started Claude Code as #{target.name}, session #{agent.session_id}, in #{dir}."
+done << "Started session #{agent.session_id}."
 puts "#{target}: #{done.join(" ")}"
 if agent.asking?
   puts "It is #{agent.state}, before it can take work. Read the dialog with session-peek #{target}; it waits for an answer in the window."
 else
-  puts "It is idle at an empty input box. Next: send it a message with session-send #{target} \"<text>\"."
+  puts "It is idle at an empty input box."
 end
+report_neighbours.call(agent)
 puts "No need to switch its branch, pull or set up the project: the worker does that itself."

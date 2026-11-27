@@ -26,6 +26,6 @@ end
 
 window.exit!(agent)
 
-puts "#{target}: closed session #{agent.session_id}. The tmux window stays, at its shell."
-puts "Next, if it is wanted again: session-start #{target} #{agent.cwd} starts a fresh session there; add --resume #{agent.session_id} to continue this one."
+puts "#{target}: closed session #{agent.session_id}."
+puts "To continue it later: session-start #{target} #{agent.cwd} --resume #{agent.session_id}."
 puts "No need to close the tmux window."

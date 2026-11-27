@@ -38,5 +38,4 @@ running.each do |pane, agent|
   puts "  latest step: #{Sessions.preview(transcript.latest_step || "none yet")}"
 end
 puts
-puts "Nothing was changed. Read one in full with session-peek <project>:<clone>."
 puts "No need to ask them how it goes: this is their state now."
