@@ -70,7 +70,7 @@ if [[ -n "$CHANGES" ]]; then
   done
   echo ""
   SYNC="thoughts-sync"
-  [[ "$THOUGHTS_DIR" == "$HOME/thoughts" ]] || SYNC="thoughts-sync $THOUGHTS_DIR"
+  [[ "$THOUGHTS_DIR" == "$HOME/thoughts" ]] || SYNC="thoughts-sync $(printf %q "$THOUGHTS_DIR")"
   echo "Run \"$SYNC\" to commit these changes"
 else
   echo "✓ No uncommitted changes"

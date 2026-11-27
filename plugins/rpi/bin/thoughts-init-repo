@@ -21,7 +21,7 @@ esac
 THOUGHTS_HOME="$(thoughts_repo "$@")"
 USERNAME="$(whoami)"
 TOOL_ARGS=""
-[[ "${THOUGHTS_HOME}" == "${HOME}/thoughts" ]] || TOOL_ARGS=" ${THOUGHTS_HOME}"
+[[ "${THOUGHTS_HOME}" == "${HOME}/thoughts" ]] || TOOL_ARGS=" $(printf %q "${THOUGHTS_HOME}")"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
