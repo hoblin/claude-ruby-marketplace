@@ -21,20 +21,17 @@ esac
 THOUGHTS_HOME="$(thoughts_repo "$@")"
 USERNAME="$(whoami)"
 TOOL_ARGS=""
-[[ "${THOUGHTS_HOME}" == "${HOME}/thoughts" ]] || TOOL_ARGS=" ${THOUGHTS_HOME}"
+[[ "${THOUGHTS_HOME}" == "${HOME}/thoughts" ]] || TOOL_ARGS=" $(printf %q "${THOUGHTS_HOME}")"
 
-# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
 info() { echo -e "${GREEN}✓${NC} $1"; }
 warn() { echo -e "${YELLOW}⚠${NC} $1"; }
 error() { echo -e "${RED}✗${NC} $1" >&2; }
 
-# Migrate .md files from source to destination, preserving directory structure
-# Excludes CLAUDE.md and README.md (template files)
 migrate_md_files() {
   local src="$1"
   local dst="$2"
@@ -59,53 +56,37 @@ TARGET_DIR="$(pwd)"
 THOUGHTS_REPO_DIR="${THOUGHTS_HOME}/repos/${REPO_NAME}"
 LOCAL_THOUGHTS_DIR="${TARGET_DIR}/thoughts"
 
-echo "Initializing thoughts system for: ${REPO_NAME}"
-echo "  Target repo: ${TARGET_DIR}"
-echo "  Thoughts storage: ${THOUGHTS_REPO_DIR}"
-echo ""
-
-# Verify we're in a git repo
 if [[ ! -d "${TARGET_DIR}/.git" ]]; then
-  error "Not a git repository: ${TARGET_DIR}"
+  error "Not a git repository, so nothing was done. Run it in the code repository's root."
   exit 1
 fi
 
-# Verify thoughts home exists
 if [[ ! -d "${THOUGHTS_HOME}" ]]; then
-  error "Thoughts home not found: ${THOUGHTS_HOME}"
-  echo "Please clone the thoughts repository first."
+  error "Thoughts home not found: ${THOUGHTS_HOME}. Clone the thoughts repository there first."
   exit 1
 fi
 
-# Handle existing thoughts directory
 if [[ -d "${LOCAL_THOUGHTS_DIR}" ]]; then
-  # Check if it's already properly linked
   if [[ -L "${LOCAL_THOUGHTS_DIR}/shared" ]] && \
      [[ "$(readlink "${LOCAL_THOUGHTS_DIR}/shared")" == "${THOUGHTS_REPO_DIR}/shared" ]]; then
-    info "Thoughts already initialized for this repo"
+    info "Already initialized: thoughts/ links to ${THOUGHTS_REPO_DIR}. Nothing was done."
     exit 0
   fi
 
-  # Existing directory needs migration
   BACKUP_DIR="${LOCAL_THOUGHTS_DIR}.backup.$(date +%Y%m%d_%H%M%S)"
-  warn "Existing thoughts directory found - migrating..."
   mv "${LOCAL_THOUGHTS_DIR}" "${BACKUP_DIR}"
-  info "Backed up to: ${BACKUP_DIR}"
+  warn "Moved the old thoughts/ to ${BACKUP_DIR}."
   NEEDS_MIGRATION=true
 else
   NEEDS_MIGRATION=false
 fi
 
-# Create repo directory structure in thoughts home
-echo "Creating thoughts storage structure..."
 mkdir -p "${THOUGHTS_REPO_DIR}/${USERNAME}"
 mkdir -p "${THOUGHTS_REPO_DIR}/shared/handoffs"
 mkdir -p "${THOUGHTS_REPO_DIR}/shared/plans"
 mkdir -p "${THOUGHTS_REPO_DIR}/shared/research"
 mkdir -p "${THOUGHTS_REPO_DIR}/shared/notes"
-info "Created: ${THOUGHTS_REPO_DIR}"
 
-# Create README if it doesn't exist
 if [[ ! -f "${THOUGHTS_REPO_DIR}/README.md" ]]; then
   cat > "${THOUGHTS_REPO_DIR}/README.md" << EOF
 # ${REPO_NAME} Thoughts
@@ -115,23 +96,13 @@ This directory contains thoughts and notes specific to the ${REPO_NAME} reposito
 - \`${USERNAME}/\` - Personal notes for this repository
 - \`shared/\` - Team-shared notes for this repository
 EOF
-  info "Created README.md"
 fi
 
-# Create local thoughts directory with symlinks
-echo "Creating symlinks in repository..."
 mkdir -p "${LOCAL_THOUGHTS_DIR}"
-
 ln -s "${THOUGHTS_HOME}/global" "${LOCAL_THOUGHTS_DIR}/global"
-info "Linked: global -> ${THOUGHTS_HOME}/global"
-
 ln -s "${THOUGHTS_REPO_DIR}/${USERNAME}" "${LOCAL_THOUGHTS_DIR}/${USERNAME}"
-info "Linked: ${USERNAME} -> ${THOUGHTS_REPO_DIR}/${USERNAME}"
-
 ln -s "${THOUGHTS_REPO_DIR}/shared" "${LOCAL_THOUGHTS_DIR}/shared"
-info "Linked: shared -> ${THOUGHTS_REPO_DIR}/shared"
 
-# Create CLAUDE.md
 cat > "${LOCAL_THOUGHTS_DIR}/CLAUDE.md" << EOF
 # Thoughts Directory Structure
 
@@ -171,28 +142,16 @@ Quick access:
 - Use \`thoughts-sync${TOOL_ARGS}\` to manually sync changes
 - Use \`thoughts-status${TOOL_ARGS}\` to see sync status
 EOF
-info "Created thoughts/CLAUDE.md"
 
-# Update .gitignore
+info "thoughts/ links to ${THOUGHTS_REPO_DIR}."
+
 GITIGNORE="${TARGET_DIR}/.gitignore"
-if [[ -f "${GITIGNORE}" ]]; then
-  if ! grep -qxF '/thoughts/' "${GITIGNORE}"; then
-    echo '/thoughts/' >> "${GITIGNORE}"
-    info "Added /thoughts/ to .gitignore"
-  else
-    info ".gitignore already excludes /thoughts/"
-  fi
-else
-  echo '/thoughts/' > "${GITIGNORE}"
-  info "Created .gitignore with /thoughts/"
+if ! grep -qxF '/thoughts/' "${GITIGNORE}" 2>/dev/null; then
+  echo '/thoughts/' >> "${GITIGNORE}"
+  info "Added /thoughts/ to .gitignore; commit that change."
 fi
 
-# Handle migration - copy .md files from backup preserving structure
 if [[ "${NEEDS_MIGRATION}" == "true" ]]; then
-  echo ""
-  echo "Migrating content from backup..."
-
-  # Migration mappings: source_relative_path:destination_absolute_path
   MIGRATION_MAPPINGS=(
     "${USERNAME}:${THOUGHTS_REPO_DIR}/${USERNAME}"
     "shared:${THOUGHTS_REPO_DIR}/shared"
@@ -204,19 +163,10 @@ if [[ "${NEEDS_MIGRATION}" == "true" ]]; then
     migrate_md_files "${BACKUP_DIR}/${mapping%%:*}" "${mapping##*:}"
   done
 
-  # Catch remaining .md files at backup root
   while IFS= read -r -d '' file; do
     cp -n "${file}" "${THOUGHTS_REPO_DIR}/" 2>/dev/null && info "Migrated: $(basename "${file}")" || true
   done < <(find "${BACKUP_DIR}" -maxdepth 1 -type f -name "*.md" ! -name "CLAUDE.md" ! -name "README.md" -print0)
 
-  echo ""
-  warn "Backup preserved at: ${BACKUP_DIR}"
-  echo "  Review and delete when satisfied: rm -rf '${BACKUP_DIR}'"
+  warn "Delete the old thoughts/ backup once the migrated notes are checked."
+  echo "Run 'thoughts-sync${TOOL_ARGS}' to commit and push the migrated notes."
 fi
-
-echo ""
-info "Thoughts initialized for ${REPO_NAME}!"
-echo ""
-echo "Next steps:"
-echo "  1. Run 'thoughts-sync${TOOL_ARGS}' to sync any migrated content"
-echo "  2. Commit the .gitignore change if modified"

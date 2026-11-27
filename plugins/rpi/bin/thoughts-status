@@ -25,47 +25,25 @@ fi
 
 cd "$THOUGHTS_DIR"
 
-echo "Thoughts Repository Status"
-echo "=================================================="
-echo ""
-echo "Configuration:"
-echo "  Repository: $THOUGHTS_DIR"
-echo "  User: $(whoami)"
-echo ""
+echo "Thoughts repository $THOUGHTS_DIR:"
 
-# Git status
-echo "Git Status:"
-echo "  $(git status -sb | head -1)"
-
-# Remote status with auto-fetch
 if git remote get-url origin &>/dev/null; then
   git fetch --quiet 2>/dev/null || true
 
-  STATUS=$(git status -sb)
-  if echo "$STATUS" | grep -q "ahead"; then
-    AHEAD=$(echo "$STATUS" | grep -oP 'ahead \K\d+' || echo "?")
-    echo "  Remote: $AHEAD commits ahead of remote"
-  elif echo "$STATUS" | grep -q "behind"; then
-    BEHIND=$(echo "$STATUS" | grep -oP 'behind \K\d+' || echo "?")
-    # Auto-pull if behind
-    if git pull --rebase --quiet 2>/dev/null; then
-      echo "  Remote: Up to date with remote (after pull)"
-    else
-      echo "  Remote: $BEHIND commits behind remote"
-    fi
-  else
-    echo "  Remote: Up to date with remote"
+  BRANCH=$(git status -sb | sed -n 1p)
+  if [[ "$BRANCH" == *behind* && "$BRANCH" != *ahead* ]] && git pull --rebase --quiet 2>/dev/null; then
+    echo "  Pulled the remote's new commits."
+    BRANCH=$(git status -sb | sed -n 1p)
   fi
+  echo "  $BRANCH"
 else
-  echo "  Remote: No remote configured"
+  echo "  No remote configured"
 fi
 
-# Last commit
 LAST_COMMIT=$(git log -1 --pretty=format:"%h %s (%cr)" 2>/dev/null || echo "No commits yet")
 echo "  Last commit: $LAST_COMMIT"
 echo ""
 
-# Uncommitted changes
 CHANGES=$(git status --porcelain)
 if [[ -n "$CHANGES" ]]; then
   echo "Uncommitted changes:"
@@ -83,7 +61,9 @@ if [[ -n "$CHANGES" ]]; then
     printf "  %-10s %s\n" "$STATUS_TEXT" "$FILE"
   done
   echo ""
-  echo 'Run "thoughts-sync" to commit these changes'
+  SYNC="thoughts-sync"
+  [[ "$THOUGHTS_DIR" == "$HOME/thoughts" ]] || SYNC="thoughts-sync $(printf %q "$THOUGHTS_DIR")"
+  echo "Run \"$SYNC\" to commit these changes"
 else
   echo "✓ No uncommitted changes"
 fi

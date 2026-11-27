@@ -20,7 +20,7 @@ agent = window.agent!
 
 if agent.idle?
   puts "#{target}: the session is #{agent.state}; there was no turn to stop, so nothing was done."
-  puts "No need to stop it. Give it work with session-send #{target} \"<text>\"."
+  puts "No need to stop it."
   exit
 end
 
@@ -28,8 +28,7 @@ window.keys("Escape")
 stopped = Sessions.wait_until(Sessions::STOP_SECONDS) { window.agent&.idle? }
 
 if stopped
-  puts "#{target}: pressed Esc; the #{agent.asking? ? "dialog closed" : "turn stopped"} and the session is idle, its context kept."
-  puts "Next: give it new instructions with session-send #{target} \"<text>\"."
+  puts "#{target}: the #{agent.asking? ? "dialog closed" : "turn stopped"} and the session is idle, its context kept."
   puts "No need to restart it."
 else
   puts "#{target}: pressed Esc, but after #{Sessions::STOP_SECONDS}s the session is still #{window.agent&.state || "gone"}. Read it with session-peek #{target}."

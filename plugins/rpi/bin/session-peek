@@ -52,5 +52,5 @@ else
   puts "No history: it has not been asked anything yet."
 end
 puts
-puts "Nothing was changed. Earlier history: session2md #{transcript.path}"
+puts "Earlier history: session2md #{transcript.path}"
 puts "No need to ask it how it goes: this is its state now."

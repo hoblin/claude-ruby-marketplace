@@ -35,13 +35,12 @@ end
 
 submitted = window.submit(text)
 
-puts "#{target}: sent #{Sessions.preview(text).inspect} and pressed Enter."
 if !submitted
-  puts "The text still sits in the input box after Enter. Read the window with session-peek #{target} before sending more."
+  puts "#{target}: the text still sits in the input box after Enter. Read the window with session-peek #{target} before sending more."
   exit 1
 elsif agent.idle?
-  puts "It was idle and takes it now. It reports on its own; read its progress with session-peek #{target}."
+  puts "#{target}: sent. It was idle and takes it now, and reports on its own."
 else
-  puts "It was working, so the message waits in its queue until the current turn ends."
+  puts "#{target}: sent. It was working, so the message waits in its queue until the current turn ends."
 end
-puts "No need to press Enter again or resend."
+puts "No need to resend."
