@@ -1,4 +1,5 @@
 ---
+name: feature
 description: Deliver a feature or chore end to end, from branch creation to the merge, starting from its ticket
 argument-hint: "<ticket URL or ID> [additional instructions]"
 ---

@@ -1,4 +1,5 @@
 ---
+name: research_codebase
 description: Document codebase as-is with thoughts directory for historical context
 model: opus
 ---

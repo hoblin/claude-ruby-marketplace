@@ -1,4 +1,5 @@
 ---
+name: create_note
 description: Capture findings or context as a persistent note in the thoughts system
 ---
 
