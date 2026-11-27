@@ -30,10 +30,10 @@ echo "Thoughts repository $THOUGHTS_DIR:"
 if git remote get-url origin &>/dev/null; then
   git fetch --quiet 2>/dev/null || true
 
-  BRANCH=$(git status -sb | head -1)
+  BRANCH=$(git status -sb | sed -n 1p)
   if [[ "$BRANCH" == *behind* && "$BRANCH" != *ahead* ]] && git pull --rebase --quiet 2>/dev/null; then
     echo "  Pulled the remote's new commits."
-    BRANCH=$(git status -sb | head -1)
+    BRANCH=$(git status -sb | sed -n 1p)
   fi
   echo "  $BRANCH"
 else
