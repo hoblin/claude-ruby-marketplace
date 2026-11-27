@@ -7,17 +7,19 @@ require "open3"
 bin = File.expand_path("../bin", __dir__)
 tools = Dir[File.join(bin, "*")].select { |path| File.file?(path) && File.executable?(path) }.sort
 
-help = lambda do |tool|
-  Thread.new do
-    Open3.capture3(tool, "--help").first.lines.first&.strip || "#{File.basename(tool)} — its --help printed nothing"
-  rescue Errno::ENOENT
-  end
+first_lines = lambda do |commands|
+  commands.map do |command|
+    Thread.new do
+      Open3.capture3(command, "--help").first.lines.first&.strip || "#{File.basename(command)} — its --help printed nothing"
+    rescue Errno::ENOENT
+    end
+  end.map(&:value)
 end
 
 bullets = ->(lines) { lines.map { |line| "- #{line}" }.join("\n") }
 
-rpi = tools.map(&help)
-yard_md = %w[yard-md mdri].map(&help).map(&:value)
+rpi = first_lines.call(tools)
+yard_md = first_lines.call(%w[yard-md mdri])
 
 gem_docs =
   if yard_md.all?
@@ -32,11 +34,11 @@ puts JSON.generate(
     additionalContext: <<~TEXT
       The rpi plugin's executables live in #{bin}:
 
-      #{bullets.call(rpi.map(&:value))}
-
-      #{gem_docs}
+      #{bullets.call(rpi)}
 
       Each one's --help prints its usage.
+
+      #{gem_docs}
     TEXT
   }
 )
