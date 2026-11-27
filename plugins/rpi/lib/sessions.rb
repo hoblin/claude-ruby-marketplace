@@ -106,7 +106,7 @@ module Sessions
         next unless File.basename(file, ".json").match?(/\A\d+\z/)
 
         record = JSON.parse(File.read(file))
-        next if record["tmux"].to_s.empty? || !running?(record)
+        next unless running?(record)
 
         new(pid: record["pid"], session_id: record["sessionId"], cwd: record["cwd"], status: record["status"],
           waiting_for: record["waitingFor"], version: record["version"], address: record["tmux"])

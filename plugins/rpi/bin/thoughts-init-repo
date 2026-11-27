@@ -75,6 +75,7 @@ if [[ -d "${LOCAL_THOUGHTS_DIR}" ]]; then
 
   BACKUP_DIR="${LOCAL_THOUGHTS_DIR}.backup.$(date +%Y%m%d_%H%M%S)"
   mv "${LOCAL_THOUGHTS_DIR}" "${BACKUP_DIR}"
+  warn "Moved the old thoughts/ to ${BACKUP_DIR}."
   NEEDS_MIGRATION=true
 else
   NEEDS_MIGRATION=false
@@ -166,6 +167,6 @@ if [[ "${NEEDS_MIGRATION}" == "true" ]]; then
     cp -n "${file}" "${THOUGHTS_REPO_DIR}/" 2>/dev/null && info "Migrated: $(basename "${file}")" || true
   done < <(find "${BACKUP_DIR}" -maxdepth 1 -type f -name "*.md" ! -name "CLAUDE.md" ! -name "README.md" -print0)
 
-  warn "The old thoughts/ is kept at ${BACKUP_DIR}; delete it once the migrated notes are checked."
+  warn "Delete the old thoughts/ backup once the migrated notes are checked."
   echo "Run 'thoughts-sync${TOOL_ARGS}' to commit and push the migrated notes."
 fi

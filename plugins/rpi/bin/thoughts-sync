@@ -50,8 +50,9 @@ git add -A
 if git diff --cached --quiet && git diff --quiet; then
   echo "Nothing to commit."
 else
-  echo "✅ Committed $(git diff --cached --name-only | wc -l) changed file(s)."
+  COUNT=$(git diff --cached --name-only | grep -c .)
   git commit --quiet -m "${MESSAGE:-Sync thoughts - $(date -Iseconds)}"
+  echo "✅ Committed ${COUNT} changed file(s)."
 fi
 
 if ! git pull --rebase --quiet; then

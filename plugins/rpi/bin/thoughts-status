@@ -26,7 +26,6 @@ fi
 cd "$THOUGHTS_DIR"
 
 echo "Thoughts repository $THOUGHTS_DIR:"
-echo "  $(git status -sb | head -1)"
 
 if git remote get-url origin &>/dev/null; then
   git fetch --quiet 2>/dev/null || true
@@ -70,7 +69,9 @@ if [[ -n "$CHANGES" ]]; then
     printf "  %-10s %s\n" "$STATUS_TEXT" "$FILE"
   done
   echo ""
-  echo 'Run "thoughts-sync" to commit these changes'
+  SYNC="thoughts-sync"
+  [[ "$THOUGHTS_DIR" == "$HOME/thoughts" ]] || SYNC="thoughts-sync $THOUGHTS_DIR"
+  echo "Run \"$SYNC\" to commit these changes"
 else
   echo "✓ No uncommitted changes"
 fi

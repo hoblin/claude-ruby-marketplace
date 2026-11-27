@@ -39,7 +39,8 @@ report_neighbours = lambda do |agent|
   others = Sessions::Agent.all.select { |other| other.cwd == dir && other.pid != agent.pid }
   next if others.empty?
 
-  puts "Claude Code also runs in the same folder: #{others.map { |other| "#{targets[other.address] || other.address}, #{other.state}" }.join("; ")}."
+  names = others.map { |other| "#{targets[other.address] || "pid #{other.pid} outside tmux"}, #{other.state}" }
+  puts "Claude Code also runs in the same folder: #{names.join("; ")}."
 end
 
 if window.panes.empty?
