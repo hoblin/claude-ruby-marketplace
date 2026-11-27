@@ -102,7 +102,9 @@ Review, run by `rpi:review-pr`:
 
 rpi brings a few command-line tools for what an agent does often: leading other sessions, reading past ones, keeping the thoughts repository in sync. As rpi lets the human focus on what matters, the tools do the same for an agent: instead of scripting the same commands again, it spends its attention on the work and on communication. Each tool's `--help` opens with a line saying what it does, and a hook puts those lines into every session, and back after a compaction, under the folder the tools live in, so an agent knows the tools exist before it needs one and finds them whether or not that folder is on its PATH. A person can run them by hand too.
 
-The Design step reads gem documentation with the [yard-md](https://github.com/hoblin/yard-md) gem: `yard-md` extracts it, `mdri` reads it. The same hook lists the two when they are on the PATH, and otherwise says the gem is missing and how to install it for every project: `mise use -g gem:yard-md`.
+The Design step reads gem documentation with the [yard-md](https://github.com/hoblin/yard-md) gem: `yard-md` extracts it, `mdri` reads it. The same hook lists the two when they are on the PATH.
+
+rpi runs on a few command-line tools: [mise](https://mise.jdx.dev) installs the others, `git` and `gh` carry the thoughts and the delivery, `jq` the pull request review, `tmux` the session tools, and yard-md the gem documentation. The hook says which of them is missing and how to install it (`mise use -g <tool>` wherever mise can), and which of those mise installed has a newer release, with `mise upgrade --global --bump <tool>` to update it. The tools the system's package manager installed are its to update. When nothing is missing or outdated, the hook says nothing about them.
 
 The session tools let the manager lead worker sessions in tmux: a tmux session per project, named after it, and a window per clone, named after the clone (`one`, `two`). A worker is addressed as `<project>:<clone>` and runs as `<project>-<clone>`.
 
