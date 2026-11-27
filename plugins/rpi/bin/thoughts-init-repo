@@ -67,7 +67,7 @@ fi
 
 if [[ -d "${LOCAL_THOUGHTS_DIR}" ]]; then
   if [[ -L "${LOCAL_THOUGHTS_DIR}/shared" ]] && \
-     [[ "$(readlink "${LOCAL_THOUGHTS_DIR}/shared")" == "${THOUGHTS_REPO_DIR}/shared" ]]; then
+     [[ "$(realpath -m "${LOCAL_THOUGHTS_DIR}/shared")" == "$(realpath -m "${THOUGHTS_REPO_DIR}/shared")" ]]; then
     info "Already initialized: thoughts/ links to ${THOUGHTS_REPO_DIR}. Nothing was done."
     exit 0
   fi

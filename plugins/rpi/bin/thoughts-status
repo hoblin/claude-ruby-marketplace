@@ -19,7 +19,7 @@ esac
 
 THOUGHTS_DIR="$(thoughts_repo "$@")"
 SYNC="thoughts-sync"
-[[ "$THOUGHTS_DIR" == "$(thoughts_repo)" ]] || SYNC="thoughts-sync $(printf %q "$THOUGHTS_DIR")"
+[[ "$THOUGHTS_DIR" == "$(thoughts_repo 2>/dev/null)" ]] || SYNC="thoughts-sync $(printf %q "$THOUGHTS_DIR")"
 
 if [[ ! -d "$THOUGHTS_DIR/.git" ]]; then
   echo "Error: $THOUGHTS_DIR is not a git repository" >&2
