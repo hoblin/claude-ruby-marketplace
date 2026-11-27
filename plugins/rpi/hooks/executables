@@ -18,7 +18,10 @@ DEPENDENCIES = [
 ].freeze
 
 on_path = lambda do |command|
-  ENV.fetch("PATH", "").split(File::PATH_SEPARATOR).any? { |dir| File.executable?(File.join(dir, command)) }
+  ENV.fetch("PATH", "").split(File::PATH_SEPARATOR).any? do |dir|
+    path = File.join(dir, command)
+    File.file?(path) && File.executable?(path)
+  end
 end
 
 bin = File.expand_path("../bin", __dir__)
@@ -40,7 +43,8 @@ outdated = Thread.new do
   mise_tools = installed.filter_map(&:mise_tool)
   next {} unless on_path.call("mise") && mise_tools.any?
 
-  out, _err, status = Open3.capture3("mise", "outdated", "--global", "--bump", "--json", *mise_tools)
+  deadline = {"MISE_FETCH_REMOTE_VERSIONS_TIMEOUT" => "2s", "MISE_HTTP_TIMEOUT" => "2s"}
+  out, _err, status = Open3.capture3(deadline, "mise", "outdated", "--global", "--bump", "--json", *mise_tools)
   status.success? ? JSON.parse(out) : {}
 end
 
