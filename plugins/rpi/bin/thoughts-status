@@ -30,22 +30,14 @@ echo "Thoughts repository $THOUGHTS_DIR:"
 if git remote get-url origin &>/dev/null; then
   git fetch --quiet 2>/dev/null || true
 
-  STATUS=$(git status -sb)
-  if echo "$STATUS" | grep -q "ahead"; then
-    AHEAD=$(echo "$STATUS" | grep -oP 'ahead \K\d+' || echo "?")
-    echo "  Remote: $AHEAD commits ahead of remote"
-  elif echo "$STATUS" | grep -q "behind"; then
-    BEHIND=$(echo "$STATUS" | grep -oP 'behind \K\d+' || echo "?")
-    if git pull --rebase --quiet 2>/dev/null; then
-      echo "  Remote: Up to date with remote (after pull)"
-    else
-      echo "  Remote: $BEHIND commits behind remote"
-    fi
-  else
-    echo "  Remote: Up to date with remote"
+  BRANCH=$(git status -sb | head -1)
+  if [[ "$BRANCH" == *behind* && "$BRANCH" != *ahead* ]] && git pull --rebase --quiet 2>/dev/null; then
+    echo "  Pulled the remote's new commits."
+    BRANCH=$(git status -sb | head -1)
   fi
+  echo "  $BRANCH"
 else
-  echo "  Remote: No remote configured"
+  echo "  No remote configured"
 fi
 
 LAST_COMMIT=$(git log -1 --pretty=format:"%h %s (%cr)" 2>/dev/null || echo "No commits yet")
