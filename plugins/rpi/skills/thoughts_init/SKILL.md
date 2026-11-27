@@ -1,4 +1,5 @@
 ---
+name: thoughts_init
 description: Initialize thoughts system for current repository
 ---
 

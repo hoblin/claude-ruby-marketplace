@@ -1,4 +1,5 @@
 ---
+name: review-pr
 description: Review a pull request with independent reviewer subagents and judge their findings, whether it's someone else's PR, a re-review, a self-review of your own, or the feedback your PR received.
 argument-hint: "[review|re-review|self-review|address-feedback] <pr> [additional instructions]"
 ---

@@ -1,4 +1,5 @@
 ---
+name: sessions
 description: "Read an earlier Claude Code session — what was said, decided, tried or rejected in a past conversation, in this repository or another. Use when a decision's reasoning survives nowhere else: not in a note, a ticket, a commit message or a code comment, and the only record left is the conversation it was made in. Also use when asked what happened in an earlier session, or when a document states a reversal without saying why. Do not use it for the conversation you are in."
 argument-hint: "[topic or decision to find]"
 ---
