@@ -18,7 +18,7 @@ Every push of fixes brings a new review, and every review finds new small points
 
 ## The loop
 
-Repositories differ. In some, Copilot reviews a pull request on its own once it's marked ready; in some, only when asked; in some, it isn't available at all, and then this loop doesn't apply. So right after marking the pull request ready, see whether its review was requested: `gh pr view <number> --json reviewRequests,reviews`. When Copilot is in neither, request it as in step 6; a wait on a review nobody requested never ends.
+Repositories differ. In some, Copilot reviews a pull request on its own once it's marked ready; in some, only when asked; in some, it isn't available at all, and then this loop doesn't apply. So right after marking the pull request ready, see whether Copilot's review was requested. The request shows only in the pull request's timeline, as a `review_requested` event (`gh api repos/{owner}/{repo}/issues/<number>/timeline`), never in `reviewRequests`. When there is none since the pull request was marked ready, request it as in step 6; a wait on a review nobody requested never ends.
 
 1. **Mark the pull request ready.**
 2. **Start a Monitor for Copilot's new review comments on the pull request,** and let it wake you when they arrive.
