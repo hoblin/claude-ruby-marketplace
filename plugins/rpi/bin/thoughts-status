@@ -10,13 +10,16 @@ thoughts-status — show a thoughts repository's git state and its uncommitted n
 
 Usage: thoughts-status [directory]
 
-  directory: any path inside the thoughts repository (default: ~/thoughts)
+  directory: any path inside the thoughts repository (default: the one this
+             git repository's thoughts/ links to, else ~/thoughts)
 TEXT
     exit 0
     ;;
 esac
 
 THOUGHTS_DIR="$(thoughts_repo "$@")"
+SYNC="thoughts-sync"
+[[ "$THOUGHTS_DIR" == "$(thoughts_repo 2>/dev/null)" ]] || SYNC="thoughts-sync $(printf %q "$THOUGHTS_DIR")"
 
 if [[ ! -d "$THOUGHTS_DIR/.git" ]]; then
   echo "Error: $THOUGHTS_DIR is not a git repository" >&2
@@ -61,8 +64,6 @@ if [[ -n "$CHANGES" ]]; then
     printf "  %-10s %s\n" "$STATUS_TEXT" "$FILE"
   done
   echo ""
-  SYNC="thoughts-sync"
-  [[ "$THOUGHTS_DIR" == "$HOME/thoughts" ]] || SYNC="thoughts-sync $(printf %q "$THOUGHTS_DIR")"
   echo "Run \"$SYNC\" to commit these changes"
 else
   echo "✓ No uncommitted changes"

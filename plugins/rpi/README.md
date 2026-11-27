@@ -116,7 +116,7 @@ The session tools let the manager lead worker sessions in tmux: a tmux session p
 - **`session-close <project>:<clone>`** — closes an idle session; the window stays for `session-start`.
 - **`session2md <session.jsonl>`** — renders a session as the conversation it was.
 
-The thoughts tools take an optional path inside the thoughts repository to act on, `~/thoughts` by default.
+The thoughts tools take an optional path inside the thoughts repository to act on. Without one, they act on the thoughts repository the current repository's `thoughts/` links to, and on `~/thoughts` where there is no such link.
 
 - **`thoughts-sync [directory] [-m message]`** — commits, pulls and pushes the thoughts repository.
 - **`thoughts-status [directory]`** — its git state and the notes not yet synced.

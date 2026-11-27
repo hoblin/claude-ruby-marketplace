@@ -10,11 +10,12 @@ thoughts-sync — commit, pull and push a thoughts repository
 Usage: thoughts-sync [directory] [-m "message"]
 
   directory: any path inside the thoughts repository to sync, a note included
-             (default: ~/thoughts)
+             (default: the one this git repository's thoughts/ links to,
+             else ~/thoughts)
 TEXT
 }
 
-THOUGHTS_DIR="$(thoughts_repo)"
+THOUGHTS_DIR=""
 MESSAGE=""
 
 while [[ $# -gt 0 ]]; do
@@ -37,6 +38,8 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
+
+[[ -n "$THOUGHTS_DIR" ]] || THOUGHTS_DIR="$(thoughts_repo)"
 
 if [[ ! -d "$THOUGHTS_DIR/.git" ]]; then
   echo "Error: $THOUGHTS_DIR is not a git repository" >&2

@@ -1,5 +1,10 @@
 thoughts_repo() {
-  [[ $# -eq 0 ]] && { echo "${HOME}/thoughts"; return; }
+  if [[ $# -eq 0 ]]; then
+    local linked
+    linked="$(git rev-parse --show-toplevel 2>/dev/null)/thoughts/shared"
+    [[ -L "$linked" ]] || { echo "${HOME}/thoughts"; return; }
+    set -- "$linked"
+  fi
 
   local target
   target="$(realpath "$1")" || return
