@@ -102,6 +102,8 @@ Review, run by `rpi:review-pr`:
 
 rpi brings a few command-line tools for what an agent does often: leading other sessions, reading past ones, keeping the thoughts repository in sync. As rpi lets the human focus on what matters, the tools do the same for an agent: instead of scripting the same commands again, it spends its attention on the work and on communication. Each tool's `--help` opens with a line saying what it does, and a hook puts those lines into every session, and back after a compaction, under the folder the tools live in, so an agent knows the tools exist before it needs one and finds them whether or not that folder is on its PATH. A person can run them by hand too.
 
+The Design step reads gem documentation with the [yard-md](https://github.com/hoblin/yard-md) gem's `yard-md` and `mdri`. The same hook lists them when they are on the PATH, and otherwise says the gem is missing and how to install it for every project: `mise use -g gem:yard-md`.
+
 The session tools let the manager lead worker sessions in tmux: a tmux session per project, named after it, and a window per clone, named after the clone (`one`, `two`). A worker is addressed as `<project>:<clone>` and runs as `<project>-<clone>`.
 
 - **`session-start <project>:<clone> <dir> [claude flags…]`** — finds or creates the window, the agent and a fresh session in `<dir>`; refuses an agent that is working or asking. Extra flags pass through to Claude Code, such as `--resume <session-id>`.

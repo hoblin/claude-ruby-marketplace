@@ -7,9 +7,24 @@ require "open3"
 bin = File.expand_path("../bin", __dir__)
 tools = Dir[File.join(bin, "*")].select { |path| File.file?(path) && File.executable?(path) }.sort
 
-lines = tools.map { |path| Thread.new { Open3.capture3(path, "--help").first } }.zip(tools).map do |thread, path|
-  thread.value.lines.first&.strip || "#{File.basename(path)} — its --help printed nothing"
+help = lambda do |tool|
+  Thread.new do
+    Open3.capture3(tool, "--help").first.lines.first&.strip || "#{File.basename(tool)} — its --help printed nothing"
+  rescue Errno::ENOENT
+  end
 end
+
+bullets = ->(lines) { lines.map { |line| "- #{line}" }.join("\n") }
+
+rpi = tools.map(&help)
+yard_md = %w[yard-md mdri].map(&help).map(&:value)
+
+gem_docs =
+  if yard_md.all?
+    "rpi reads gem documentation with the yard-md gem's executables, on the PATH:\n\n#{bullets.call(yard_md)}"
+  else
+    "rpi reads gem documentation with the yard-md gem, which isn't installed: `mise use -g gem:yard-md` installs it for every project."
+  end
 
 puts JSON.generate(
   hookSpecificOutput: {
@@ -17,7 +32,9 @@ puts JSON.generate(
     additionalContext: <<~TEXT
       The rpi plugin's executables live in #{bin}:
 
-      #{lines.map { |line| "- #{line}" }.join("\n")}
+      #{bullets.call(rpi.map(&:value))}
+
+      #{gem_docs}
 
       Each one's --help prints its usage.
     TEXT
